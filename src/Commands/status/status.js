@@ -159,7 +159,7 @@ module.exports = {
               content: `loading...`,
               components: updatedComponents,
             });
-            // SDefine buttons for submenu
+            // Define buttons for submenu
 
             const modifyStatsButton = new ButtonBuilder()
               .setLabel("Modify Stats")
