@@ -73,9 +73,9 @@ module.exports = {
         skillsDisplay = "No skills learned yet";
       }
 
-      if (
-        !interaction.member.permissions.has(PermissionFlagsBits.Administrator)
-      ) {
+      async function playerMenu() {
+        
+        
         await interaction.editReply({
           content: `Hello <@${targetUserObj.user.id}>!\nYour level is **${
             targetUserData.level
@@ -86,10 +86,12 @@ module.exports = {
           }***\n**Will:** ***${targetUserData.will}***\n**Cognition:** ***${
             targetUserData.cognition
           }***\n# ***Skills:***\n`,
+          ephemeral: true,
+          components: [],
         });
-      } else if (
-        interaction.member.permissions.has(PermissionFlagsBits.Administrator)
-      ) {
+      }
+
+      async function adminMenu() {
         // set up admin button collection
         const playerModification = new ButtonBuilder()
           .setLabel("Modify Player Data")
@@ -103,7 +105,14 @@ module.exports = {
           .setCustomId("moderation")
           .setDisabled(false);
 
+        const playerMode = new ButtonBuilder()
+          .setLabel("Reload as Player")
+          .setStyle(ButtonStyle.Primary)
+          .setCustomId("player-mode")
+          .setDisabled(false);
+
         // send welcome message to admin
+
         const reply = await interaction.editReply({
           content: `Welcome Administrator ${targetUserObj.user.globalName.substr(
             0,
@@ -117,8 +126,8 @@ module.exports = {
           }***\n**Will:** ***${targetUserData.will}***\n**Cognition:** ***${
             targetUserData.cognition
           }***\n# ***Skills:***\n${skillsDisplay}\n\n-# What action would you like to perform?`,
-          components: buttonWrapper([playerModification, moderation]),
-        });
+          components: buttonWrapper([playerModification, moderation, playerMode]),
+        })
 
         // make sure the user who ran the command is the one who clicked the button
         const filter = (i) => i.user.id === interaction.user.id;
@@ -150,7 +159,7 @@ module.exports = {
               content: `loading...`,
               components: updatedComponents,
             });
-            // Show submenu with "Modify Stats" button
+            // SDefine buttons for submenu
 
             const modifyStatsButton = new ButtonBuilder()
               .setLabel("Modify Stats")
@@ -201,7 +210,7 @@ module.exports = {
             // Handle "Grant Skill" button click
             await statusAdminHandler.handleGrantSkillModal(buttonInteraction);
           }
-          if (buttonInteraction.customId === "moderation") {
+          else if (buttonInteraction.customId === "moderation") {
             // Handle "Moderation" button click
             const updatedComponents = reply.components.map((row) => {
               return ActionRowBuilder.from(row).setComponents(
@@ -216,7 +225,7 @@ module.exports = {
               content: `loading...`,
               components: updatedComponents,
             });
-            // Show submenu with "Modify Stats" button
+            // Define buttons for submenu
 
             const banUserButton = new ButtonBuilder()
               .setLabel("Ban User")
@@ -257,8 +266,31 @@ module.exports = {
             // Handle "Timeout User" button click
             await statusAdminHandler.handleTimeoutUserModal(buttonInteraction);
           }
+          else if (buttonInteraction.customId === "player-mode") {
+            // Handle "Player Mode" button click
+            const updatedComponents = reply.components.map((row) => {
+              return ActionRowBuilder.from(row).setComponents(
+                row.components.map((button) => {
+                  return button;
+                })
+              );
+            });
+
+            // Edit the original reply to disable the button
+            await interaction.editReply({
+              content: `loading...`,
+              components: updatedComponents,
+            });
+            //reload as a player
+            await playerMenu();
+          }
         });
       }
+      if (interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+        adminMenu();
+      } else {
+        playerMenu();
+      };
     } catch (error) {
       console.log(`There was an error running status: ${error}`);
     }
