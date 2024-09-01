@@ -114,10 +114,7 @@ module.exports = {
         // send welcome message to admin
 
         const reply = await interaction.editReply({
-          content: `Welcome Administrator ${targetUserObj.user.globalName.substr(
-            0,
-            1
-          )}!\nYour level is **${targetUserData.level}** and you have **${
+          content: `Welcome Administrator <@${targetUserObj.user.id}>!\nYour level is **${targetUserData.level}** and you have **${
             targetUserData.exp
           }/${calculateLevelExp(
             targetUserData.level + 1
