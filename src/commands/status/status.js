@@ -208,7 +208,7 @@ module.exports = {
             });
 
             // Edit the original reply to disable the button
-            await buttonInteraction.reply({
+            await interaction.reply({
               content: `loading...`,
               components: updatedComponents,
               ephemeral: true,
@@ -239,7 +239,7 @@ module.exports = {
               .setCustomId("grant_skill")
               .setDisabled(false);
 
-            await buttonInteraction.editReply({
+            await interaction.editReply({
               content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
                 0,
                 1
