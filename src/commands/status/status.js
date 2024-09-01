@@ -74,7 +74,12 @@ module.exports = {
       }
 
       async function playerMenu() {
-        
+        const inventory = new ButtonBuilder()
+          .setLabel("Inventory")
+          .setStyle(ButtonStyle.Primary)
+          .setCustomId("inventory")
+          .setDisabled(false);
+
         
         await interaction.editReply({
           content: `Hello <@${targetUserObj.user.id}>!\nYour level is **${
@@ -87,7 +92,7 @@ module.exports = {
             targetUserData.cognition
           }***\n# ***Skills:***\n`,
           ephemeral: true,
-          components: [],
+          components: buttonWrapper([inventory]),
         });
       }
 
