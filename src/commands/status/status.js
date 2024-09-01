@@ -168,7 +168,7 @@ module.exports = {
         collector.on("collect", async (buttonInteraction) => {
           if (buttonInteraction.customId === "player-modification") {
             // Handle "Modify Player Data" button click
-            const updatedComponents = reply.components.map((row) => {
+            const updatedComponents = adminReply.components.map((row) => {
               return ActionRowBuilder.from(row).setComponents(
                 row.components.map((button) => {
                   return button;
@@ -234,7 +234,7 @@ module.exports = {
           }
           else if (buttonInteraction.customId === "moderation") {
             // Handle "Moderation" button click
-            const updatedComponents = reply.components.map((row) => {
+            const updatedComponents = adminReply.components.map((row) => {
               return ActionRowBuilder.from(row).setComponents(
                 row.components.map((button) => {
                   return button;
@@ -290,7 +290,7 @@ module.exports = {
           }
           else if (buttonInteraction.customId === "player-mode") {
             // Handle "Player Mode" button click
-            const updatedComponents = reply.components.map((row) => {
+            const updatedComponents = adminReply.components.map((row) => {
               return ActionRowBuilder.from(row).setComponents(
                 row.components.map((button) => {
                   return button;
