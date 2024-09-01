@@ -90,10 +90,30 @@ module.exports = {
             targetUserData.strength
           }***\n**Will:** ***${targetUserData.will}***\n**Cognition:** ***${
             targetUserData.cognition
-          }***\n# ***Skills:***\n`,
+          }***\n# ***Skills:***\n${skillsDisplay}`,
           ephemeral: true,
           components: buttonWrapper([inventory]),
         });
+
+        // make sure the user who ran the command is the one who clicked the button
+        const filter = (i) => i.user.id === interaction.user.id;
+
+        // collect button clicks
+        const collector = reply.createMessageComponentCollector({
+          componentType: ComponentType.Button,
+          filter,
+        });
+
+        collector.on("collect", async (i) => {
+          if (i.customId === "inventory") {
+            const formattedInventory = targetUserData.inventory.map(
+              (item) => `${item}`
+            ).join(",\n");
+            await i.reply({
+              content: `Your inventory: ${formattedInventory}`,
+            })
+          }
+        })
       }
 
       async function adminMenu() {
