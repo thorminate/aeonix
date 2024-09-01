@@ -81,7 +81,7 @@ module.exports = {
           .setDisabled(false);
 
         
-        await interaction.editReply({
+        const playerReply = await interaction.editReply({
           content: `Hello <@${targetUserObj.user.id}>!\nYour level is **${
             targetUserData.level
           }** and you have **${targetUserData.exp}/${calculateLevelExp(
@@ -99,7 +99,7 @@ module.exports = {
         const filter = (i) => i.user.id === interaction.user.id;
 
         // collect button clicks
-        const collector = reply.createMessageComponentCollector({
+        const collector = playerReply.createMessageComponentCollector({
           componentType: ComponentType.Button,
           filter,
         });
@@ -138,7 +138,7 @@ module.exports = {
 
         // send welcome message to admin
 
-        const reply = await interaction.editReply({
+        const adminReply = await interaction.editReply({
           content: `Welcome Administrator <@${targetUserObj.user.id}>!\nYour level is **${targetUserData.level}** and you have **${
             targetUserData.exp
           }/${calculateLevelExp(
@@ -155,7 +155,7 @@ module.exports = {
         const filter = (i) => i.user.id === interaction.user.id;
 
         // collect button clicks
-        const collector = reply.createMessageComponentCollector({
+        const collector = adminReply.createMessageComponentCollector({
           componentType: ComponentType.Button,
           filter,
         });
