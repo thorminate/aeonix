@@ -211,7 +211,6 @@ module.exports = {
             await interaction.editReply({
               content: `loading...`,
               components: updatedComponents,
-              ephemeral: true,
             });
             // Define buttons for submenu
 
@@ -239,7 +238,7 @@ module.exports = {
               .setCustomId("grant_skill")
               .setDisabled(false);
 
-            await interaction.editReply({
+            await buttonInteraction.update({
               content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
                 0,
                 1
