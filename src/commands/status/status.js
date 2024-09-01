@@ -208,7 +208,7 @@ module.exports = {
             });
 
             // Edit the original reply to disable the button
-            await interaction.reply({
+            await interaction.editReply({
               content: `loading...`,
               components: updatedComponents,
               ephemeral: true,
