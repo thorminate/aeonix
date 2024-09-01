@@ -208,7 +208,7 @@ module.exports = {
             });
 
             // Edit the original reply to disable the button
-            await interaction.editReply({
+            await buttonInteraction.reply({
               content: `loading...`,
               components: updatedComponents,
             });
@@ -238,7 +238,7 @@ module.exports = {
               .setCustomId("grant_skill")
               .setDisabled(false);
 
-            await interaction.editReply({
+            await buttonInteraction.editReply({
               content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
                 0,
                 1
