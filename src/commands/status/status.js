@@ -108,9 +108,10 @@ module.exports = {
           if (i.customId === "inventory") {
             const formattedInventory = targetUserData.inventory.map(
               (item) => `${item}`
-            ).join(",\n") || "Empty...";
+            ).join(",\n") || "Is empty...";
             await i.reply({
               content: `## Your inventory\n ${formattedInventory}`,
+              ephemeral: true,
             })
           }
         })
