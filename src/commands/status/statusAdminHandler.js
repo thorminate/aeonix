@@ -196,6 +196,41 @@ module.exports = {
       console.log("Error handling Grant Skill modal:", error);
     }
   },
+  handleRevokeSkillModal: async (interaction) => {
+    try {
+      // Set up the Revoke Skill modal
+      const revokeSkillModal = new ModalBuilder()
+        .setCustomId("revoke-skill-modal")
+        .setTitle("Revoke Skill");
+
+      const revokeSkillTargetInput = new TextInputBuilder()
+        .setCustomId("revoke-skill-target-input")
+        .setLabel("The user who's skill you want to revoke")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true)
+        .setMinLength(18);
+
+      const revokeSkillNameInput = new TextInputBuilder()
+        .setCustomId("revoke-skill-name-input")
+        .setLabel("The Name of the skill you want to revoke")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true)
+
+      const revokeSkillTargetRow = new ActionRowBuilder().addComponents(
+        revokeSkillTargetInput
+      );
+      const revokeSkillNameRow = new ActionRowBuilder().addComponents(
+        revokeSkillNameInput
+      );
+
+      revokeSkillModal.addComponents(revokeSkillNameRow, revokeSkillTargetRow);
+
+      // Show the modal
+      await interaction.showModal(revokeSkillModal);
+    } catch (error) {
+      console.log("Error handling Revoke Skill modal:", error);
+    }
+  },
   handleBanUserModal: async (interaction) => {
     try {
       // Set up the Ban User modal

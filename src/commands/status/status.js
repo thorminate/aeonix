@@ -238,6 +238,12 @@ module.exports = {
               .setCustomId("grant_skill")
               .setDisabled(false);
 
+            const revokeSkillButton = new ButtonBuilder()
+              .setLabel("Revoke Skill")
+              .setStyle(ButtonStyle.Danger)
+              .setCustomId("revoke_skill")
+              .setDisabled(false);
+
             await buttonInteraction.update({
               content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
                 0,
@@ -248,6 +254,7 @@ module.exports = {
                 createSkillButton,
                 grantSkillButton,
                 deleteSkillButton,
+                revokeSkillButton,
               ]),
             });
           } else if (buttonInteraction.customId === "modify_stats") {
@@ -262,6 +269,9 @@ module.exports = {
           } else if (buttonInteraction.customId === "grant_skill") {
             // Handle "Grant Skill" button click
             await statusAdminHandler.handleGrantSkillModal(buttonInteraction);
+          } else if (buttonInteraction.customId === "revoke_skill") {
+            // Handle "Revoke Skill" button click
+            await statusAdminHandler.handleRevokeSkillModal(buttonInteraction);
           } else if (buttonInteraction.customId === "moderation") {
             // Handle "Moderation" button click
             const updatedComponents = adminReply.components.map((row) => {
