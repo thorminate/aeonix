@@ -211,6 +211,7 @@ module.exports = {
             await buttonInteraction.reply({
               content: `loading...`,
               components: updatedComponents,
+              ephemeral: true,
             });
             // Define buttons for submenu
 
