@@ -300,6 +300,18 @@ module.exports = {
           } else if (buttonInteraction.customId === "revoke_skill") {
             // Handle "Revoke Skill" button click
             await statusAdminHandler.handleRevokeSkillModal(buttonInteraction);
+          } else if (buttonInteraction.customId === "create_item") {
+            // Handle "Create Item" button click
+            await statusAdminHandler.handleCreateItemModal(buttonInteraction);
+          } else if (buttonInteraction.customId === "give_item") {
+            // Handle "Give Item" button click
+            await statusAdminHandler.handleGiveItemModal(buttonInteraction);
+          } else if (buttonInteraction.customId === "remove_item") {
+            // Handle "Remove Item" button click
+            await statusAdminHandler.handleRemoveItemModal(buttonInteraction);
+          } else if (buttonInteraction.customId === "delete_item") {
+            // Handle "Delete Item" button click
+            await statusAdminHandler.handleDeleteItemModal(buttonInteraction);
           } else if (buttonInteraction.customId === "moderation") {
             // Handle "Moderation" button click
             const updatedComponents = adminReply.components.map((row) => {

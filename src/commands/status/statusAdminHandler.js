@@ -214,7 +214,7 @@ module.exports = {
         .setCustomId("revoke-skill-name-input")
         .setLabel("The Name of the skill you want to revoke")
         .setStyle(TextInputStyle.Short)
-        .setRequired(true)
+        .setRequired(true);
 
       const revokeSkillTargetRow = new ActionRowBuilder().addComponents(
         revokeSkillTargetInput
@@ -230,6 +230,154 @@ module.exports = {
     } catch (error) {
       console.log("Error handling Revoke Skill modal:", error);
     }
+  },
+  handleCreateItemModal: async (interaction) => {
+    try {
+      // Set up the Create Item modal
+      const createItemModal = new ModalBuilder()
+        .setCustomId("create-item-modal")
+        .setTitle("Create Item");
+
+      const createItemNameInput = new TextInputBuilder()
+        .setCustomId("create-item-name-input")
+        .setLabel("Item Descriptor/Name")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
+
+      const createItemDescriptionInput = new TextInputBuilder()
+        .setCustomId("create-item-description-input")
+        .setLabel("Item Description")
+        .setStyle(TextInputStyle.Paragraph)
+        .setRequired(true);
+
+      const createItemActionableInput = new TextInputBuilder()
+        .setCustomId("create-item-actionable-input")
+        .setLabel("What the item does, use/consume/interact")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
+
+      const createItemActionInput = new TextInputBuilder()
+        .setCustomId("create-item-action-input")
+        .setLabel("What happens when you interact?")
+        .setStyle(TextInputStyle.Paragraph)
+        .setRequired(true);
+
+      const createItemNameRow = new ActionRowBuilder().addComponents(
+        createItemNameInput
+      );
+      const createItemDescriptionRow = new ActionRowBuilder().addComponents(
+        createItemDescriptionInput
+      );
+      const createItemActionableRow = new ActionRowBuilder().addComponents(
+        createItemActionableInput
+      );
+      const createItemActionRow = new ActionRowBuilder().addComponents(
+        createItemActionInput
+      );
+
+      createItemModal.addComponents(
+        createItemNameRow,
+        createItemDescriptionRow,
+        createItemActionableRow,
+        createItemActionRow
+      );
+
+      // Show the modal
+      await interaction.showModal(createItemModal);
+    } catch (error) {
+      console.log("Error handling Create Item modal:", error);
+    }
+  },
+  handleGiveItemModal: async (interaction) => {
+    try {
+      // Set up the Give Item modal
+      const giveItemModal = new ModalBuilder()
+        .setCustomId("give-item-modal")
+        .setTitle("Give Item");
+
+      const giveItemTargetInput = new TextInputBuilder()
+        .setCustomId("give-item-target-input")
+        .setLabel("Target user ID")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true)
+        .setMinLength(18);
+
+      const giveItemNameInput = new TextInputBuilder()
+        .setCustomId("give-item-name-input")
+        .setLabel("Item Descriptor/Name")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
+
+      const giveItemTargetRow = new ActionRowBuilder().addComponents(
+        giveItemTargetInput
+      );
+      const giveItemNameRow = new ActionRowBuilder().addComponents(
+        giveItemNameInput
+      );
+
+      giveItemModal.addComponents(giveItemNameRow, giveItemTargetRow);
+
+      // Show the modal
+      await interaction.showModal(giveItemModal);
+    } catch (error) {
+      console.log("Error handling Give Item modal:", error);
+    }
+  },
+  handleRemoveItemModal: async (interaction) => {
+    try {
+      // Set up the Remove Item modal
+      const removeItemModal = new ModalBuilder()
+        .setCustomId("remove-item-modal")
+        .setTitle("Remove Item");
+
+      const removeItemTargetInput = new TextInputBuilder()
+        .setCustomId("remove-item-target-input")
+        .setLabel("Target user ID")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true)
+        .setMinLength(18);
+
+      const removeItemNameInput = new TextInputBuilder()
+        .setCustomId("remove-item-name-input")
+        .setLabel("Item Descriptor/Name")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
+
+      const removeItemTargetRow = new ActionRowBuilder().addComponents(
+        removeItemTargetInput
+      );
+      const removeItemNameRow = new ActionRowBuilder().addComponents(
+        removeItemNameInput
+      );
+
+      removeItemModal.addComponents(removeItemNameRow, removeItemTargetRow);
+
+      // Show the modal
+      await interaction.showModal(removeItemModal);
+    } catch (error) {
+      console.log("Error handling Remove Item modal:", error);
+    }
+  },
+  handleDeleteItemModal: async (interaction) => {
+    // Set up the Delete Item modal
+    const deleteItemModal = new ModalBuilder()
+      .setCustomId("delete-item-modal")
+      .setTitle("Delete Item");
+
+    const deleteItemNameInput = new TextInputBuilder()
+      .setCustomId("delete-item-name-input")
+      .setLabel("Item Descriptor/Name")
+      .setStyle(TextInputStyle.Short)
+      .setRequired(true);
+
+    const deleteItemNameRow = new ActionRowBuilder().addComponents(
+      deleteItemNameInput
+    );
+
+    deleteItemModal.addComponents(deleteItemNameRow);
+
+    // Show the modal
+    await interaction.showModal(deleteItemModal);
   },
   handleBanUserModal: async (interaction) => {
     try {
@@ -271,7 +419,7 @@ module.exports = {
       // Set up the Kick User modal
       const kickUserModal = new ModalBuilder()
         .setCustomId("kick-user-modal")
-        .setTitle("Kick User, scary!")
+        .setTitle("Kick User, scary!");
 
       const kickUserTargetInput = new TextInputBuilder()
         .setCustomId("kick-user-target-input")
@@ -342,12 +490,12 @@ module.exports = {
       timeoutUserModal.addComponents(
         timeoutUserTargetRow,
         timeoutUserDurationRow,
-        timeoutUserReasonRow,
+        timeoutUserReasonRow
       );
 
       await interaction.showModal(timeoutUserModal);
     } catch (error) {
       console.log("Error handling Timeout User modal:", error);
     }
-  }
-}
+  },
+};
