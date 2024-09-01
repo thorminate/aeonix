@@ -83,7 +83,7 @@ module.exports = {
         let playerReply;
         if (prevAdmin === true) {
           const backToAdmin = new ButtonBuilder()
-            .setLabel("Return as admin")
+            .setLabel("Reload as admin")
             .setStyle(ButtonStyle.Primary)
             .setCustomId("backAsAdmin")
             .setDisabled(false);
@@ -238,7 +238,7 @@ module.exports = {
               .setCustomId("grant_skill")
               .setDisabled(false);
 
-            await buttonInteraction.update({
+            await buttonInteraction.editReply({
               content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
                 0,
                 1
