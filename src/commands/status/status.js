@@ -289,20 +289,6 @@ module.exports = {
             await statusAdminHandler.handleTimeoutUserModal(buttonInteraction);
           }
           else if (buttonInteraction.customId === "player-mode") {
-            // Handle "Player Mode" button click
-            const updatedComponents = adminReply.components.map((row) => {
-              return ActionRowBuilder.from(row).setComponents(
-                row.components.map((button) => {
-                  return button;
-                })
-              );
-            });
-
-            // Edit the original reply to disable the button
-            await interaction.editReply({
-              content: `loading...`,
-              components: updatedComponents,
-            });
             //reload as a player
             await playerMenu();
           }
