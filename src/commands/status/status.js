@@ -73,27 +73,47 @@ module.exports = {
         skillsDisplay = "No skills learned yet";
       }
 
-      async function playerMenu() {
+      async function playerMenu(prevAdmin = false) {
         const inventory = new ButtonBuilder()
           .setLabel("Inventory")
           .setStyle(ButtonStyle.Primary)
           .setCustomId("inventory")
           .setDisabled(false);
+        if (prevAdmin === true) {
+          const backToAdmin = new ButtonBuilder()
+            .setLabel("Return as admin")
+            .setStyle(ButtonStyle.Primary)
+            .setCustomId("backAsAdmin")
+            .setDisabled(false);
 
-        
-        const playerReply = await interaction.editReply({
-          content: `Hello <@${targetUserObj.user.id}>!\nYour level is **${
-            targetUserData.level
-          }** and you have **${targetUserData.exp}/${calculateLevelExp(
-            targetUserData.level + 1
-          )}** experience.\n# ***Stats:***\n**Strength:** ***${
-            targetUserData.strength
-          }***\n**Will:** ***${targetUserData.will}***\n**Cognition:** ***${
-            targetUserData.cognition
-          }***\n# ***Skills:***\n${skillsDisplay}`,
-          ephemeral: true,
-          components: buttonWrapper([inventory]),
-        });
+          const playerReply = await interaction.editReply({
+            content: `Hello <@${targetUserObj.user.id}>!\nYour level is **${
+              targetUserData.level
+            }** and you have **${targetUserData.exp}/${calculateLevelExp(
+              targetUserData.level + 1
+            )}** experience.\n# ***Stats:***\n**Strength:** ***${
+              targetUserData.strength
+            }***\n**Will:** ***${targetUserData.will}***\n**Cognition:** ***${
+              targetUserData.cognition
+            }***\n# ***Skills:***\n${skillsDisplay}`,
+            ephemeral: true,
+            components: buttonWrapper([inventory, backToAdmin]),
+          });
+        } else {
+          const playerReply = await interaction.editReply({
+            content: `Hello <@${targetUserObj.user.id}>!\nYour level is **${
+              targetUserData.level
+            }** and you have **${targetUserData.exp}/${calculateLevelExp(
+              targetUserData.level + 1
+            )}** experience.\n# ***Stats:***\n**Strength:** ***${
+              targetUserData.strength
+            }***\n**Will:** ***${targetUserData.will}***\n**Cognition:** ***${
+              targetUserData.cognition
+            }***\n# ***Skills:***\n${skillsDisplay}`,
+            ephemeral: true,
+            components: buttonWrapper([inventory]),
+          });
+        }
 
         // make sure the user who ran the command is the one who clicked the button
         const filter = (i) => i.user.id === interaction.user.id;
@@ -106,15 +126,17 @@ module.exports = {
 
         collector.on("collect", async (i) => {
           if (i.customId === "inventory") {
-            const formattedInventory = targetUserData.inventory.map(
-              (item) => `${item}`
-            ).join(",\n") || "is empty...";
+            const formattedInventory =
+              targetUserData.inventory.map((item) => `${item}`).join(",\n") ||
+              "is empty...";
             await i.reply({
               content: `## Your inventory\n ${formattedInventory}`,
               ephemeral: true,
-            })
+            });
+          } else if (i.customId === "backAsAdmin") {
+            await adminMenu();
           }
-        })
+        });
       }
 
       async function adminMenu() {
@@ -140,7 +162,9 @@ module.exports = {
         // send welcome message to admin
 
         const adminReply = await interaction.editReply({
-          content: `Welcome Administrator <@${targetUserObj.user.id}>!\nYour level is **${targetUserData.level}** and you have **${
+          content: `Welcome Administrator <@${
+            targetUserObj.user.id
+          }>!\nYour level is **${targetUserData.level}** and you have **${
             targetUserData.exp
           }/${calculateLevelExp(
             targetUserData.level + 1
@@ -149,8 +173,12 @@ module.exports = {
           }***\n**Will:** ***${targetUserData.will}***\n**Cognition:** ***${
             targetUserData.cognition
           }***\n# ***Skills:***\n${skillsDisplay}\n\n-# What action would you like to perform?`,
-          components: buttonWrapper([playerModification, moderation, playerMode]),
-        })
+          components: buttonWrapper([
+            playerModification,
+            moderation,
+            playerMode,
+          ]),
+        });
 
         // make sure the user who ran the command is the one who clicked the button
         const filter = (i) => i.user.id === interaction.user.id;
@@ -232,8 +260,7 @@ module.exports = {
           } else if (buttonInteraction.customId === "grant_skill") {
             // Handle "Grant Skill" button click
             await statusAdminHandler.handleGrantSkillModal(buttonInteraction);
-          }
-          else if (buttonInteraction.customId === "moderation") {
+          } else if (buttonInteraction.customId === "moderation") {
             // Handle "Moderation" button click
             const updatedComponents = adminReply.components.map((row) => {
               return ActionRowBuilder.from(row).setComponents(
@@ -288,18 +315,19 @@ module.exports = {
           } else if (buttonInteraction.customId === "timeout_user") {
             // Handle "Timeout User" button click
             await statusAdminHandler.handleTimeoutUserModal(buttonInteraction);
-          }
-          else if (buttonInteraction.customId === "player-mode") {
+          } else if (buttonInteraction.customId === "player-mode") {
             //reload as a player
-            await playerMenu();
+            await playerMenu(true);
           }
         });
       }
-      if (interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+      if (
+        interaction.member.permissions.has(PermissionFlagsBits.Administrator)
+      ) {
         adminMenu();
       } else {
         playerMenu();
-      };
+      }
     } catch (error) {
       console.log(`There was an error running status: ${error}`);
     }
