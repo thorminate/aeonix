@@ -244,6 +244,30 @@ module.exports = {
               .setCustomId("revoke_skill")
               .setDisabled(false);
 
+            const createItemButton = new ButtonBuilder()
+              .setLabel("Create Item")
+              .setStyle(ButtonStyle.Secondary)
+              .setCustomId("create_item")
+              .setDisabled(false);
+
+            const deleteItemButton = new ButtonBuilder()
+              .setLabel("Delete Item")
+              .setStyle(ButtonStyle.Danger)
+              .setCustomId("delete_item")
+              .setDisabled(false);
+
+            const giveItemButton = new ButtonBuilder()
+              .setLabel("Give Item")
+              .setStyle(ButtonStyle.Primary)
+              .setCustomId("give_item")
+              .setDisabled(false);
+
+            const removeItemButton = new ButtonBuilder()
+              .setLabel("Remove Item")
+              .setStyle(ButtonStyle.Danger)
+              .setCustomId("remove_item")
+              .setDisabled(false);
+
             await buttonInteraction.update({
               content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
                 0,
@@ -255,6 +279,10 @@ module.exports = {
                 grantSkillButton,
                 deleteSkillButton,
                 revokeSkillButton,
+                createItemButton,
+                giveItemButton,
+                removeItemButton,
+                deleteItemButton,
               ]),
             });
           } else if (buttonInteraction.customId === "modify_stats") {
