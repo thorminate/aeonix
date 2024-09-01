@@ -64,8 +64,8 @@ module.exports = {
       if (targetUserData.skills && targetUserData.skills.length > 0) {
         skillsDisplay = targetUserData.skills
           .map((skill) => {
-            const skillUppercaseLetter = skill.skillName[0].toUpperCase();
-            return `${skillUppercaseLetter}${skill.skillName.slice(1)}`;
+            const skillUppercaseLetter = skill[0].toUpperCase();
+            return `${skillUppercaseLetter}${skill.slice(1)}`;
           })
           .filter((skillArray) => skillArray && skillArray[0])
           .join(", ");

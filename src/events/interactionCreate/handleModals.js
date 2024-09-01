@@ -316,15 +316,66 @@ module.exports = async (bot, modalInteraction) => {
 
       grantSkillSkill.skillUsers.push(grantSkillTargetUserData.userId);
       await grantSkillSkill.save();
-      grantSkillTargetUserData.skills.push(grantSkillSkill);
+      grantSkillTargetUserData.skills.push(grantSkillSkill.skillName);
       await grantSkillTargetUserData.save();
 
       await modalInteraction.reply({
         content: `Successfully granted skill ${grantSkillName} to <@${grantSkillTarget}>.`,
         ephemeral: true,
       });
-    }
-    else if (modalInteraction.customId === "ban-user-modal") {
+    } else if (modalInteraction.customId === "revoke-skill-modal") {
+      // get input values
+      const revokeSkillName = modalInteraction.fields.getTextInputValue(
+        "revoke-skill-name-input"
+      );
+      const revokeSkillTarget = modalInteraction.fields.getTextInputValue(
+        "revoke-skill-target-input"
+      );
+
+      // Validate the inputs
+      const revokeSkillData = await skillData.findOne({
+        skillName: revokeSkillName,
+      });
+
+      if (!revokeSkillData) {
+        await modalInteraction.reply({
+          content: `Skill ${revokeSkillName} not found. Make sure you entered a valid skill name. Or create a new skill.`,
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const revokeSkillTargetData = await userData.findOne({
+        userId: revokeSkillTarget,
+        guildId: modalInteraction.guild.id,
+      });
+
+      if (!revokeSkillTargetData) {
+        await modalInteraction.reply({
+          content:
+            "Target user not found. Make sure you entered a valid user ID.",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      // check if the user has the skill
+      if (revokeSkillTargetData.skills.includes(revokeSkillName)) {
+        revokeSkillTargetData.skills = revokeSkillTargetData.skills.filter(
+          (skill) => skill !== revokeSkillName
+        );
+        await revokeSkillTargetData.save();
+        await modalInteraction.reply({
+          content: `Successfully revoked skill ${revokeSkillName} from <@${revokeSkillTarget}>.`,
+          ephemeral: true,
+        });
+      } else {
+        await modalInteraction.reply({
+          content: `User does not have skill ${revokeSkillName}.`,
+          ephemeral: true,
+        });
+      }
+    } else if (modalInteraction.customId === "ban-user-modal") {
       // get input values
       const banUserId = modalInteraction.fields.getTextInputValue(
         "ban-user-target-input"
@@ -342,46 +393,47 @@ module.exports = async (bot, modalInteraction) => {
         return;
       }
 
-      
-        const buttonConfirm = new ButtonBuilder()
-          .setCustomId("ban-user-confirm")
-          .setLabel("Confirm")
-          .setStyle(ButtonStyle.Danger)
-          .setDisabled(false);
+      const buttonConfirm = new ButtonBuilder()
+        .setCustomId("ban-user-confirm")
+        .setLabel("Confirm")
+        .setStyle(ButtonStyle.Danger)
+        .setDisabled(false);
 
-        const buttonCancel = new ButtonBuilder()
-          .setCustomId("ban-user-cancel")
-          .setLabel("Cancel")
-          .setStyle(ButtonStyle.Success)
-          .setDisabled(false);
+      const buttonCancel = new ButtonBuilder()
+        .setCustomId("ban-user-cancel")
+        .setLabel("Cancel")
+        .setStyle(ButtonStyle.Success)
+        .setDisabled(false);
 
-        await modalInteraction.reply({
-          content: "Are you sure you want to ban this user?",
-          ephemeral: true,
-          components: buttonWrapper([buttonConfirm, buttonCancel]),
-        });
-        
-        const collector = modalInteraction.channel.createMessageComponentCollector({
+      await modalInteraction.reply({
+        content: "Are you sure you want to ban this user?",
+        ephemeral: true,
+        components: buttonWrapper([buttonConfirm, buttonCancel]),
+      });
+
+      const collector =
+        modalInteraction.channel.createMessageComponentCollector({
           filter: (m) => m.user.id === modalInteraction.user.id,
           max: 1,
         });
 
-         collector.on("collect", async (i) => {
-           if (i.customId === "ban-user-confirm") {
-
-           }
-         });
+      collector.on("collect", async (i) => {
+        if (i.customId === "ban-user-confirm") {
+        }
+      });
     } else if (modalInteraction.customId === "kick-user-modal") {
       // get input values
       const kickUserId = modalInteraction.fields.getTextInputValue(
         "kick-user-target-input"
       );
-      const kickUserReason = modalInteraction.fields.getTextInputValue(
-        "kick-user-reason-input"
-      ) || "No reason provided";
+      const kickUserReason =
+        modalInteraction.fields.getTextInputValue("kick-user-reason-input") ||
+        "No reason provided";
 
       // get the target user object
-      const kickUser = await modalInteraction.guild.members.fetch(kickUserId)?.catch(() => null);
+      const kickUser = await modalInteraction.guild.members
+        .fetch(kickUserId)
+        ?.catch(() => null);
 
       // check if the target user exists, else edit the reply and return
       if (!kickUser) {
@@ -411,13 +463,16 @@ module.exports = async (bot, modalInteraction) => {
       }
       // define the target user role position and request user role position
       const kickUserRolePosition = kickUser.roles.highest.position;
-      const kickUserRequesterRolePosition = modalInteraction.member.roles.highest.position;
-      const kickUserBotRolePosition = modalInteraction.guild.members.me.roles.highest.position;
+      const kickUserRequesterRolePosition =
+        modalInteraction.member.roles.highest.position;
+      const kickUserBotRolePosition =
+        modalInteraction.guild.members.me.roles.highest.position;
 
       // check if the target user is of a higher position than the request user
       if (kickUserRolePosition >= kickUserRequesterRolePosition) {
         await modalInteraction.reply({
-          content: "That user is of a higher position of the power hierarchy than you. Therefore you cannot kick them.",
+          content:
+            "That user is of a higher position of the power hierarchy than you. Therefore you cannot kick them.",
           ephemeral: true,
         });
         return;
@@ -426,7 +481,8 @@ module.exports = async (bot, modalInteraction) => {
       // check if the target user is of a higher position than the bot
       if (kickUserRolePosition >= kickUserBotRolePosition) {
         await modalInteraction.reply({
-          content: "That user is of a higher position of the power hierarchy than me. Therefore i cannot kick them.",
+          content:
+            "That user is of a higher position of the power hierarchy than me. Therefore i cannot kick them.",
           ephemeral: true,
         });
         return;
@@ -434,10 +490,10 @@ module.exports = async (bot, modalInteraction) => {
       // kick the user
       try {
         await kickUser.kick(kickUserReason);
-      await modalInteraction.reply({
-        content: `The user <@${kickUser.user.id}> has been kicked successfully.\n${kickUserReason}`,
-        ephemeral: true,
-      });
+        await modalInteraction.reply({
+          content: `The user <@${kickUser.user.id}> has been kicked successfully.\n${kickUserReason}`,
+          ephemeral: true,
+        });
       } catch (error) {
         console.error("Error kicking user: ", error);
       }
@@ -449,12 +505,15 @@ module.exports = async (bot, modalInteraction) => {
       let timeoutUserDuration = modalInteraction.fields.getTextInputValue(
         "timeout-user-duration-input"
       );
-      const timeoutUserReason = modalInteraction.fields.getTextInputValue(
-        "timeout-user-reason-input"
-      ) || 'No reason provided';
+      const timeoutUserReason =
+        modalInteraction.fields.getTextInputValue(
+          "timeout-user-reason-input"
+        ) || "No reason provided";
 
       // get the target user object
-      const timeoutUser = await modalInteraction.guild.members.fetch(timeoutUserId)?.catch(() => null);
+      const timeoutUser = await modalInteraction.guild.members
+        .fetch(timeoutUserId)
+        ?.catch(() => null);
 
       // check if the target user exists, else edit the reply and return
       if (!timeoutUser) {
@@ -496,9 +555,13 @@ module.exports = async (bot, modalInteraction) => {
       }
 
       //check if the duration is below 5 seconds or above 28 days
-      if (timeoutUserDuration < 5000 || timeoutUserDuration > 28 * 24 * 60 * 60 * 1000) {
+      if (
+        timeoutUserDuration < 5000 ||
+        timeoutUserDuration > 28 * 24 * 60 * 60 * 1000
+      ) {
         await modalInteraction.reply({
-          content: "Invalid duration. Please enter a duration between 5 seconds and 28 days.",
+          content:
+            "Invalid duration. Please enter a duration between 5 seconds and 28 days.",
           ephemeral: true,
         });
         return;
@@ -506,13 +569,16 @@ module.exports = async (bot, modalInteraction) => {
 
       // define role positions
       const timeoutUserRolePosition = timeoutUser.roles.highest.position;
-      const timeoutUserRequesterRolePosition = modalInteraction.member.roles.highest.position;
-      const timeoutUserBotRolePosition = modalInteraction.guild.members.me.roles.highest.position;
+      const timeoutUserRequesterRolePosition =
+        modalInteraction.member.roles.highest.position;
+      const timeoutUserBotRolePosition =
+        modalInteraction.guild.members.me.roles.highest.position;
 
       // check if the target user is of a higher position than the request user
       if (timeoutUserRolePosition >= timeoutUserRequesterRolePosition) {
         await modalInteraction.reply({
-          content: "That user is of a higher position of the power hierarchy than you. Therefore you cannot timeout them.",
+          content:
+            "That user is of a higher position of the power hierarchy than you. Therefore you cannot timeout them.",
           ephemeral: true,
         });
         return;
@@ -521,7 +587,8 @@ module.exports = async (bot, modalInteraction) => {
       // check if the target user is of a higher position than the bot
       if (timeoutUserRolePosition >= timeoutUserBotRolePosition) {
         await modalInteraction.reply({
-          content: "That user is of a higher position of the power hierarchy than me. Therefore i cannot timeout them.",
+          content:
+            "That user is of a higher position of the power hierarchy than me. Therefore i cannot timeout them.",
           ephemeral: true,
         });
         return;

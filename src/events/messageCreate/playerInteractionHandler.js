@@ -46,19 +46,22 @@ module.exports = async (bot, message) => {
     const user = await userData.findOne({ userId: userId });
 
     if (user) {
-      const skill = user.skills.find((skill) => skill.skillName === skillName);
+      if (user.skills.includes(skillName)) {
+        const skill = await skillData.findOne({ skillName: skillName });
 
-      if (skill) {
-        // Perform the skill action here
-        const skillAction = skill.skillAction;
-        await message.reply(skillAction);
-      } else if (skillName === undefined) {
-        await message.reply({
-          content: "Please specify a skill to use.",
-          ephemeral: true,
-        });
-      }
-      if (!skill) {
+        if (skill) {
+          // Perform the skill action here
+          const skillAction = skill.skillAction;
+          await message.reply(skillAction);
+        } else if (skillName === undefined) {
+          await message.reply({
+            content: "Please specify a skill to use.",
+            ephemeral: true,
+          });
+        } else {
+          await message.reply(`Skill ${skillName} not found.`);
+        }
+      } else {
         await message.reply(`Skill ${skillName} not found.`);
       }
     } else {
