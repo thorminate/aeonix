@@ -30,6 +30,7 @@ module.exports = {
    */
 
   callback: async (bot, interaction) => {
+    console.log(interaction);
     // if the command is not in a guild, say so and return
     if (!interaction.inGuild()) {
       interaction.reply("You can only run this command inside a server");
