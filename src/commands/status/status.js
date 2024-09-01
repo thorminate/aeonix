@@ -79,6 +79,8 @@ module.exports = {
           .setStyle(ButtonStyle.Primary)
           .setCustomId("inventory")
           .setDisabled(false);
+
+        let playerReply;
         if (prevAdmin === true) {
           const backToAdmin = new ButtonBuilder()
             .setLabel("Return as admin")
@@ -86,7 +88,7 @@ module.exports = {
             .setCustomId("backAsAdmin")
             .setDisabled(false);
 
-          const playerReply = await interaction.editReply({
+          playerReply = await interaction.editReply({
             content: `Hello <@${targetUserObj.user.id}>!\nYour level is **${
               targetUserData.level
             }** and you have **${targetUserData.exp}/${calculateLevelExp(
@@ -100,7 +102,7 @@ module.exports = {
             components: buttonWrapper([inventory, backToAdmin]),
           });
         } else {
-          const playerReply = await interaction.editReply({
+          playerReply = await interaction.editReply({
             content: `Hello <@${targetUserObj.user.id}>!\nYour level is **${
               targetUserData.level
             }** and you have **${targetUserData.exp}/${calculateLevelExp(
