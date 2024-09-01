@@ -238,7 +238,7 @@ module.exports = {
               .setCustomId("grant_skill")
               .setDisabled(false);
 
-            await buttonInteraction.editReply({
+            await interaction.editReply({
               content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
                 0,
                 1
