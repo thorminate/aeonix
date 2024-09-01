@@ -2,6 +2,7 @@ const { ButtonBuilder, ButtonStyle } = require("discord.js");
 const buttonWrapper = require("../../utils/buttonWrapper");
 const userData = require("../../models/userDatabaseSchema");
 const skillData = require("../../models/skillDatabaseSchema");
+const itemData = require("../../models/itemDatabaseSchema");
 const ms = require("ms");
 
 module.exports = async (bot, modalInteraction) => {
@@ -259,9 +260,9 @@ module.exports = async (bot, modalInteraction) => {
       }
     } else if (modalInteraction.customId === "grant-skill-modal") {
       // get input values
-      const grantSkillName = modalInteraction.fields.getTextInputValue(
-        "grant-skill-name-input"
-      );
+      const grantSkillName = modalInteraction.fields
+        .getTextInputValue("grant-skill-name-input")
+        .toLowerCase();
       const grantSkillTarget = modalInteraction.fields.getTextInputValue(
         "grant-skill-target-input"
       );
@@ -325,9 +326,9 @@ module.exports = async (bot, modalInteraction) => {
       });
     } else if (modalInteraction.customId === "revoke-skill-modal") {
       // get input values
-      const revokeSkillName = modalInteraction.fields.getTextInputValue(
-        "revoke-skill-name-input"
-      );
+      const revokeSkillName = modalInteraction.fields
+        .getTextInputValue("revoke-skill-name-input")
+        .toLowerCase();
       const revokeSkillTarget = modalInteraction.fields.getTextInputValue(
         "revoke-skill-target-input"
       );
@@ -375,6 +376,113 @@ module.exports = async (bot, modalInteraction) => {
           ephemeral: true,
         });
       }
+    } else if (modalInteraction.customId === "create-item-modal") {
+      // get input values
+      const itemName = modalInteraction.fields.getTextInputValue(
+        "create-item-name-input"
+      );
+      const itemDescription = modalInteraction.fields.getTextInputValue(
+        "create-item-description-input"
+      );
+      const itemActionable = modalInteraction.fields
+        .getTextInputValue("create-item-actionable-input")
+        .toLowerCase();
+      const itemAction = modalInteraction.fields.getTextInputValue(
+        "create-item-action-input"
+      );
+
+      function checkItemActionSyntax(actionString) {
+        if (actionString === "none") return true;
+        const actionParts = actionString.split(",");
+        const validOperators = ["+", "-"];
+        const validStats = ["STRENGTH", "WILL", "COGNITION"];
+
+        for (const action of actionParts) {
+          const [stat, operator, value] = action.trim().split(" ");
+          if (!validStats.includes(stat)) {
+            return false; // invalid stat
+          }
+          if (!validOperators.includes(operator)) {
+            return false; // invalid operator
+          }
+          if (isNaN(parseInt(value))) {
+            return false; // invalid value
+          }
+        }
+        return true; // syntax is correct
+      }
+
+      /*
+      
+      // the code to execute the item action using correct syntax
+
+      function executeItemAction(actionString, userData) {
+        if (actionString === "none") return;
+        const actionParts = actionString.split(",");
+        const operators = {
+          "+": (a, b) => a + b,
+          "-": (a, b) => a - b,
+        };
+
+        for (const action of actionParts) {
+          const [stat, operator, value] = action.trim().split(" ");
+          const statName = stat.toLowerCase();
+          const statValue = parseInt(value);
+          userData[statName] = operators[operator](
+            userData[statName],
+            statValue
+          );
+        }
+      }
+      */
+      // Validate the inputs
+      if (
+        !itemActionable === "interact" ||
+        !itemActionable === "consume" ||
+        !itemActionable === "use"
+      ) {
+        modalInteraction.reply({
+          content:
+            "The third field must be either 'interactable', 'consumable' or 'usable'.",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      if (checkItemActionSyntax(itemAction) === false) {
+        modalInteraction.reply({
+          content:
+            "The fourth field must be a valid action syntax.\nExample: COGNITION + 10, WILL - 5\nThey must be separated by a comma and a space. The operator must be either '+' or '-'. The stat must be either 'STRENGTH', 'WILL' or 'COGNITION'. The value must be a number. Each action must be separated by a space. so COGNITION+10, WILL-5 in invalid syntax.",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const existingItem = await itemData.findOne({
+        itemName: itemName,
+      });
+      if (existingItem) {
+        modalInteraction.reply({
+          content:
+            "An item with that name already exists. You can skip this step.",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const newItem = new itemData({
+        itemName: itemName,
+        itemDescription: itemDescription,
+        itemActionable: itemActionable,
+        itemAction: itemAction,
+      });
+
+      await newItem.save();
+
+      await modalInteraction.reply({
+        content: `Successfully created item ${itemName}.`,
+        ephemeral: true,
+      });
     } else if (modalInteraction.customId === "ban-user-modal") {
       // get input values
       const banUserId = modalInteraction.fields.getTextInputValue(
