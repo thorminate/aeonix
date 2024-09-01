@@ -55,7 +55,7 @@ module.exports = {
       // if user doesn't exist in database, say so and return
       if (!targetUserData) {
         interaction.editReply(
-          "You haven't been integrated into the system yet. Head over to <#1270795236964171849>"
+          "You haven't been integrated into the system yet. Head over to <#1270790941892153404>"
         );
         return;
       }
