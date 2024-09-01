@@ -109,7 +109,7 @@ module.exports = {
             const formattedInventory = targetUserData.inventory.map(
               (item) => `${item}`
             ).join(",\n") || "Empty...";
-            await interaction.editReply({
+            await i.reply({
               content: `## Your inventory\n ${formattedInventory}`,
             })
           }
