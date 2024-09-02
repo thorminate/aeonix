@@ -18,6 +18,12 @@ module.exports = async (bot, interaction) => {
     });
     const userDiscord = await interaction.guild.members.fetch(interaction.user.id);
 
+    if (!user) {
+      const newUser = new userData({
+        userId: interaction.user.id,
+        guildId: interaction.guild.id,
+      })
+    }
     if (user.isOnboard && !userDiscord.roles.cache.has("1270791621289578607")) {
       await interaction.reply({
         content: "You have already completed the onboarding process, but you don't have the player role. Fixing...",
