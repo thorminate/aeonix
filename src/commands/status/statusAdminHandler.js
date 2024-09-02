@@ -308,14 +308,28 @@ module.exports = {
         .setStyle(TextInputStyle.Short)
         .setRequired(true);
 
+      const giveItemAmountInput = new TextInputBuilder()
+        .setCustomId("give-item-amount-input")
+        .setLabel("Amount")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true)
+        .setMinLength(1);
+
       const giveItemTargetRow = new ActionRowBuilder().addComponents(
         giveItemTargetInput
       );
       const giveItemNameRow = new ActionRowBuilder().addComponents(
         giveItemNameInput
       );
+      const giveItemAmountRow = new ActionRowBuilder().addComponents(
+        giveItemAmountInput
+      );
 
-      giveItemModal.addComponents(giveItemNameRow, giveItemTargetRow);
+      giveItemModal.addComponents(
+        giveItemNameRow,
+        giveItemTargetRow,
+        giveItemAmountRow
+      );
 
       // Show the modal
       await interaction.showModal(giveItemModal);

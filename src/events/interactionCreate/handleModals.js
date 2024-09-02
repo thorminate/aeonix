@@ -494,7 +494,18 @@ module.exports = async (bot, modalInteraction) => {
         "give-item-target-input"
       );
 
-      const giveItemTargetData = userData.findOne({
+      const giveItemAmount = modalInteraction.fields.getTextInputValue(
+        "give-item-amount-input"
+      );
+
+      if (isNaN(giveItemAmount)) {
+        await modalInteraction.reply({
+          content: "Amount must be a number.",
+          ephemeral: true,
+        });
+        return;
+      }
+      const giveItemTargetData = await userData.findOne({
         userId: giveItemTarget,
         guildId: modalInteraction.guild.id,
       });
@@ -506,7 +517,7 @@ module.exports = async (bot, modalInteraction) => {
         });
       }
 
-      const giveItemData = itemData.findOne({
+      const giveItemData = await itemData.findOne({
         itemName: giveItemName,
       });
 
@@ -517,13 +528,32 @@ module.exports = async (bot, modalInteraction) => {
         });
       }
 
-      if (giveItemTargetData.inventory.includes(giveItemData.itemName)) {
+      const itemIndex = giveItemTargetData.inventory.findIndex(
+        (item) => item.itemName === giveItemData.itemName
+      );
+      if (itemIndex === -1) {
         const inventoryObject = {
           itemName: giveItemData.itemName,
-          itemAmount: 1,
+          itemAmount: giveItemAmount,
         };
-        giveItemTargetData.inventory.push(giveItemData.itemName);
+        giveItemTargetData.inventory.push(inventoryObject);
+
+        await giveItemTargetData.save();
+      } else {
+        giveItemTargetData.inventory[itemIndex].itemAmount +=
+          parseInt(giveItemAmount);
+
+        await giveItemTargetData.save();
       }
+
+      giveItemData.itemUsers.push(giveItemTarget);
+
+      await giveItemData.save();
+
+      await modalInteraction.reply({
+        content: `Successfully gave ${giveItemAmount}x ${giveItemName} to <@${giveItemTarget}>.`,
+        ephemeral: true,
+      });
     } else if (modalInteraction.customId === "ban-user-modal") {
       // get input values
       const banUserId = modalInteraction.fields.getTextInputValue(
