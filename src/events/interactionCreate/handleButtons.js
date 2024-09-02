@@ -16,21 +16,28 @@ module.exports = async (bot, interaction) => {
       userId: interaction.user.id,
       guildId: interaction.guild.id,
     });
-    const userDiscord = await interaction.guild.members.fetch(interaction.user.id);
+    const userDiscord = await interaction.guild.members.fetch(
+      interaction.user.id
+    );
 
-    if (!user) {
+    if (!user.isOnboard) {
       const newUser = new userData({
         userId: interaction.user.id,
         guildId: interaction.guild.id,
-      })
+      });
     }
     if (user.isOnboard && !userDiscord.roles.cache.has("1270791621289578607")) {
       await interaction.reply({
-        content: "You have already completed the onboarding process, but you don't have the player role. Fixing...",
+        content:
+          "You have already completed the onboarding process, but you don't have the player role. Fixing...",
         ephemeral: true,
       });
       setTimeout(() => {
-        interaction.member.roles.add(interaction.guild.roles.cache.find(role => role.id === "1270791621289578607"));
+        interaction.member.roles.add(
+          interaction.guild.roles.cache.find(
+            (role) => role.id === "1270791621289578607"
+          )
+        );
       }, 2000);
       return;
     } else if (user.isOnboard) {
