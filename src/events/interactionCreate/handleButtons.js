@@ -12,7 +12,7 @@ module.exports = async (bot, interaction) => {
   if (!interaction.isButton()) return;
 
   if (interaction.customId === "welcome-channel-begin-onboarding") {
-    const user = await userData.findOne({
+    let user = await userData.findOne({
       userId: interaction.user.id,
       guildId: interaction.guild.id,
     });
@@ -21,13 +21,15 @@ module.exports = async (bot, interaction) => {
     );
 
     if (!user) {
-      const newUser = new userData({
+      newUser = new userData({
         userId: interaction.user.id,
         guildId: interaction.guild.id,
         isOnboard: false,
       });
 
-      await newUser.save();
+      user = newUser;
+
+      await user.save();
     }
     if (user.isOnboard && !userDiscord.roles.cache.has("1270791621289578607")) {
       await interaction.reply({

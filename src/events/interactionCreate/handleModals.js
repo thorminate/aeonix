@@ -378,9 +378,9 @@ module.exports = async (bot, modalInteraction) => {
       }
     } else if (modalInteraction.customId === "create-item-modal") {
       // get input values
-      const itemName = modalInteraction.fields.getTextInputValue(
-        "create-item-name-input"
-      ).toLowerCase();
+      const itemName = modalInteraction.fields
+        .getTextInputValue("create-item-name-input")
+        .toLowerCase();
       const itemDescription = modalInteraction.fields.getTextInputValue(
         "create-item-description-input"
       );
@@ -486,9 +486,9 @@ module.exports = async (bot, modalInteraction) => {
     } else if (modalInteraction.customId === "give-item-modal") {
       // get input values
 
-      const giveItemName = modalInteraction.fields.getTextInputValue(
-        "give-item-name-input"
-      ).toLowerCase();
+      const giveItemName = modalInteraction.fields
+        .getTextInputValue("give-item-name-input")
+        .toLowerCase();
 
       const giveItemTarget = modalInteraction.fields.getTextInputValue(
         "give-item-target-input"
@@ -497,30 +497,32 @@ module.exports = async (bot, modalInteraction) => {
       const giveItemTargetData = userData.findOne({
         userId: giveItemTarget,
         guildId: modalInteraction.guild.id,
-      })
+      });
 
       if (!giveItemTargetData) {
         await modalInteraction.reply({
           content: "User not found, make sure they exist in the database.",
           ephemeral: true,
-        })
+        });
       }
 
       const giveItemData = itemData.findOne({
-        itemName: giveItemName
-      })
+        itemName: giveItemName,
+      });
 
       if (!giveItemData) {
         await modalInteraction.reply({
           content: "Item not found, make sure it exist in the database",
           ephemeral: true,
-        })
+        });
       }
 
       if (giveItemTargetData.inventory.includes(giveItemData.itemName)) {
-        //giveItemTargetData.inventory.
-      } else {
-        //giveItemTargetData.inventory.push(giveItemData.itemName)
+        const inventoryObject = {
+          itemName: giveItemData.itemName,
+          itemAmount: 1,
+        };
+        giveItemTargetData.inventory.push(giveItemData.itemName);
       }
     } else if (modalInteraction.customId === "ban-user-modal") {
       // get input values
