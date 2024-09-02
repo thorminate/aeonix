@@ -20,12 +20,14 @@ module.exports = async (bot, interaction) => {
       interaction.user.id
     );
 
-    if (!user.isOnboard) {
+    if (!user) {
       const newUser = new userData({
         userId: interaction.user.id,
         guildId: interaction.guild.id,
         isOnboard: false,
       });
+
+      await newUser.save();
     }
     if (user.isOnboard && !userDiscord.roles.cache.has("1270791621289578607")) {
       await interaction.reply({
