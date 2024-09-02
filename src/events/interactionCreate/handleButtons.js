@@ -24,6 +24,7 @@ module.exports = async (bot, interaction) => {
       const newUser = new userData({
         userId: interaction.user.id,
         guildId: interaction.guild.id,
+        isOnboard: false,
       });
     }
     if (user.isOnboard && !userDiscord.roles.cache.has("1270791621289578607")) {
