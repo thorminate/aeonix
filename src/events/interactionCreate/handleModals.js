@@ -554,6 +554,63 @@ module.exports = async (bot, modalInteraction) => {
         content: `Successfully gave ${giveItemAmount}x ${giveItemName} to <@${giveItemTarget}>.`,
         ephemeral: true,
       });
+    } else if (modalInteraction.customId === "remove-item-modal") {
+      // get input values
+
+      const removeItemName = modalInteraction.fields
+        .getTextInputValue("remove-item-name-input")
+        .toLowerCase();
+
+      const removeItemTarget = modalInteraction.fields.getTextInputValue(
+        "remove-item-target-input"
+      );
+
+      // Validate the inputs
+
+      const removeItemData = await itemData.findOne({
+        itemName: removeItemName,
+      });
+
+      if (!removeItemData) {
+        await modalInteraction.reply({
+          content: "Item not found, make sure it exist in the database",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const removeItemTargetData = await userData.findOne({
+        userId: removeItemTarget,
+        guildId: modalInteraction.guild.id,
+      });
+
+      if (!removeItemTargetData) {
+        await modalInteraction.reply({
+          content: "User not found, make sure they are in the server.",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const itemIndex = removeItemTargetData.inventory.findIndex(
+        (item) => item.itemName === removeItemData.itemName
+      );
+
+      if (itemIndex > -1) {
+        removeItemTargetData.inventory.splice(itemIndex, 1);
+        await removeItemTargetData.save();
+
+        await modalInteraction.reply({
+          content: `Successfully removed item ${removeItemName} from <@${removeItemTarget}>'s inventory.`,
+          ephemeral: true,
+        });
+      } else {
+        await modalInteraction.reply({
+          content: "User does not have the item in their inventory.",
+          ephemeral: true,
+        });
+        return;
+      }
     } else if (modalInteraction.customId === "ban-user-modal") {
       // get input values
       const banUserId = modalInteraction.fields.getTextInputValue(

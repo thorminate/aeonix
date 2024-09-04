@@ -129,8 +129,9 @@ module.exports = {
         collector.on("collect", async (i) => {
           if (i.customId === "inventory") {
             const formattedInventory =
-              targetUserData.inventory.map((item) => `${item}`).join(",\n") ||
-              "is empty...";
+              targetUserData.inventory
+                .map((item) => `${item.itemName}`)
+                .join(",\n") || "is empty...";
             await i.reply({
               content: `## Your inventory\n ${formattedInventory}`,
               ephemeral: true,
