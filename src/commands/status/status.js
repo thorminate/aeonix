@@ -127,6 +127,7 @@ module.exports = {
         });
 
         collector.on("collect", async (i) => {
+          if (i.replied) return;
           if (i.customId === "inventory") {
             const formattedInventory =
               targetUserData.inventory
@@ -137,12 +138,12 @@ module.exports = {
               ephemeral: true,
             });
           } else if (i.customId === "backAsAdmin") {
-            await adminMenu();
+            await adminMenu(true);
           }
         });
       }
 
-      async function adminMenu() {
+      async function adminMenu(prevPlayer = false) {
         // set up admin button collection
         const playerModification = new ButtonBuilder()
           .setLabel("Modify Player Data")
@@ -198,6 +199,7 @@ module.exports = {
           return;
         }
         collector.on("collect", async (buttonInteraction) => {
+          if (!buttonInteraction.isRepliable()) return;
           if (buttonInteraction.customId === "player-modification") {
             // Handle "Modify Player Data" button click
             const updatedComponents = adminReply.components.map((row) => {
@@ -269,23 +271,43 @@ module.exports = {
               .setCustomId("remove_item")
               .setDisabled(false);
 
-            await buttonInteraction.update({
-              content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
-                0,
-                1
-              )}?`,
-              components: buttonWrapper([
-                modifyStatsButton,
-                createSkillButton,
-                grantSkillButton,
-                deleteSkillButton,
-                revokeSkillButton,
-                createItemButton,
-                giveItemButton,
-                removeItemButton,
-                deleteItemButton,
-              ]),
-            });
+            if (prevPlayer === true) {
+              await buttonInteraction.editReply({
+                content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
+                  0,
+                  1
+                )}?`,
+                components: buttonWrapper([
+                  modifyStatsButton,
+                  createSkillButton,
+                  grantSkillButton,
+                  deleteSkillButton,
+                  revokeSkillButton,
+                  createItemButton,
+                  giveItemButton,
+                  removeItemButton,
+                  deleteItemButton,
+                ]),
+              });
+            } else {
+              await buttonInteraction.update({
+                content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
+                  0,
+                  1
+                )}?`,
+                components: buttonWrapper([
+                  modifyStatsButton,
+                  createSkillButton,
+                  grantSkillButton,
+                  deleteSkillButton,
+                  revokeSkillButton,
+                  createItemButton,
+                  giveItemButton,
+                  removeItemButton,
+                  deleteItemButton,
+                ]),
+              });
+            }
           } else if (buttonInteraction.customId === "modify_stats") {
             // Handle "Modify Stats" button click
             await statusAdminHandler.handleStatsGiverModal(buttonInteraction);

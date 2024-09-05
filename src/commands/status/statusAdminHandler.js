@@ -373,25 +373,29 @@ module.exports = {
     }
   },
   handleDeleteItemModal: async (interaction) => {
-    // Set up the Delete Item modal
-    const deleteItemModal = new ModalBuilder()
-      .setCustomId("delete-item-modal")
-      .setTitle("Delete Item");
+    try {
+      // Set up the Delete Item modal
+      const deleteItemModal = new ModalBuilder()
+        .setCustomId("delete-item-modal")
+        .setTitle("Delete Item");
 
-    const deleteItemNameInput = new TextInputBuilder()
-      .setCustomId("delete-item-name-input")
-      .setLabel("Item Descriptor/Name")
-      .setStyle(TextInputStyle.Short)
-      .setRequired(true);
+      const deleteItemNameInput = new TextInputBuilder()
+        .setCustomId("delete-item-name-input")
+        .setLabel("Item Descriptor/Name")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
 
-    const deleteItemNameRow = new ActionRowBuilder().addComponents(
-      deleteItemNameInput
-    );
+      const deleteItemNameRow = new ActionRowBuilder().addComponents(
+        deleteItemNameInput
+      );
 
-    deleteItemModal.addComponents(deleteItemNameRow);
+      deleteItemModal.addComponents(deleteItemNameRow);
 
-    // Show the modal
-    await interaction.showModal(deleteItemModal);
+      // Show the modal
+      await interaction.showModal(deleteItemModal);
+    } catch (error) {
+      console.log("Error handling Delete Item modal:", error);
+    }
   },
   handleBanUserModal: async (interaction) => {
     try {
