@@ -611,6 +611,48 @@ module.exports = async (bot, modalInteraction) => {
         });
         return;
       }
+    } else if (modalInteraction.customId === "delete-item-modal") {
+      // get input values
+
+      const deleteItemName = modalInteraction.fields
+        .getTextInputValue("delete-item-name-input")
+        .toLowerCase();
+
+      // Validate the inputs
+
+      const deleteItemData = await itemData.findOne({
+        itemName: deleteItemName,
+      });
+
+      if (!deleteItemData) {
+        await modalInteraction.reply({
+          content: "Item not found, make sure it exist in the database",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const deleteItemUsers = deleteItemData.itemUsers;
+      for (const user of deleteItemUsers) {
+        const deleteItemUserData = await userData.findOne({
+          userId: user,
+          guildId: modalInteraction.guild.id,
+        });
+        const itemIndex = deleteItemUserData.inventory.findIndex(
+          (item) => item.itemName === deleteItemName
+        );
+        if (itemIndex > -1) {
+          userData.inventory.splice(itemIndex, 1);
+          await userData.save();
+        }
+      }
+
+      itemData.deleteOne({ itemName: deleteItemName });
+
+      await modalInteraction.reply({
+        content: `Successfully deleted item ${deleteItemName}.`,
+        ephemeral: true,
+      });
     } else if (modalInteraction.customId === "ban-user-modal") {
       // get input values
       const banUserId = modalInteraction.fields.getTextInputValue(
