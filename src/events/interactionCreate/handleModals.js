@@ -443,7 +443,7 @@ module.exports = async (bot, modalInteraction) => {
       ) {
         modalInteraction.reply({
           content:
-            "The third field must be either 'interactable', 'consumable' or 'usable'.",
+            "The third field must be either 'interact', 'consume' or 'use'.",
           ephemeral: true,
         });
         return;
@@ -452,7 +452,7 @@ module.exports = async (bot, modalInteraction) => {
       if (checkItemActionSyntax(itemAction) === false) {
         modalInteraction.reply({
           content:
-            "The fourth field must be a valid action syntax.\nExample: COGNITION + 10, WILL - 5\nThey must be separated by a comma and a space. The operator must be either '+' or '-'. The stat must be either 'STRENGTH', 'WILL' or 'COGNITION'. The value must be a number. Each action must be separated by a space. so COGNITION+10, WILL-5 in invalid syntax.",
+            "The fourth field must be a valid action syntax or 'none'.\nExample: COGNITION + 10, WILL - 5\nThey must be separated by a comma and a space. The operator must be either '+' or '-'. The stat must be either 'STRENGTH', 'WILL' or 'COGNITION'. The value must be a number. Each action must be separated by a space. so COGNITION+10, WILL-5 in invalid syntax.",
           ephemeral: true,
         });
         return;
