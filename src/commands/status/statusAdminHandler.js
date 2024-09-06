@@ -397,6 +397,164 @@ module.exports = {
       console.log("Error handling Delete Item modal:", error);
     }
   },
+  handleCreateStatusEffectModal: async (interaction) => {
+    try {
+      // Set up the Create Status Effect modal
+      const createStatusEffectModal = new ModalBuilder()
+        .setCustomId("create-status-effect-modal")
+        .setTitle("Create Status Effect");
+
+      const createStatusEffectNameInput = new TextInputBuilder()
+        .setCustomId("create-status-effect-name-input")
+        .setLabel("Status Effect name, no special characters!")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
+
+      const createStatusEffectDescriptionInput = new TextInputBuilder()
+        .setCustomId("create-status-effect-description-input")
+        .setLabel("Status Effect description")
+        .setStyle(TextInputStyle.Paragraph)
+        .setRequired(true);
+
+      const createStatusEffectActionInput = new TextInputBuilder()
+        .setCustomId("create-status-effect-action-input")
+        .setLabel("What the system does when applied")
+        .setStyle(TextInputStyle.Paragraph)
+        .setRequired(true);
+
+      const createStatusEffectDurationInput = new TextInputBuilder()
+        .setCustomId("create-status-effect-duration-input")
+        .setLabel("Status Effect duration")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
+
+      const createStatusEffectNameRow = new ActionRowBuilder().addComponents(
+        createStatusEffectNameInput
+      );
+      const createStatusEffectDescriptionRow =
+        new ActionRowBuilder().addComponents(
+          createStatusEffectDescriptionInput
+        );
+      const createStatusEffectActionRow = new ActionRowBuilder().addComponents(
+        createStatusEffectActionInput
+      );
+      const createStatusEffectDurationRow =
+        new ActionRowBuilder().addComponents(createStatusEffectDurationInput);
+
+      createStatusEffectModal.addComponents(
+        createStatusEffectNameRow,
+        createStatusEffectDescriptionRow,
+        createStatusEffectActionRow,
+        createStatusEffectDurationRow
+      );
+
+      // Show the modal
+      await interaction.showModal(createStatusEffectModal);
+    } catch (error) {
+      console.log("Error handling Create Status Effect modal:", error);
+    }
+  },
+  handleDeleteStatusEffectModal: async (interaction) => {
+    try {
+      // Set up the Delete Status Effect modal
+      const deleteStatusEffectModal = new ModalBuilder()
+        .setCustomId("delete-status-effect-modal")
+        .setTitle("Delete Status Effect");
+
+      const deleteStatusEffectNameInput = new TextInputBuilder()
+        .setCustomId("delete-status-effect-name-input")
+        .setLabel("Status Effect name")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
+
+      const deleteStatusEffectNameRow = new ActionRowBuilder().addComponents(
+        deleteStatusEffectNameInput
+      );
+
+      deleteStatusEffectModal.addComponents(deleteStatusEffectNameRow);
+
+      // Show the modal
+      await interaction.showModal(deleteStatusEffectModal);
+    } catch (error) {
+      console.log("Error handling Delete Status Effect modal:", error);
+    }
+  },
+  handleGrantStatusEffectModal: async (interaction) => {
+    try {
+      // Set up the Grant Status Effect modal
+      const grantStatusEffectModal = new ModalBuilder()
+        .setCustomId("grant-status-effect-modal")
+        .setTitle("Grant Status Effect");
+
+      const grantStatusEffectNameInput = new TextInputBuilder()
+        .setCustomId("grant-status-effect-name-input")
+        .setLabel("Status Effect name")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
+
+      const grantStatusEffectTargetInput = new TextInputBuilder()
+        .setCustomId("grant-status-effect-target-input")
+        .setLabel("Target user ID")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true)
+        .setMinLength(18);
+
+      const grantStatusEffectNameRow = new ActionRowBuilder().addComponents(
+        grantStatusEffectNameInput
+      );
+      const grantStatusEffectTargetRow = new ActionRowBuilder().addComponents(
+        grantStatusEffectTargetInput
+      );
+
+      grantStatusEffectModal.addComponents(
+        grantStatusEffectNameRow,
+        grantStatusEffectTargetRow
+      );
+
+      // Show the modal
+      await interaction.showModal(grantStatusEffectModal);
+    } catch (error) {
+      console.log("Error handling Grant Status Effect modal:", error);
+    }
+  },
+  handleRevokeStatusEffectModal: async (interaction) => {
+    try {
+      // Set up the Revoke Status Effect modal
+      const revokeStatusEffectModal = new ModalBuilder()
+        .setCustomId("revoke-status-effect-modal")
+        .setTitle("Revoke Status Effect");
+
+      const revokeStatusEffectNameInput = new TextInputBuilder()
+        .setCustomId("revoke-status-effect-name-input")
+        .setLabel("Status Effect name")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
+
+      const revokeStatusEffectTargetInput = new TextInputBuilder()
+        .setCustomId("revoke-status-effect-target-input")
+        .setLabel("Target user ID")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true)
+        .setMinLength(18);
+
+      const revokeStatusEffectNameRow = new ActionRowBuilder().addComponents(
+        revokeStatusEffectNameInput
+      );
+      const revokeStatusEffectTargetRow = new ActionRowBuilder().addComponents(
+        revokeStatusEffectTargetInput
+      );
+
+      revokeStatusEffectModal.addComponents(
+        revokeStatusEffectNameRow,
+        revokeStatusEffectTargetRow
+      );
+
+      // Show the modal
+      await interaction.showModal(revokeStatusEffectModal);
+    } catch (error) {
+      console.log("Error handling Revoke Status Effect modal:", error);
+    }
+  },
   handleBanUserModal: async (interaction) => {
     try {
       // Set up the Ban User modal
