@@ -200,199 +200,423 @@ module.exports = {
         }
         collector.on("collect", async (buttonInteraction) => {
           if (!buttonInteraction.isRepliable()) return;
-          if (buttonInteraction.customId === "player-modification") {
-            // Handle "Modify Player Data" button click
-            const updatedComponents = adminReply.components.map((row) => {
-              return ActionRowBuilder.from(row).setComponents(
-                row.components.map((button) => {
-                  return button;
-                })
-              );
-            });
 
-            // Edit the original reply to disable the button
-            await interaction.editReply({
-              content: `loading...`,
-              components: updatedComponents,
-            });
-            // Define buttons for submenu
-
-            const modifyStatsButton = new ButtonBuilder()
-              .setLabel("Modify Stats")
-              .setStyle(ButtonStyle.Secondary)
-              .setCustomId("modify_stats")
-              .setDisabled(false);
-
-            const createSkillButton = new ButtonBuilder()
-              .setLabel("Create Skill")
-              .setStyle(ButtonStyle.Secondary)
-              .setCustomId("create_skill")
-              .setDisabled(false);
-
-            const deleteSkillButton = new ButtonBuilder()
-              .setLabel("Delete Skill")
-              .setStyle(ButtonStyle.Danger)
-              .setCustomId("delete_skill")
-              .setDisabled(false);
-
-            const grantSkillButton = new ButtonBuilder()
-              .setLabel("Grant Skill")
-              .setStyle(ButtonStyle.Secondary)
-              .setCustomId("grant_skill")
-              .setDisabled(false);
-
-            const revokeSkillButton = new ButtonBuilder()
-              .setLabel("Revoke Skill")
-              .setStyle(ButtonStyle.Danger)
-              .setCustomId("revoke_skill")
-              .setDisabled(false);
-
-            const createItemButton = new ButtonBuilder()
-              .setLabel("Create Item")
-              .setStyle(ButtonStyle.Secondary)
-              .setCustomId("create_item")
-              .setDisabled(false);
-
-            const deleteItemButton = new ButtonBuilder()
-              .setLabel("Delete Item")
-              .setStyle(ButtonStyle.Danger)
-              .setCustomId("delete_item")
-              .setDisabled(false);
-
-            const giveItemButton = new ButtonBuilder()
-              .setLabel("Give Item")
-              .setStyle(ButtonStyle.Primary)
-              .setCustomId("give_item")
-              .setDisabled(false);
-
-            const removeItemButton = new ButtonBuilder()
-              .setLabel("Remove Item")
-              .setStyle(ButtonStyle.Danger)
-              .setCustomId("remove_item")
-              .setDisabled(false);
-
-            if (prevPlayer === true) {
-              await buttonInteraction.editReply({
-                content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
-                  0,
-                  1
-                )}?`,
-                components: buttonWrapper([
-                  modifyStatsButton,
-                  createSkillButton,
-                  grantSkillButton,
-                  deleteSkillButton,
-                  revokeSkillButton,
-                  createItemButton,
-                  giveItemButton,
-                  removeItemButton,
-                  deleteItemButton,
-                ]),
+          switch (buttonInteraction.customId) {
+            // Initial Buttons
+            case "player-modification":
+              // Handle "Modify Player Data" button click
+              const updatedComponents = adminReply.components.map((row) => {
+                return ActionRowBuilder.from(row).setComponents(
+                  row.components.map((button) => {
+                    return button;
+                  })
+                );
               });
-            } else {
+
+              // Edit the original reply to disable the button
+              await interaction.editReply({
+                content: `loading...`,
+                components: updatedComponents,
+              });
+              // Define buttons for submenu
+
+              const modifyStatsButton = new ButtonBuilder()
+                .setLabel("Modify Stats")
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId("modify_stats")
+                .setDisabled(false);
+
+              const modifySkillsButton = new ButtonBuilder()
+                .setLabel("Modify Skills")
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId("modify_skills")
+                .setDisabled(false);
+
+              const modifyItemsButton = new ButtonBuilder()
+                .setLabel("Modify Items")
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId("modify_items")
+                .setDisabled(false);
+
+              const modifyStatusEffectsButton = new ButtonBuilder()
+                .setLabel("Modify Status Effects")
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId("modify_status_effects")
+                .setDisabled(false);
+
+              if (prevPlayer === true) {
+                await buttonInteraction.editReply({
+                  content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
+                    0,
+                    1
+                  )}?`,
+                  components: buttonWrapper([
+                    modifyStatsButton,
+                    modifySkillsButton,
+                    modifyItemsButton,
+                    modifyStatusEffectsButton,
+                  ]),
+                });
+              } else {
+                await buttonInteraction.update({
+                  content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
+                    0,
+                    1
+                  )}?`,
+                  components: buttonWrapper([
+                    modifyStatsButton,
+                    modifySkillsButton,
+                    modifyItemsButton,
+                    modifyStatusEffectsButton,
+                  ]),
+                });
+              }
+
+              break;
+
+            case "moderation":
+              // Handle "Moderation" button click
+              const moderationUpdatedComponents = adminReply.components.map(
+                (row) => {
+                  return ActionRowBuilder.from(row).setComponents(
+                    row.components.map((button) => {
+                      return button;
+                    })
+                  );
+                }
+              );
+
+              // Edit the original reply to disable the button
+              await interaction.editReply({
+                content: `loading...`,
+                components: moderationUpdatedComponents,
+              });
+              // Define buttons for submenu
+
+              const banUserButton = new ButtonBuilder()
+                .setLabel("Ban User")
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId("ban_user")
+                .setDisabled(false);
+
+              const kickUserButton = new ButtonBuilder()
+                .setLabel("Kick User")
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId("kick_user")
+                .setDisabled(false);
+
+              const timeoutUserButton = new ButtonBuilder()
+                .setLabel("Timeout User")
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId("timeout_user")
+                .setDisabled(false);
+
               await buttonInteraction.update({
                 content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
                   0,
                   1
                 )}?`,
                 components: buttonWrapper([
-                  modifyStatsButton,
-                  createSkillButton,
-                  grantSkillButton,
-                  deleteSkillButton,
-                  revokeSkillButton,
-                  createItemButton,
-                  giveItemButton,
-                  removeItemButton,
-                  deleteItemButton,
+                  banUserButton,
+                  kickUserButton,
+                  timeoutUserButton,
                 ]),
               });
-            }
-          } else if (buttonInteraction.customId === "modify_stats") {
-            // Handle "Modify Stats" button click
-            await statusAdminHandler.handleStatsGiverModal(buttonInteraction);
-          } else if (buttonInteraction.customId === "create_skill") {
-            // Handle "Create Skill" button click
-            await statusAdminHandler.handleCreateSkillModal(buttonInteraction);
-          } else if (buttonInteraction.customId === "delete_skill") {
-            // Handle "Delete Skill" button click
-            await statusAdminHandler.handleDeleteSkillModal(buttonInteraction);
-          } else if (buttonInteraction.customId === "grant_skill") {
-            // Handle "Grant Skill" button click
-            await statusAdminHandler.handleGrantSkillModal(buttonInteraction);
-          } else if (buttonInteraction.customId === "revoke_skill") {
-            // Handle "Revoke Skill" button click
-            await statusAdminHandler.handleRevokeSkillModal(buttonInteraction);
-          } else if (buttonInteraction.customId === "create_item") {
-            // Handle "Create Item" button click
-            await statusAdminHandler.handleCreateItemModal(buttonInteraction);
-          } else if (buttonInteraction.customId === "give_item") {
-            // Handle "Give Item" button click
-            await statusAdminHandler.handleGiveItemModal(buttonInteraction);
-          } else if (buttonInteraction.customId === "remove_item") {
-            // Handle "Remove Item" button click
-            await statusAdminHandler.handleRemoveItemModal(buttonInteraction);
-          } else if (buttonInteraction.customId === "delete_item") {
-            // Handle "Delete Item" button click
-            await statusAdminHandler.handleDeleteItemModal(buttonInteraction);
-          } else if (buttonInteraction.customId === "moderation") {
-            // Handle "Moderation" button click
-            const updatedComponents = adminReply.components.map((row) => {
-              return ActionRowBuilder.from(row).setComponents(
-                row.components.map((button) => {
-                  return button;
-                })
+
+              break;
+
+            case "player-mode":
+              // Handle "Reload as Player" button click
+              await playerMenu(true);
+              break;
+
+            // Player Modification Buttons
+            case "modify_stats":
+              // Handle "Modify Stats" button click
+              await statusAdminHandler.handleStatsGiverModal(buttonInteraction);
+              break;
+
+            case "modify_skills":
+              // Handle "Modify Player Data" button click
+              const modifySkillsUpdatedComponents = adminReply.components.map(
+                (row) => {
+                  return ActionRowBuilder.from(row).setComponents(
+                    row.components.map((button) => {
+                      return button;
+                    })
+                  );
+                }
               );
-            });
 
-            // Edit the original reply to disable the button
-            await interaction.editReply({
-              content: `loading...`,
-              components: updatedComponents,
-            });
-            // Define buttons for submenu
+              // Edit the original reply to disable the button
+              await interaction.editReply({
+                content: `loading...`,
+                components: modifySkillsUpdatedComponents,
+              });
+              // Define buttons for submenu
 
-            const banUserButton = new ButtonBuilder()
-              .setLabel("Ban User")
-              .setStyle(ButtonStyle.Danger)
-              .setCustomId("ban_user")
-              .setDisabled(false);
+              const createSkillButton = new ButtonBuilder()
+                .setLabel("Create Skill")
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId("create_skill")
+                .setDisabled(false);
 
-            const kickUserButton = new ButtonBuilder()
-              .setLabel("Kick User")
-              .setStyle(ButtonStyle.Danger)
-              .setCustomId("kick_user")
-              .setDisabled(false);
+              const deleteSkillButton = new ButtonBuilder()
+                .setLabel("Delete Skill")
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId("delete_skill")
+                .setDisabled(false);
 
-            const timeoutUserButton = new ButtonBuilder()
-              .setLabel("Timeout User")
-              .setStyle(ButtonStyle.Danger)
-              .setCustomId("timeout_user")
-              .setDisabled(false);
+              const grantSkillButton = new ButtonBuilder()
+                .setLabel("Grant Skill")
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId("grant_skill")
+                .setDisabled(false);
 
-            await buttonInteraction.update({
-              content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
-                0,
-                1
-              )}?`,
-              components: buttonWrapper([
-                banUserButton,
-                kickUserButton,
-                timeoutUserButton,
-              ]),
-            });
-          } else if (buttonInteraction.customId === "ban_user") {
-            // Handle "Ban User" button click
-            await statusAdminHandler.handleBanUserModal(buttonInteraction);
-          } else if (buttonInteraction.customId === "kick_user") {
-            // Handle "Kick User" button click
-            await statusAdminHandler.handleKickUserModal(buttonInteraction);
-          } else if (buttonInteraction.customId === "timeout_user") {
-            // Handle "Timeout User" button click
-            await statusAdminHandler.handleTimeoutUserModal(buttonInteraction);
-          } else if (buttonInteraction.customId === "player-mode") {
-            //reload as a player
-            await playerMenu(true);
+              const revokeSkillButton = new ButtonBuilder()
+                .setLabel("Revoke Skill")
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId("revoke_skill")
+                .setDisabled(false);
+
+              if (prevPlayer === true) {
+                await buttonInteraction.editReply({
+                  content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
+                    0,
+                    1
+                  )}?`,
+                  components: buttonWrapper([
+                    createSkillButton,
+                    grantSkillButton,
+                    revokeSkillButton,
+                    deleteSkillButton,
+                  ]),
+                });
+              } else {
+                await buttonInteraction.update({
+                  content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
+                    0,
+                    1
+                  )}?`,
+                  components: buttonWrapper([
+                    createSkillButton,
+                    grantSkillButton,
+                    revokeSkillButton,
+                    deleteSkillButton,
+                  ]),
+                });
+              }
+
+              break;
+
+            case "modify_items":
+              // Handle "Modify Items" button click
+              const modifyItemsUpdatedComponents = adminReply.components.map(
+                (row) => {
+                  return ActionRowBuilder.from(row).setComponents(
+                    row.components.map((button) => {
+                      return button;
+                    })
+                  );
+                }
+              );
+
+              // Edit the original reply to disable the button
+              await interaction.editReply({
+                content: `loading...`,
+                components: modifyItemsUpdatedComponents,
+              });
+              // Define buttons for submenu
+              const createItemButton = new ButtonBuilder()
+                .setLabel("Create Item")
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId("create_item")
+                .setDisabled(false);
+
+              const deleteItemButton = new ButtonBuilder()
+                .setLabel("Delete Item")
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId("delete_item")
+                .setDisabled(false);
+
+              const giveItemButton = new ButtonBuilder()
+                .setLabel("Give Item")
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId("give_item")
+                .setDisabled(false);
+
+              const removeItemButton = new ButtonBuilder()
+                .setLabel("Remove Item")
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId("remove_item")
+                .setDisabled(false);
+
+              if (prevPlayer === true) {
+                await buttonInteraction.editReply({
+                  content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
+                    0,
+                    1
+                  )}?`,
+                  components: buttonWrapper([
+                    createItemButton,
+                    giveItemButton,
+                    removeItemButton,
+                    deleteItemButton,
+                  ]),
+                });
+              } else {
+                await buttonInteraction.update({
+                  content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
+                    0,
+                    1
+                  )}?`,
+                  components: buttonWrapper([
+                    createItemButton,
+                    giveItemButton,
+                    removeItemButton,
+                    deleteItemButton,
+                  ]),
+                });
+              }
+
+              break;
+
+            case "modify_status_effects":
+              // Handle "Modify Status Effects" button click
+              const modifyStatusEffectsUpdatedComponents =
+                adminReply.components.map((row) => {
+                  return ActionRowBuilder.from(row).setComponents(
+                    row.components.map((button) => {
+                      return button;
+                    })
+                  );
+                });
+
+              // Edit the original reply to disable the button
+              await interaction.editReply({
+                content: `loading...`,
+                components: modifyStatusEffectsUpdatedComponents,
+              });
+              // Define buttons for submenu
+              const createStatusEffectButton = new ButtonBuilder()
+                .setLabel("Create Status Effect")
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId("create_status_effect")
+                .setDisabled(false);
+
+              const deleteStatusEffectButton = new ButtonBuilder()
+                .setLabel("Delete Status Effect")
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId("delete_status_effect")
+                .setDisabled(false);
+
+              const grantStatusEffectButton = new ButtonBuilder()
+                .setLabel("Grant Status Effect")
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId("grant_status_effect")
+                .setDisabled(false);
+
+              const revokeStatusEffectButton = new ButtonBuilder()
+                .setLabel("Revoke Status Effect")
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId("revoke_status_effect")
+                .setDisabled(false);
+
+              if (prevPlayer === true) {
+                await buttonInteraction.editReply({
+                  content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
+                    0,
+                    1
+                  )}?`,
+                  components: buttonWrapper([
+                    createStatusEffectButton,
+                    grantStatusEffectButton,
+                    revokeStatusEffectButton,
+                    deleteStatusEffectButton,
+                  ]),
+                });
+              } else {
+                await buttonInteraction.update({
+                  content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
+                    0,
+                    1
+                  )}?`,
+                  components: buttonWrapper([
+                    createStatusEffectButton,
+                    grantStatusEffectButton,
+                    revokeStatusEffectButton,
+                    deleteStatusEffectButton,
+                  ]),
+                });
+              }
+
+              break;
+
+            // Skill Modification Buttons
+            case "create_skill":
+              // Handle "Create Skill" button click
+              await statusAdminHandler.handleCreateSkillModal(
+                buttonInteraction
+              );
+              break;
+
+            case "delete_skill":
+              // Handle "Delete Skill" button click
+              await statusAdminHandler.handleDeleteSkillModal(
+                buttonInteraction
+              );
+              break;
+
+            case "grant_skill":
+              // Handle "Grant Skill" button click
+              await statusAdminHandler.handleGrantSkillModal(buttonInteraction);
+              break;
+
+            case "revoke_skill":
+              // Handle "Revoke Skill" button click
+              await statusAdminHandler.handleRevokeSkillModal(
+                buttonInteraction
+              );
+              break;
+
+            // Item Modification Buttons
+            case "create_item":
+              // Handle "Create Item" button click
+              await statusAdminHandler.handleCreateItemModal(buttonInteraction);
+              break;
+
+            case "give_item":
+              // Handle "Give Item" button click
+              await statusAdminHandler.handleGiveItemModal(buttonInteraction);
+              break;
+
+            case "remove_item":
+              // Handle "Remove Item" button click
+              await statusAdminHandler.handleRemoveItemModal(buttonInteraction);
+              break;
+
+            case "delete_item":
+              // Handle "Delete Item" button click
+              await statusAdminHandler.handleDeleteItemModal(buttonInteraction);
+              break;
+
+            // Moderation Buttons
+            case "ban_user":
+              // Handle "Ban User" button click
+              await statusAdminHandler.handleBanUserModal(buttonInteraction);
+              break;
+
+            case "kick_user":
+              // Handle "Kick User" button click
+              await statusAdminHandler.handleKickUserModal(buttonInteraction);
+              break;
+
+            case "timeout_user":
+              // Handle "Timeout User" button click
+              await statusAdminHandler.handleTimeoutUserModal(
+                buttonInteraction
+              );
+              break;
           }
         });
       }
