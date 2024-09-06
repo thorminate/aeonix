@@ -600,6 +600,35 @@ module.exports = {
               await statusAdminHandler.handleDeleteItemModal(buttonInteraction);
               break;
 
+            // Status Effect Modification Buttons
+            case "create_status_effect":
+              // Handle "Create Status Effect" button click
+              await statusAdminHandler.handleCreateStatusEffectModal(
+                buttonInteraction
+              );
+              break;
+
+            case "delete_status_effect":
+              // Handle "Delete Status Effect" button click
+              await statusAdminHandler.handleDeleteStatusEffectModal(
+                buttonInteraction
+              );
+              break;
+
+            case "grant_status_effect":
+              // Handle "Grant Status Effect" button click
+              await statusAdminHandler.handleGrantStatusEffectModal(
+                buttonInteraction
+              );
+              break;
+
+            case "revoke_status_effect":
+              // Handle "Revoke Status Effect" button click
+              await statusAdminHandler.handleRevokeStatusEffectModal(
+                buttonInteraction
+              );
+              break;
+
             // Moderation Buttons
             case "ban_user":
               // Handle "Ban User" button click
