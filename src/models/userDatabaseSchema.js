@@ -77,6 +77,11 @@ const userData = new Schema({
     type: Number,
     default: 1,
   },
+  // status effects
+  statusEffects: {
+    type: Array,
+    default: [],
+  },
 });
 
 // Exports the model
