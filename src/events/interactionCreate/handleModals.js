@@ -3,6 +3,7 @@ const buttonWrapper = require("../../utils/buttonWrapper");
 const userData = require("../../models/userDatabaseSchema");
 const skillData = require("../../models/skillDatabaseSchema");
 const itemData = require("../../models/itemDatabaseSchema");
+const statusEffectData = require("../../models/statusEffectDatabaseSchema");
 const ms = require("ms");
 
 module.exports = async (bot, modalInteraction) => {
@@ -651,6 +652,107 @@ module.exports = async (bot, modalInteraction) => {
 
       await modalInteraction.reply({
         content: `Successfully deleted item ${deleteItemName}.`,
+        ephemeral: true,
+      });
+    } else if (modalInteraction.customId === "create-status-effect-modal") {
+      // get input values
+      const statusEffectName = modalInteraction.fields
+        .getTextInputValue("create-status-effect-name-input")
+        .toLowerCase();
+      const statusEffectDuration = modalInteraction.fields
+        .getTextInputValue("create-status-effect-duration-input")
+        .toLowerCase();
+      const statusEffectDescription = modalInteraction.fields.getTextInputValue(
+        "create-status-effect-description-input"
+      );
+      const statusEffectAction = modalInteraction.fields.getTextInputValue(
+        "create-status-effect-action-input"
+      );
+
+      // Validate the inputs
+
+      if (
+        statusEffectName === "" ||
+        statusEffectDuration === "" ||
+        statusEffectDescription === "" ||
+        statusEffectAction === ""
+      ) {
+        await modalInteraction.reply({
+          content: "Please fill in the required fields.",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      function checkItemActionSyntax(actionString) {
+        if (actionString === "none") return true;
+        const actionParts = actionString.split(",");
+        const validOperators = ["+", "-"];
+        const validStats = ["STRENGTH", "WILL", "COGNITION"];
+
+        for (const action of actionParts) {
+          const [stat, operator, value] = action.trim().split(" ");
+          if (!validStats.includes(stat)) {
+            return false; // invalid stat
+          }
+          if (!validOperators.includes(operator)) {
+            return false; // invalid operator
+          }
+          if (isNaN(parseInt(value))) {
+            return false; // invalid value
+          }
+        }
+        return true; // syntax is correct
+      }
+
+      if (!checkItemActionSyntax(statusEffectAction)) {
+        await modalInteraction.reply({
+          content:
+            "Invalid status effect action syntax. Use 'none' for no action.",
+          ephemeral: true,
+        });
+        return;
+      }
+      // check if status effect already exists
+
+      const statusEffectExistingData = await statusEffectData.findOne({
+        statusEffectName: statusEffectName,
+      });
+
+      if (statusEffectExistingData) {
+        await modalInteraction.reply({
+          content:
+            "Status effect already exists. Check database for more information.",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const statusEffectDurationMs = ms(statusEffectDuration);
+
+      if (
+        statusEffectDurationMs < 0 ||
+        statusEffectDurationMs > 86400000 ||
+        isNaN(statusEffectDurationMs)
+      ) {
+        await modalInteraction.reply({
+          content: "Status effect duration invalid!",
+          ephemeral: true,
+        });
+        return;
+      }
+      // create status effect
+
+      const statusEffectNew = new statusEffectData({
+        statusEffectName: statusEffectName,
+        statusEffectDuration: statusEffectDurationMs,
+        statusEffectDescription: statusEffectDescription,
+        statusEffectAction: statusEffectAction,
+      });
+
+      await statusEffectNew.save();
+      await modalInteraction.reply({
+        content: `Successfully created status effect ${statusEffectName}.`,
         ephemeral: true,
       });
     } else if (modalInteraction.customId === "ban-user-modal") {
