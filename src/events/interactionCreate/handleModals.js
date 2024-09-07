@@ -800,6 +800,49 @@ module.exports = async (bot, modalInteraction) => {
 
         break;
 
+      case "delete-status-effect-modal":
+        // get input values
+
+        const deleteStatusEffectName = modalInteraction.fields
+          .getTextInputValue("delete-status-effect-name-input")
+          .toLowerCase();
+
+        // Validate the inputs
+        const deleteStatusEffectData = await statusEffectData.findOne({
+          statusEffectName: deleteStatusEffectName,
+        });
+
+        if (!deleteStatusEffectData) {
+          await modalInteraction.reply({
+            content:
+              "Status effect not found, make sure it exist in the database",
+            ephemeral: true,
+          });
+          return;
+        }
+
+        // delete status effect from all users
+        deleteStatusEffectData.statusEffectUsers.forEach(async (user) => {
+          await userData.findOne({ userId: user }).then((user) => {
+            if (user) {
+              user.statusEffects = user.statusEffects.filter(
+                (effect) => effect.statusEffectName !== deleteStatusEffectName
+              );
+            }
+          });
+        });
+
+        await statusEffectData.deleteOne({
+          statusEffectName: deleteStatusEffectName,
+        });
+
+        await modalInteraction.reply({
+          content: `Successfully deleted status effect ${deleteStatusEffectName}.`,
+          ephemeral: true,
+        });
+
+        break;
+
       // Moderation Modals
       case "ban-user-modal":
         // get input values
