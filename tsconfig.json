@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "ES2023",
     "outDir": "./dist", // Specify the output folder for compiled JavaScript
     "allowJs": true,
     "moduleResolution": "NodeNext",
     "module": "NodeNext",
     "resolveJsonModule": true
   },
-  "exclude": ["./node_modules/**"],
+  "exclude": ["./node_modules/**/*", "./dist"],
   "include": ["./src/**/*"] // Specify the path to your TypeScript files
 }

@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -16,8 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const config = require("../../../config.json");
 const { devs, primaryServer } = config;
 const getLocalCommands_1 = __importDefault(require("../../utils/getLocalCommands"));
-module.exports = (bot, interaction) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+module.exports = async (bot, interaction) => {
     // check if it's a chat input command, else return.
     if (!interaction.isChatInputCommand())
         return;
@@ -48,7 +38,7 @@ module.exports = (bot, interaction) => __awaiter(void 0, void 0, void 0, functio
             return;
         }
         // if command requires permissions and user does not have aforementioned permission, return
-        if ((_a = commandObject.permissionsRequired) === null || _a === void 0 ? void 0 : _a.length) {
+        if (commandObject.permissionsRequired?.length) {
             for (const permission of commandObject.permissionsRequired) {
                 if (!interaction.member.permissions.has(permission)) {
                     interaction.reply({
@@ -60,7 +50,7 @@ module.exports = (bot, interaction) => __awaiter(void 0, void 0, void 0, functio
             }
         }
         // if command requires bot permissions and bot does not have aforementioned permission, return
-        if ((_b = commandObject.botPermissions) === null || _b === void 0 ? void 0 : _b.length) {
+        if (commandObject.botPermissions?.length) {
             for (const permission of commandObject.botPermissions) {
                 const bot = interaction.guild.members.me;
                 if (!bot.permissions.has(permission)) {
@@ -73,9 +63,9 @@ module.exports = (bot, interaction) => __awaiter(void 0, void 0, void 0, functio
             }
         }
         // if all goes well, run the commands callback function.
-        yield commandObject.callback(bot, interaction);
+        await commandObject.callback(bot, interaction);
     }
     catch (error) {
         console.log(`There was an error running this command: ${error}`);
     }
-});
+};

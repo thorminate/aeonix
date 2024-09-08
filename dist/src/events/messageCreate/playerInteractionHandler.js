@@ -1,101 +1,86 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const userData = require("../../models/userDatabaseSchema");
 const skillData = require("../../models/skillDatabaseSchema");
 const itemData = require("../../models/itemDatabaseSchema");
-module.exports = (bot, message) => __awaiter(void 0, void 0, void 0, function* () {
+module.exports = async (bot, message) => {
     // if message was not made in a guild, author was a bot or the cooldown is active, return
     if (!message.inGuild() || message.author.bot)
         return;
-    function consumeItem(message, itemName) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const userId = message.author.id;
-            const user = yield userData.findOne({ userId: userId });
-            if (user) {
-                const itemIndex = Array.prototype.findIndex.call(user.inventory, (item) => item && item.itemName === itemName);
-                const itemDataConsume = yield itemData.findOne({ itemName: itemName });
-                if (itemIndex > -1) {
-                    if (!itemDataConsume)
+    async function consumeItem(message, itemName) {
+        const userId = message.author.id;
+        const user = await userData.findOne({ userId: userId });
+        if (user) {
+            const itemIndex = Array.prototype.findIndex.call(user.inventory, (item) => item && item.itemName === itemName);
+            const itemDataConsume = await itemData.findOne({ itemName: itemName });
+            if (itemIndex > -1) {
+                if (!itemDataConsume)
+                    return;
+                if (itemDataConsume.itemActionable === "consume" &&
+                    user.inventory[itemIndex].Amount > 1) {
+                    user.inventory[itemIndex].Amount--;
+                    await user.save();
+                }
+                else if (itemDataConsume.itemActionable === "consume") {
+                    user.inventory.splice(itemIndex, 1); // Remove the item from the inventory
+                    await user.save();
+                }
+                // the code to execute the item action using correct syntax
+                async function executeItemAction(actionString, userData) {
+                    if (actionString === "none")
                         return;
-                    if (itemDataConsume.itemActionable === "consume" &&
-                        user.inventory[itemIndex].Amount > 1) {
-                        user.inventory[itemIndex].Amount--;
-                        yield user.save();
+                    const actionParts = actionString.split(",");
+                    const operators = {
+                        "+": (a, b) => a + b,
+                        "-": (a, b) => a - b,
+                    };
+                    for (const action of actionParts) {
+                        const [stat, operator, value] = action.trim().split(" ");
+                        const statName = stat.toLowerCase();
+                        const statValue = parseInt(value);
+                        userData[statName] = operators[operator](userData[statName], statValue);
+                        await userData.save();
                     }
-                    else if (itemDataConsume.itemActionable === "consume") {
-                        user.inventory.splice(itemIndex, 1); // Remove the item from the inventory
-                        yield user.save();
-                    }
-                    // the code to execute the item action using correct syntax
-                    function executeItemAction(actionString, userData) {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            if (actionString === "none")
-                                return;
-                            const actionParts = actionString.split(",");
-                            const operators = {
-                                "+": (a, b) => a + b,
-                                "-": (a, b) => a - b,
-                            };
-                            for (const action of actionParts) {
-                                const [stat, operator, value] = action.trim().split(" ");
-                                const statName = stat.toLowerCase();
-                                const statValue = parseInt(value);
-                                userData[statName] = operators[operator](userData[statName], statValue);
-                                yield userData.save();
-                            }
-                        });
-                    }
-                    executeItemAction(itemDataConsume.itemAction, user);
-                    yield message.reply(`Item ${itemName} consumed.`);
                 }
-                else {
-                    yield message.reply(`Item ${itemName} not found in your inventory.`);
-                }
+                executeItemAction(itemDataConsume.itemAction, user);
+                await message.reply(`Item ${itemName} consumed.`);
             }
             else {
-                yield message.reply("You are not registered in the system.");
+                await message.reply(`Item ${itemName} not found in your inventory.`);
             }
-        });
+        }
+        else {
+            await message.reply("You are not registered in the system.");
+        }
     }
-    function useSkill(message, skillName) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const userId = message.author.id;
-            const user = yield userData.findOne({ userId: userId });
-            if (user) {
-                if (user.skills.includes(skillName)) {
-                    const skill = yield skillData.findOne({ skillName: skillName });
-                    if (skill) {
-                        // Perform the skill action here
-                        const skillAction = skill.skillAction;
-                        yield message.reply(skillAction);
-                    }
-                    else if (skillName === undefined) {
-                        yield message.reply({
-                            content: "Please specify a skill to use.",
-                            ephemeral: true,
-                        });
-                    }
-                    else {
-                        yield message.reply(`Skill ${skillName} not found.`);
-                    }
+    async function useSkill(message, skillName) {
+        const userId = message.author.id;
+        const user = await userData.findOne({ userId: userId });
+        if (user) {
+            if (user.skills.includes(skillName)) {
+                const skill = await skillData.findOne({ skillName: skillName });
+                if (skill) {
+                    // Perform the skill action here
+                    const skillAction = skill.skillAction;
+                    await message.reply(skillAction);
+                }
+                else if (skillName === undefined) {
+                    await message.reply({
+                        content: "Please specify a skill to use.",
+                        ephemeral: true,
+                    });
                 }
                 else {
-                    yield message.reply(`Skill ${skillName} not found.`);
+                    await message.reply(`Skill ${skillName} not found.`);
                 }
             }
             else {
-                yield message.reply("You are not registered in the system.");
+                await message.reply(`Skill ${skillName} not found.`);
             }
-        });
+        }
+        else {
+            await message.reply("You are not registered in the system.");
+        }
     }
     const content = message.content.trim();
     const bracketContent = content.match(/\[(.*?)\]/g);
@@ -104,12 +89,12 @@ module.exports = (bot, message) => __awaiter(void 0, void 0, void 0, function* (
         for (const text of bracketTexts) {
             if (text.toLowerCase().includes("consume")) {
                 const itemName = text.split(" ")[1];
-                yield consumeItem(message, itemName);
+                await consumeItem(message, itemName);
             }
             else {
                 const skillName = text.toLowerCase();
-                yield useSkill(message, skillName);
+                await useSkill(message, skillName);
             }
         }
     }
-});
+};

@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -19,8 +10,7 @@ const skillData = require("../../models/skillDatabaseSchema");
 const itemData = require("../../models/itemDatabaseSchema");
 const statusEffectData = require("../../models/statusEffectDatabaseSchema");
 const ms_1 = __importDefault(require("ms"));
-module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+module.exports = async (bot, modalInteraction) => {
     try {
         if (!modalInteraction.isModalSubmit())
             return;
@@ -36,7 +26,7 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 if (isNaN(statAmount) ||
                     statAmount < 0 ||
                     !modalInteraction.guild.members.cache.has(statsTargetUserInput)) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Please enter a valid positive number for the stat amount and a valid user ID.",
                         ephemeral: true,
                     });
@@ -47,27 +37,27 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     variant !== "cognition" &&
                     variant !== "level" &&
                     variant !== "exp") {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Please enter a valid variant. Valid variants are 'strength', 'will', 'cognition', 'level', and 'exp'.",
                         ephemeral: true,
                     });
                     return;
                 }
                 if (modifier !== "add" && modifier !== "remove" && modifier !== "set") {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Please enter a valid modifier. Valid modifiers are 'add', 'remove', and 'set'.",
                         ephemeral: true,
                     });
                     return;
                 }
                 // Fetch the target user and update their stats
-                const statsTargetUserObj = yield modalInteraction.guild.members.fetch(statsTargetUserInput);
-                const statsTargetUserData = yield userData.findOne({
+                const statsTargetUserObj = await modalInteraction.guild.members.fetch(statsTargetUserInput);
+                const statsTargetUserData = await userData.findOne({
                     userId: statsTargetUserObj.user.id,
                     guildId: modalInteraction.guild.id,
                 });
                 if (!statsTargetUserData) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "User not found in the database. Please make sure the user has at least sent one message before running this command.",
                         ephemeral: true,
                     });
@@ -91,8 +81,8 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     else if (variant === "exp") {
                         statsTargetUserData.exp = statsTargetUserData.exp + statAmount;
                     }
-                    yield statsTargetUserData.save();
-                    yield modalInteraction.reply({
+                    await statsTargetUserData.save();
+                    await modalInteraction.reply({
                         content: `Successfully gave <@${statsTargetUserObj.user.id}> **${statAmount}** stat point(s) to the ${variant} variant!`,
                         ephemeral: true,
                     });
@@ -124,8 +114,8 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     if (statsTargetUserData.cognition < 0) {
                         statsTargetUserData.cognition = 0;
                     }
-                    yield statsTargetUserData.save();
-                    yield modalInteraction.reply({
+                    await statsTargetUserData.save();
+                    await modalInteraction.reply({
                         content: `Successfully took <@${statsTargetUserObj.user.id}> **${statAmount}** stat point(s) from ${variant}!`,
                         ephemeral: true,
                     });
@@ -146,8 +136,8 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     else if (variant === "exp") {
                         statsTargetUserData.exp = statAmount;
                     }
-                    yield statsTargetUserData.save();
-                    yield modalInteraction.reply({
+                    await statsTargetUserData.save();
+                    await modalInteraction.reply({
                         content: `Successfully set <@${statsTargetUserObj.user.id}>'s ${variant} to **${statAmount}!**`,
                         ephemeral: true,
                     });
@@ -169,15 +159,15 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     createSkillAction === "" ||
                     isNaN(createSkillCooldown) ||
                     isNaN(createSkillWill)) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Please fill in all the required fields correctly. Cooldown and Will must be numbers.",
                         ephemeral: true,
                     });
                     return;
                 }
                 // check if skill already exists
-                if (yield skillData.findOne({ skillName: createSkillName })) {
-                    yield modalInteraction.reply({
+                if (await skillData.findOne({ skillName: createSkillName })) {
+                    await modalInteraction.reply({
                         content: "Skill already exists. Please choose a different name.",
                         ephemeral: true,
                     });
@@ -191,8 +181,8 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     skillCooldown: createSkillCooldown,
                     skillWill: createSkillWill,
                 });
-                yield newSkill.save();
-                yield modalInteraction.reply({
+                await newSkill.save();
+                await modalInteraction.reply({
                     content: `Successfully created skill ${createSkillName}.`,
                     ephemeral: true,
                 });
@@ -204,14 +194,14 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     .toLowerCase();
                 // Validate the inputs
                 if (deleteSkillName === "") {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Please fill in the required field.",
                         ephemeral: true,
                     });
                     return;
                 }
                 // first delete the skill from all users that have it
-                const skillUsers = yield userData.find({
+                const skillUsers = await userData.find({
                     skills: { $elemMatch: { skillName: deleteSkillName } },
                 });
                 for (const skillUser of skillUsers) {
@@ -219,20 +209,20 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     if (skillUser.skills.length === 0) {
                         skillUser.skills = [];
                     }
-                    yield skillUser.save();
+                    await skillUser.save();
                 }
                 // delete the skill from the database
-                const deletedSkill = yield skillData.deleteOne({
+                const deletedSkill = await skillData.deleteOne({
                     skillName: deleteSkillName,
                 });
                 if (deletedSkill.deletedCount === 0) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: `Failed to delete skill ${deleteSkillName}. Please check if the skill exists.`,
                         ephemeral: true,
                     });
                 }
                 else {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: `Successfully deleted skill ${deleteSkillName}.`,
                         ephemeral: true,
                     });
@@ -246,28 +236,28 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 const grantSkillTarget = modalInteraction.fields.getTextInputValue("grant-skill-target-input");
                 // Validate the inputs
                 if (grantSkillName === "") {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Please fill in the required fields.",
                         ephemeral: true,
                     });
                     return;
                 }
                 // grant the skill to the target user
-                const grantSkillTargetUserData = yield userData.findOne({
+                const grantSkillTargetUserData = await userData.findOne({
                     userId: grantSkillTarget,
                 });
                 if (!grantSkillTargetUserData) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Target user not found. Make sure you entered a valid user ID.",
                         ephemeral: true,
                     });
                     return;
                 }
-                const grantSkillSkill = yield skillData.findOne({
+                const grantSkillSkill = await skillData.findOne({
                     skillName: grantSkillName,
                 });
                 if (!grantSkillSkill) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: `Skill ${grantSkillName} not found. Make sure you entered a valid skill name. Or create a new skill.`,
                         ephemeral: true,
                     });
@@ -275,17 +265,17 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 }
                 // check if the user already has the skill
                 if (grantSkillTargetUserData.skills.some((skill) => skill === grantSkillName)) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: `User already has skill ${grantSkillName}.`,
                         ephemeral: true,
                     });
                     return;
                 }
                 grantSkillSkill.skillUsers.push(grantSkillTargetUserData.userId);
-                yield grantSkillSkill.save();
+                await grantSkillSkill.save();
                 grantSkillTargetUserData.skills.push(grantSkillSkill.skillName);
-                yield grantSkillTargetUserData.save();
-                yield modalInteraction.reply({
+                await grantSkillTargetUserData.save();
+                await modalInteraction.reply({
                     content: `Successfully granted skill ${grantSkillName} to <@${grantSkillTarget}>.`,
                     ephemeral: true,
                 });
@@ -297,22 +287,22 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     .toLowerCase();
                 const revokeSkillTarget = modalInteraction.fields.getTextInputValue("revoke-skill-target-input");
                 // Validate the inputs
-                const revokeSkillData = yield skillData.findOne({
+                const revokeSkillData = await skillData.findOne({
                     skillName: revokeSkillName,
                 });
                 if (!revokeSkillData) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: `Skill ${revokeSkillName} not found. Make sure you entered a valid skill name. Or create a new skill.`,
                         ephemeral: true,
                     });
                     return;
                 }
-                const revokeSkillTargetData = yield userData.findOne({
+                const revokeSkillTargetData = await userData.findOne({
                     userId: revokeSkillTarget,
                     guildId: modalInteraction.guild.id,
                 });
                 if (!revokeSkillTargetData) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Target user not found. Make sure you entered a valid user ID.",
                         ephemeral: true,
                     });
@@ -321,14 +311,14 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 // check if the user has the skill
                 if (revokeSkillTargetData.skills.includes(revokeSkillName)) {
                     revokeSkillTargetData.skills = revokeSkillTargetData.skills.filter((skill) => skill !== revokeSkillName);
-                    yield revokeSkillTargetData.save();
-                    yield modalInteraction.reply({
+                    await revokeSkillTargetData.save();
+                    await modalInteraction.reply({
                         content: `Successfully revoked skill ${revokeSkillName} from <@${revokeSkillTarget}>.`,
                         ephemeral: true,
                     });
                 }
                 else {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: `User does not have skill ${revokeSkillName}.`,
                         ephemeral: true,
                     });
@@ -405,7 +395,7 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     });
                     return;
                 }
-                const existingItem = yield itemData.findOne({
+                const existingItem = await itemData.findOne({
                     itemName: itemName,
                 });
                 if (existingItem) {
@@ -421,8 +411,8 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     itemActionable: itemActionable,
                     itemAction: itemAction,
                 });
-                yield newItem.save();
-                yield modalInteraction.reply({
+                await newItem.save();
+                await modalInteraction.reply({
                     content: `Successfully created item ${itemName}.`,
                     ephemeral: true,
                 });
@@ -435,27 +425,27 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 const giveItemTarget = modalInteraction.fields.getTextInputValue("give-item-target-input");
                 const giveItemAmount = parseInt(modalInteraction.fields.getTextInputValue("give-item-amount-input"));
                 if (isNaN(giveItemAmount)) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Amount must be a number.",
                         ephemeral: true,
                     });
                     return;
                 }
-                const giveItemTargetData = yield userData.findOne({
+                const giveItemTargetData = await userData.findOne({
                     userId: giveItemTarget,
                     guildId: modalInteraction.guild.id,
                 });
                 if (!giveItemTargetData) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "User not found, make sure they exist in the database.",
                         ephemeral: true,
                     });
                 }
-                const giveItemData = yield itemData.findOne({
+                const giveItemData = await itemData.findOne({
                     itemName: giveItemName,
                 });
                 if (!giveItemData) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Item not found, make sure it exist in the database",
                         ephemeral: true,
                     });
@@ -467,16 +457,16 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                         itemAmount: giveItemAmount,
                     };
                     giveItemTargetData.inventory.push(inventoryObject);
-                    yield giveItemTargetData.save();
+                    await giveItemTargetData.save();
                 }
                 else {
                     giveItemTargetData.inventory[giveItemIndex].itemAmount +=
                         giveItemAmount;
-                    yield giveItemTargetData.save();
+                    await giveItemTargetData.save();
                 }
                 giveItemData.itemUsers.push(giveItemTarget);
-                yield giveItemData.save();
-                yield modalInteraction.reply({
+                await giveItemData.save();
+                await modalInteraction.reply({
                     content: `Successfully gave ${giveItemAmount}x ${giveItemName} to <@${giveItemTarget}>.`,
                     ephemeral: true,
                 });
@@ -488,22 +478,22 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     .toLowerCase();
                 const removeItemTarget = modalInteraction.fields.getTextInputValue("remove-item-target-input");
                 // Validate the inputs
-                const removeItemData = yield itemData.findOne({
+                const removeItemData = await itemData.findOne({
                     itemName: removeItemName,
                 });
                 if (!removeItemData) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Item not found, make sure it exist in the database",
                         ephemeral: true,
                     });
                     return;
                 }
-                const removeItemTargetData = yield userData.findOne({
+                const removeItemTargetData = await userData.findOne({
                     userId: removeItemTarget,
                     guildId: modalInteraction.guild.id,
                 });
                 if (!removeItemTargetData) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "User not found, make sure they are in the server.",
                         ephemeral: true,
                     });
@@ -512,14 +502,14 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 const removeItemIndex = removeItemTargetData.inventory.findIndex((item) => item.itemName === removeItemData.itemName);
                 if (removeItemIndex > -1) {
                     removeItemTargetData.inventory.splice(removeItemIndex, 1);
-                    yield removeItemTargetData.save();
-                    yield modalInteraction.reply({
+                    await removeItemTargetData.save();
+                    await modalInteraction.reply({
                         content: `Successfully removed item ${removeItemName} from <@${removeItemTarget}>'s inventory.`,
                         ephemeral: true,
                     });
                 }
                 else {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "User does not have the item in their inventory.",
                         ephemeral: true,
                     });
@@ -532,11 +522,11 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     .getTextInputValue("delete-item-name-input")
                     .toLowerCase();
                 // Validate the inputs
-                const deleteItemData = yield itemData.findOne({
+                const deleteItemData = await itemData.findOne({
                     itemName: deleteItemName,
                 });
                 if (!deleteItemData) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Item not found, make sure it exist in the database",
                         ephemeral: true,
                     });
@@ -544,18 +534,18 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 }
                 const deleteItemUsers = deleteItemData.itemUsers;
                 for (const user of deleteItemUsers) {
-                    const deleteItemUserData = yield userData.findOne({
+                    const deleteItemUserData = await userData.findOne({
                         userId: user,
                         guildId: modalInteraction.guild.id,
                     });
                     const deleteItemIndex = deleteItemUserData.inventory.findIndex((item) => item.itemName === deleteItemName);
                     if (deleteItemIndex > -1) {
                         userData.inventory.splice(deleteItemIndex, 1);
-                        yield userData.save();
+                        await userData.save();
                     }
                 }
                 itemData.deleteOne({ itemName: deleteItemName });
-                yield modalInteraction.reply({
+                await modalInteraction.reply({
                     content: `Successfully deleted item ${deleteItemName}.`,
                     ephemeral: true,
                 });
@@ -576,25 +566,25 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     statusEffectDuration === "" ||
                     statusEffectDescription === "" ||
                     statusEffectAction === "") {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Please fill in the required fields.",
                         ephemeral: true,
                     });
                     return;
                 }
                 if (!checkItemActionSyntax(statusEffectAction)) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Invalid status effect action syntax. Use 'none' for no action.",
                         ephemeral: true,
                     });
                     return;
                 }
                 // check if status effect already exists
-                const statusEffectExistingData = yield statusEffectData.findOne({
+                const statusEffectExistingData = await statusEffectData.findOne({
                     statusEffectName: statusEffectName,
                 });
                 if (statusEffectExistingData) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Status effect already exists. Check database for more information.",
                         ephemeral: true,
                     });
@@ -604,7 +594,7 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 if (statusEffectDurationMs < 0 ||
                     statusEffectDurationMs > 86400000 ||
                     isNaN(statusEffectDurationMs)) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Status effect duration invalid!",
                         ephemeral: true,
                     });
@@ -617,8 +607,8 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     statusEffectDescription: statusEffectDescription,
                     statusEffectAction: statusEffectAction,
                 });
-                yield statusEffectNew.save();
-                yield modalInteraction.reply({
+                await statusEffectNew.save();
+                await modalInteraction.reply({
                     content: `Successfully created status effect ${statusEffectName}.`,
                     ephemeral: true,
                 });
@@ -629,28 +619,28 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     .getTextInputValue("delete-status-effect-name-input")
                     .toLowerCase();
                 // Validate the inputs
-                const deleteStatusEffectData = yield statusEffectData.findOne({
+                const deleteStatusEffectData = await statusEffectData.findOne({
                     statusEffectName: deleteStatusEffectName,
                 });
                 if (!deleteStatusEffectData) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Status effect not found, make sure it exist in the database",
                         ephemeral: true,
                     });
                     return;
                 }
                 // delete status effect from all users
-                deleteStatusEffectData.statusEffectUsers.forEach((user) => __awaiter(void 0, void 0, void 0, function* () {
-                    yield userData.findOne({ userId: user }).then((user) => {
+                deleteStatusEffectData.statusEffectUsers.forEach(async (user) => {
+                    await userData.findOne({ userId: user }).then((user) => {
                         if (user) {
                             user.statusEffects = user.statusEffects.filter((effect) => effect.statusEffectName !== deleteStatusEffectName);
                         }
                     });
-                }));
-                yield statusEffectData.deleteOne({
+                });
+                await statusEffectData.deleteOne({
                     statusEffectName: deleteStatusEffectName,
                 });
-                yield modalInteraction.reply({
+                await modalInteraction.reply({
                     content: `Successfully deleted status effect ${deleteStatusEffectName}.`,
                     ephemeral: true,
                 });
@@ -665,17 +655,17 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 if (sendMessageChannel === "here") {
                     sendMessageChannel = modalInteraction.channel.id;
                 }
-                const sendMessageChannelObj = yield modalInteraction.guild.channels.cache.get(sendMessageChannel);
+                const sendMessageChannelObj = await modalInteraction.guild.channels.cache.get(sendMessageChannel);
                 if (!sendMessageChannelObj) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Channel not found!",
                         ephemeral: true,
                     });
                     return;
                 }
                 // send message
-                yield sendMessageChannelObj.send(sendMessageContent);
-                yield modalInteraction.reply({
+                await sendMessageChannelObj.send(sendMessageContent);
+                await modalInteraction.reply({
                     content: `Sent message in ${sendMessageChannelObj.name}.`,
                     ephemeral: true,
                 });
@@ -687,7 +677,7 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 const banUserReason = modalInteraction.fields.getTextInputValue("ban-user-reason-input");
                 // Validate the inputs
                 if (banUserId === "") {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Please fill in the required fields.",
                         ephemeral: true,
                     });
@@ -703,19 +693,19 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                     .setLabel("Cancel")
                     .setStyle(discord_js_1.ButtonStyle.Success)
                     .setDisabled(false);
-                yield modalInteraction.reply({
+                await modalInteraction.reply({
                     content: "Are you sure you want to ban this user?",
                     ephemeral: true,
-                    components: yield buttonWrapper([buttonConfirm, buttonCancel]),
+                    components: await buttonWrapper([buttonConfirm, buttonCancel]),
                 });
                 const collector = modalInteraction.channel.createMessageComponentCollector({
                     filter: (m) => m.user.id === modalInteraction.user.id,
                     max: 1,
                 });
-                collector.on("collect", (i) => __awaiter(void 0, void 0, void 0, function* () {
+                collector.on("collect", async (i) => {
                     if (i.customId === "ban-user-confirm") {
                     }
-                }));
+                });
                 break;
             case "kick-user-modal":
                 // get input values
@@ -723,11 +713,12 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 const kickUserReason = modalInteraction.fields.getTextInputValue("kick-user-reason-input") ||
                     "No reason provided";
                 // get the target user object
-                const kickUser = yield ((_a = modalInteraction.guild.members
-                    .fetch(kickUserId)) === null || _a === void 0 ? void 0 : _a.catch(() => null));
+                const kickUser = await modalInteraction.guild.members
+                    .fetch(kickUserId)
+                    ?.catch(() => null);
                 // check if the target user exists, else edit the reply and return
                 if (!kickUser) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "That user doesn't exist in this server.",
                         ephemeral: true,
                     });
@@ -735,7 +726,7 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 }
                 // check if the target user is a bot
                 if (kickUser.user.bot) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "You cannot kick a bot.",
                         ephemeral: true,
                     });
@@ -743,7 +734,7 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 }
                 // check if the target user is the owner of the server
                 if (kickUser.id === modalInteraction.guild.ownerId) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "I cannot kick my creator.",
                         ephemeral: true,
                     });
@@ -755,7 +746,7 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 const kickUserBotRolePosition = modalInteraction.guild.members.me.roles.highest.position;
                 // check if the target user is of a higher position than the request user
                 if (kickUserRolePosition >= kickUserRequesterRolePosition) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "That user is of a higher position of the power hierarchy than you. Therefore you cannot kick them.",
                         ephemeral: true,
                     });
@@ -763,7 +754,7 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 }
                 // check if the target user is of a higher position than the bot
                 if (kickUserRolePosition >= kickUserBotRolePosition) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "That user is of a higher position of the power hierarchy than me. Therefore i cannot kick them.",
                         ephemeral: true,
                     });
@@ -771,8 +762,8 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 }
                 // kick the user
                 try {
-                    yield kickUser.kick(kickUserReason);
-                    yield modalInteraction.reply({
+                    await kickUser.kick(kickUserReason);
+                    await modalInteraction.reply({
                         content: `The user <@${kickUser.user.id}> has been kicked successfully.\n${kickUserReason}`,
                         ephemeral: true,
                     });
@@ -787,11 +778,12 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 let timeoutUserDuration = modalInteraction.fields.getTextInputValue("timeout-user-duration-input");
                 const timeoutUserReason = modalInteraction.fields.getTextInputValue("timeout-user-reason-input") || "No reason provided";
                 // get the target user object
-                const timeoutUser = yield ((_b = modalInteraction.guild.members
-                    .fetch(timeoutUserId)) === null || _b === void 0 ? void 0 : _b.catch(() => null));
+                const timeoutUser = await modalInteraction.guild.members
+                    .fetch(timeoutUserId)
+                    ?.catch(() => null);
                 // check if the target user exists, else edit the reply and return
                 if (!timeoutUser) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: `That user doesn't exist in this server.\n${timeoutUserReason}`,
                         ephemeral: true,
                     });
@@ -799,7 +791,7 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 }
                 // check if the target user is a bot
                 if (timeoutUser.user.bot) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "You cannot timeout a bot.",
                         ephemeral: true,
                     });
@@ -807,7 +799,7 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 }
                 // check if the target user is the owner of the server
                 if (timeoutUser.id === modalInteraction.guild.ownerId) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "I cannot timeout my creator.",
                         ephemeral: true,
                     });
@@ -817,7 +809,7 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 const timeoutUserDurationMs = (0, ms_1.default)(timeoutUserDuration);
                 //check if duration is valid
                 if (isNaN(timeoutUserDurationMs)) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Invalid duration. Please enter a valid duration.",
                         ephemeral: true,
                     });
@@ -826,7 +818,7 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 //check if the duration is below 5 seconds or above 28 days
                 if (timeoutUserDurationMs < 5000 ||
                     timeoutUserDurationMs > 28 * 24 * 60 * 60 * 1000) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "Invalid duration. Please enter a duration between 5 seconds and 28 days.",
                         ephemeral: true,
                     });
@@ -838,7 +830,7 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 const timeoutUserBotRolePosition = modalInteraction.guild.members.me.roles.highest.position;
                 // check if the target user is of a higher position than the request user
                 if (timeoutUserRolePosition >= timeoutUserRequesterRolePosition) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "That user is of a higher position of the power hierarchy than you. Therefore you cannot timeout them.",
                         ephemeral: true,
                     });
@@ -846,7 +838,7 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 }
                 // check if the target user is of a higher position than the bot
                 if (timeoutUserRolePosition >= timeoutUserBotRolePosition) {
-                    yield modalInteraction.reply({
+                    await modalInteraction.reply({
                         content: "That user is of a higher position of the power hierarchy than me. Therefore i cannot timeout them.",
                         ephemeral: true,
                     });
@@ -854,8 +846,8 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 }
                 // timeout the user
                 try {
-                    yield timeoutUser.timeout(timeoutUserDuration, timeoutUserReason);
-                    yield modalInteraction.reply({
+                    await timeoutUser.timeout(timeoutUserDuration, timeoutUserReason);
+                    await modalInteraction.reply({
                         content: `The user <@${timeoutUser.user.id}> has been timed out successfully.\n${timeoutUserReason}`,
                         ephemeral: true,
                     });
@@ -869,4 +861,4 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
     catch (error) {
         console.error("Error handling modal submission:", error);
     }
-});
+};

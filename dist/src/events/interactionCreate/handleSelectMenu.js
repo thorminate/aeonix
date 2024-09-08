@@ -1,23 +1,14 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const userData = require("../../models/userDatabaseSchema");
 const { ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ButtonBuilder, ButtonStyle, } = require("discord.js");
 const selectedValues = [];
-module.exports = (bot, interaction) => __awaiter(void 0, void 0, void 0, function* () {
+module.exports = async (bot, interaction) => {
     if (!interaction.isStringSelectMenu())
         return;
     switch (interaction.customId) {
         case "species-select":
-            let user = yield userData.findOne({ userId: interaction.user.id });
+            let user = await userData.findOne({ userId: interaction.user.id });
             if (!user) {
                 const newUser = new userData({
                     userId: interaction.user.id,
@@ -25,7 +16,7 @@ module.exports = (bot, interaction) => __awaiter(void 0, void 0, void 0, functio
                 });
                 user = newUser;
             }
-            yield interaction.values.forEach((value) => __awaiter(void 0, void 0, void 0, function* () {
+            await interaction.values.forEach(async (value) => {
                 user.species = value;
                 if (value === "Human") {
                     user.strengthMultiplier = 1.1;
@@ -47,7 +38,7 @@ module.exports = (bot, interaction) => __awaiter(void 0, void 0, void 0, functio
                     user.willMultiplier = 1.1;
                     user.cognitionMultiplier = 0.9;
                 }
-                yield user.save();
+                await user.save();
                 const classMenu = new StringSelectMenuBuilder()
                     .setCustomId("class-select")
                     .setPlaceholder("Select your class!")
@@ -70,21 +61,21 @@ module.exports = (bot, interaction) => __awaiter(void 0, void 0, void 0, functio
                     components: [classRow],
                     ephemeral: true,
                 });
-            }));
+            });
             break;
         case "class-select":
             const selectedClass = interaction.values[0];
-            const userClass = yield userData.findOne({ userId: interaction.user.id });
+            const userClass = await userData.findOne({ userId: interaction.user.id });
             if (userClass) {
                 userClass.class = selectedClass;
                 userClass.isOnboard = true;
-                yield userClass.save();
+                await userClass.save();
                 interaction.reply({
                     content: "Your class has been set! Welcome aboard, player.",
                     ephemeral: true,
                 });
                 const onboardingChannel = interaction.guild.channels.cache.get("1270790941892153404");
-                const messages = yield onboardingChannel.messages.fetch({ limit: 1 });
+                const messages = await onboardingChannel.messages.fetch({ limit: 1 });
                 const message = messages.first();
                 const resetButton = new ButtonBuilder()
                     .setCustomId("welcome-channel-begin-onboarding")
@@ -92,7 +83,7 @@ module.exports = (bot, interaction) => __awaiter(void 0, void 0, void 0, functio
                     .setStyle(ButtonStyle.Success)
                     .setDisabled(false);
                 const resetRow = new ActionRowBuilder().addComponents(resetButton);
-                yield message.edit({
+                await message.edit({
                     components: [resetRow],
                 });
                 setTimeout(() => {
@@ -101,4 +92,4 @@ module.exports = (bot, interaction) => __awaiter(void 0, void 0, void 0, functio
             }
             break;
     }
-});
+};
