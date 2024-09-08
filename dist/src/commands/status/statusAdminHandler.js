@@ -1,18 +1,9 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, } = require("discord.js");
 const userData = require("../../models/userDatabaseSchema");
 module.exports = {
-    handleStatsGiverModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    handleStatsGiverModal: async (interaction) => {
         try {
             // Set up the Stats Giver modal
             const statsGiverModal = new ModalBuilder()
@@ -48,13 +39,13 @@ module.exports = {
             const statsGiverModifierRow = new ActionRowBuilder().addComponents(statsGiverModifierInput);
             statsGiverModal.addComponents(statsGiverRow, statsGiverVariantRow, statsGiverTargetRow, statsGiverModifierRow);
             // Show the modal
-            yield interaction.showModal(statsGiverModal);
+            await interaction.showModal(statsGiverModal);
         }
         catch (error) {
             console.log("Error handling Stats Giver modal:", error);
         }
-    }),
-    handleCreateSkillModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleCreateSkillModal: async (interaction) => {
         try {
             // Set up the Create Skill modal
             const createSkillModal = new ModalBuilder()
@@ -92,13 +83,13 @@ module.exports = {
             const createSkillNameRow = new ActionRowBuilder().addComponents(createSkillNameInput);
             createSkillModal.addComponents(createSkillNameRow, createSkillDescriptionRow, createSkillActionRow, createSkillCooldownRow, createSkillWillRow);
             // Show the modal
-            yield interaction.showModal(createSkillModal);
+            await interaction.showModal(createSkillModal);
         }
         catch (error) {
             console.log("Error handling Create Skill modal:", error);
         }
-    }),
-    handleDeleteSkillModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleDeleteSkillModal: async (interaction) => {
         try {
             // Set up the Delete Skill modal
             const deleteSkillModal = new ModalBuilder()
@@ -112,13 +103,13 @@ module.exports = {
             const deleteSkillNameRow = new ActionRowBuilder().addComponents(deleteSkillNameInput);
             deleteSkillModal.addComponents(deleteSkillNameRow);
             // Show the modal
-            yield interaction.showModal(deleteSkillModal);
+            await interaction.showModal(deleteSkillModal);
         }
         catch (error) {
             console.log("Error handling Delete Skill modal:", error);
         }
-    }),
-    handleGrantSkillModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleGrantSkillModal: async (interaction) => {
         try {
             // Set up the Grant Skill modal
             const grantSkillModal = new ModalBuilder()
@@ -139,13 +130,13 @@ module.exports = {
             const grantSkillNameRow = new ActionRowBuilder().addComponents(grantSkillNameInput);
             grantSkillModal.addComponents(grantSkillNameRow, grantSkillTargetRow);
             // Show the modal
-            yield interaction.showModal(grantSkillModal);
+            await interaction.showModal(grantSkillModal);
         }
         catch (error) {
             console.log("Error handling Grant Skill modal:", error);
         }
-    }),
-    handleRevokeSkillModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleRevokeSkillModal: async (interaction) => {
         try {
             // Set up the Revoke Skill modal
             const revokeSkillModal = new ModalBuilder()
@@ -166,13 +157,13 @@ module.exports = {
             const revokeSkillNameRow = new ActionRowBuilder().addComponents(revokeSkillNameInput);
             revokeSkillModal.addComponents(revokeSkillNameRow, revokeSkillTargetRow);
             // Show the modal
-            yield interaction.showModal(revokeSkillModal);
+            await interaction.showModal(revokeSkillModal);
         }
         catch (error) {
             console.log("Error handling Revoke Skill modal:", error);
         }
-    }),
-    handleCreateItemModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleCreateItemModal: async (interaction) => {
         try {
             // Set up the Create Item modal
             const createItemModal = new ModalBuilder()
@@ -204,13 +195,13 @@ module.exports = {
             const createItemActionRow = new ActionRowBuilder().addComponents(createItemActionInput);
             createItemModal.addComponents(createItemNameRow, createItemDescriptionRow, createItemActionableRow, createItemActionRow);
             // Show the modal
-            yield interaction.showModal(createItemModal);
+            await interaction.showModal(createItemModal);
         }
         catch (error) {
             console.log("Error handling Create Item modal:", error);
         }
-    }),
-    handleGiveItemModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleGiveItemModal: async (interaction) => {
         try {
             // Set up the Give Item modal
             const giveItemModal = new ModalBuilder()
@@ -238,13 +229,13 @@ module.exports = {
             const giveItemAmountRow = new ActionRowBuilder().addComponents(giveItemAmountInput);
             giveItemModal.addComponents(giveItemNameRow, giveItemTargetRow, giveItemAmountRow);
             // Show the modal
-            yield interaction.showModal(giveItemModal);
+            await interaction.showModal(giveItemModal);
         }
         catch (error) {
             console.log("Error handling Give Item modal:", error);
         }
-    }),
-    handleRemoveItemModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleRemoveItemModal: async (interaction) => {
         try {
             // Set up the Remove Item modal
             const removeItemModal = new ModalBuilder()
@@ -265,13 +256,13 @@ module.exports = {
             const removeItemNameRow = new ActionRowBuilder().addComponents(removeItemNameInput);
             removeItemModal.addComponents(removeItemNameRow, removeItemTargetRow);
             // Show the modal
-            yield interaction.showModal(removeItemModal);
+            await interaction.showModal(removeItemModal);
         }
         catch (error) {
             console.log("Error handling Remove Item modal:", error);
         }
-    }),
-    handleDeleteItemModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleDeleteItemModal: async (interaction) => {
         try {
             // Set up the Delete Item modal
             const deleteItemModal = new ModalBuilder()
@@ -285,13 +276,13 @@ module.exports = {
             const deleteItemNameRow = new ActionRowBuilder().addComponents(deleteItemNameInput);
             deleteItemModal.addComponents(deleteItemNameRow);
             // Show the modal
-            yield interaction.showModal(deleteItemModal);
+            await interaction.showModal(deleteItemModal);
         }
         catch (error) {
             console.log("Error handling Delete Item modal:", error);
         }
-    }),
-    handleCreateStatusEffectModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleCreateStatusEffectModal: async (interaction) => {
         try {
             // Set up the Create Status Effect modal
             const createStatusEffectModal = new ModalBuilder()
@@ -323,13 +314,13 @@ module.exports = {
             const createStatusEffectDurationRow = new ActionRowBuilder().addComponents(createStatusEffectDurationInput);
             createStatusEffectModal.addComponents(createStatusEffectNameRow, createStatusEffectDescriptionRow, createStatusEffectActionRow, createStatusEffectDurationRow);
             // Show the modal
-            yield interaction.showModal(createStatusEffectModal);
+            await interaction.showModal(createStatusEffectModal);
         }
         catch (error) {
             console.log("Error handling Create Status Effect modal:", error);
         }
-    }),
-    handleDeleteStatusEffectModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleDeleteStatusEffectModal: async (interaction) => {
         try {
             // Set up the Delete Status Effect modal
             const deleteStatusEffectModal = new ModalBuilder()
@@ -343,13 +334,13 @@ module.exports = {
             const deleteStatusEffectNameRow = new ActionRowBuilder().addComponents(deleteStatusEffectNameInput);
             deleteStatusEffectModal.addComponents(deleteStatusEffectNameRow);
             // Show the modal
-            yield interaction.showModal(deleteStatusEffectModal);
+            await interaction.showModal(deleteStatusEffectModal);
         }
         catch (error) {
             console.log("Error handling Delete Status Effect modal:", error);
         }
-    }),
-    handleGrantStatusEffectModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleGrantStatusEffectModal: async (interaction) => {
         try {
             // Set up the Grant Status Effect modal
             const grantStatusEffectModal = new ModalBuilder()
@@ -370,13 +361,13 @@ module.exports = {
             const grantStatusEffectTargetRow = new ActionRowBuilder().addComponents(grantStatusEffectTargetInput);
             grantStatusEffectModal.addComponents(grantStatusEffectNameRow, grantStatusEffectTargetRow);
             // Show the modal
-            yield interaction.showModal(grantStatusEffectModal);
+            await interaction.showModal(grantStatusEffectModal);
         }
         catch (error) {
             console.log("Error handling Grant Status Effect modal:", error);
         }
-    }),
-    handleRevokeStatusEffectModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleRevokeStatusEffectModal: async (interaction) => {
         try {
             // Set up the Revoke Status Effect modal
             const revokeStatusEffectModal = new ModalBuilder()
@@ -397,13 +388,13 @@ module.exports = {
             const revokeStatusEffectTargetRow = new ActionRowBuilder().addComponents(revokeStatusEffectTargetInput);
             revokeStatusEffectModal.addComponents(revokeStatusEffectNameRow, revokeStatusEffectTargetRow);
             // Show the modal
-            yield interaction.showModal(revokeStatusEffectModal);
+            await interaction.showModal(revokeStatusEffectModal);
         }
         catch (error) {
             console.log("Error handling Revoke Status Effect modal:", error);
         }
-    }),
-    handleSendMessageModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleSendMessageModal: async (interaction) => {
         try {
             // Set up the Send Message modal
             const sendMessageModal = new ModalBuilder()
@@ -423,13 +414,13 @@ module.exports = {
             const sendMessageContentRow = new ActionRowBuilder().addComponents(sendMessageContentInput);
             sendMessageModal.addComponents(sendMessageTargetChannelRow, sendMessageContentRow);
             // Show the modal
-            yield interaction.showModal(sendMessageModal);
+            await interaction.showModal(sendMessageModal);
         }
         catch (error) {
             console.log("Error handling Send Message modal:", error);
         }
-    }),
-    handleBanUserModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleBanUserModal: async (interaction) => {
         try {
             // Set up the Ban User modal
             const banUserModal = new ModalBuilder()
@@ -449,13 +440,13 @@ module.exports = {
             const banUserTargetRow = new ActionRowBuilder().addComponents(banUserTargetInput);
             const banUserReasonRow = new ActionRowBuilder().addComponents(banUserReasonInput);
             banUserModal.addComponents(banUserTargetRow, banUserReasonRow);
-            yield interaction.showModal(banUserModal);
+            await interaction.showModal(banUserModal);
         }
         catch (error) {
             console.log("Error handling Ban User modal:", error);
         }
-    }),
-    handleKickUserModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleKickUserModal: async (interaction) => {
         try {
             // Set up the Kick User modal
             const kickUserModal = new ModalBuilder()
@@ -475,13 +466,13 @@ module.exports = {
             const kickUserTargetRow = new ActionRowBuilder().addComponents(kickUserTargetInput);
             const kickUserReasonRow = new ActionRowBuilder().addComponents(kickUserReasonInput);
             kickUserModal.addComponents(kickUserTargetRow, kickUserReasonRow);
-            yield interaction.showModal(kickUserModal);
+            await interaction.showModal(kickUserModal);
         }
         catch (error) {
             console.log("Error handling Kick User modal:", error);
         }
-    }),
-    handleTimeoutUserModal: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    },
+    handleTimeoutUserModal: async (interaction) => {
         try {
             // Set up the Timeout User modal
             const timeoutUserModal = new ModalBuilder()
@@ -507,10 +498,10 @@ module.exports = {
             const timeoutUserDurationRow = new ActionRowBuilder().addComponents(timeoutUserDurationInput);
             const timeoutUserReasonRow = new ActionRowBuilder().addComponents(timeoutUserReasonInput);
             timeoutUserModal.addComponents(timeoutUserTargetRow, timeoutUserDurationRow, timeoutUserReasonRow);
-            yield interaction.showModal(timeoutUserModal);
+            await interaction.showModal(timeoutUserModal);
         }
         catch (error) {
             console.log("Error handling Timeout User modal:", error);
         }
-    }),
+    },
 };

@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const userData = require("../../models/userDatabaseSchema");
 const calculateLevelExp = require("../../utils/calculateLevelExp");
@@ -18,7 +9,7 @@ function getRandomExp(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-module.exports = (bot, message) => __awaiter(void 0, void 0, void 0, function* () {
+module.exports = async (bot, message) => {
     // if message was not made in a guild, author was a bot or the cooldown is active, return
     if (!message.inGuild() ||
         message.author.bot ||
@@ -33,7 +24,7 @@ module.exports = (bot, message) => __awaiter(void 0, void 0, void 0, function* (
     };
     try {
         // gets userData(aka level) from database based on query
-        const level = yield userData.findOne(query);
+        const level = await userData.findOne(query);
         // if userData(aka level) exists in database, give exp to user.
         if (level) {
             level.exp += expToGive;
@@ -51,8 +42,8 @@ module.exports = (bot, message) => __awaiter(void 0, void 0, void 0, function* (
                 level.strength = Math.round(level.strength);
                 level.will = Math.round(level.will);
                 level.cognition = Math.round(level.cognition);
-                yield level.save();
-                const botMessage = yield message.reply({
+                await level.save();
+                const botMessage = await message.reply({
                     content: `Hello, <@${message.member.id}>! you have leveled up!\nPlease check your status menu for your new stats!`,
                 });
                 setTimeout(() => {
@@ -60,7 +51,7 @@ module.exports = (bot, message) => __awaiter(void 0, void 0, void 0, function* (
                 }, 60 * 1000);
             }
             // save new userData(aka level), if it fails, log error
-            yield level.save().catch((e) => {
+            await level.save().catch((e) => {
                 console.log(`Error saving level: ${e}`);
                 return;
             });
@@ -82,7 +73,7 @@ module.exports = (bot, message) => __awaiter(void 0, void 0, void 0, function* (
                 message.channel.send(`Hello, ${message.member} your persona was not saved in the database. This has now been fixed, please go to <#1270790941892153404> to correct your persona! If your stats are incorrect, please contact <@539166043009056794>!`);
             }
             // save new userData(aka level)
-            yield newUser.save();
+            await newUser.save();
             cooldowns.add(message.author.id);
             setTimeout(() => {
                 cooldowns.delete(message.author.id);
@@ -92,4 +83,4 @@ module.exports = (bot, message) => __awaiter(void 0, void 0, void 0, function* (
     catch (error) {
         console.log(`Error giving Exp: ${error}`);
     }
-});
+};
