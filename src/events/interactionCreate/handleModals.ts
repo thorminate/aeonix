@@ -17,7 +17,7 @@ module.exports = async (bot: Client, modalInteraction: Interaction) => {
     if (!modalInteraction.isModalSubmit()) return;
 
     switch (modalInteraction.customId) {
-      // Stat Modals
+      // Stat Modal
       case "stats-giver-modal":
         // get input values
 
