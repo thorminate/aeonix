@@ -154,6 +154,12 @@ module.exports = {
           .setCustomId("moderation")
           .setDisabled(false);
 
+        const botPerform = new ButtonBuilder()
+          .setLabel("Perform Bot Action")
+          .setStyle(ButtonStyle.Primary)
+          .setCustomId("bot-perform")
+          .setDisabled(false);
+
         const playerMode = new ButtonBuilder()
           .setLabel("Reload as Player")
           .setStyle(ButtonStyle.Primary)
@@ -177,6 +183,7 @@ module.exports = {
           components: buttonWrapper([
             playerModification,
             moderation,
+            botPerform,
             playerMode,
           ]),
         });
@@ -327,6 +334,49 @@ module.exports = {
               await playerMenu(true);
               break;
 
+            case "bot-perform":
+              // Handle "Perform Bot Action" button click
+              const botPerformUpdatedComponents = adminReply.components.map(
+                (row) => {
+                  return ActionRowBuilder.from(row).setComponents(
+                    row.components.map((button) => {
+                      return button;
+                    })
+                  );
+                }
+              );
+
+              // Edit the original reply to disable the button
+              await interaction.editReply({
+                content: `loading...`,
+                components: botPerformUpdatedComponents,
+              });
+
+              // Define buttons for submenu
+              const botPerformSendMessageButton = new ButtonBuilder()
+                .setLabel("Send Message")
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId("send_message")
+                .setDisabled(false);
+
+              if (prevPlayer === true) {
+                await buttonInteraction.editReply({
+                  content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
+                    0,
+                    1
+                  )}?`,
+                  components: buttonWrapper([botPerformSendMessageButton]),
+                });
+              } else {
+                await buttonInteraction.update({
+                  content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(
+                    0,
+                    1
+                  )}?`,
+                  components: buttonWrapper([botPerformSendMessageButton]),
+                });
+              }
+              break;
             // Player Modification Buttons
             case "modify_stats":
               // Handle "Modify Stats" button click
@@ -597,6 +647,13 @@ module.exports = {
               await statusAdminHandler.handleDeleteItemModal(buttonInteraction);
               break;
 
+            // Bot Perform Buttons
+            case "send_message":
+              // Handle "Send Message" button click
+              await statusAdminHandler.handleSendMessageModal(
+                buttonInteraction
+              );
+              break;
             // Status Effect Modification Buttons
             case "create_status_effect":
               // Handle "Create Status Effect" button click

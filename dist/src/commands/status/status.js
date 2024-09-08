@@ -131,6 +131,11 @@ module.exports = {
                         .setStyle(ButtonStyle.Primary)
                         .setCustomId("moderation")
                         .setDisabled(false);
+                    const botPerform = new ButtonBuilder()
+                        .setLabel("Perform Bot Action")
+                        .setStyle(ButtonStyle.Primary)
+                        .setCustomId("bot-perform")
+                        .setDisabled(false);
                     const playerMode = new ButtonBuilder()
                         .setLabel("Reload as Player")
                         .setStyle(ButtonStyle.Primary)
@@ -142,6 +147,7 @@ module.exports = {
                         components: buttonWrapper([
                             playerModification,
                             moderation,
+                            botPerform,
                             playerMode,
                         ]),
                     });
@@ -258,6 +264,37 @@ module.exports = {
                             case "player-mode":
                                 // Handle "Reload as Player" button click
                                 yield playerMenu(true);
+                                break;
+                            case "bot-perform":
+                                // Handle "Perform Bot Action" button click
+                                const botPerformUpdatedComponents = adminReply.components.map((row) => {
+                                    return ActionRowBuilder.from(row).setComponents(row.components.map((button) => {
+                                        return button;
+                                    }));
+                                });
+                                // Edit the original reply to disable the button
+                                yield interaction.editReply({
+                                    content: `loading...`,
+                                    components: botPerformUpdatedComponents,
+                                });
+                                // Define buttons for submenu
+                                const botPerformSendMessageButton = new ButtonBuilder()
+                                    .setLabel("Send Message")
+                                    .setStyle(ButtonStyle.Secondary)
+                                    .setCustomId("send_message")
+                                    .setDisabled(false);
+                                if (prevPlayer === true) {
+                                    yield buttonInteraction.editReply({
+                                        content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(0, 1)}?`,
+                                        components: buttonWrapper([botPerformSendMessageButton]),
+                                    });
+                                }
+                                else {
+                                    yield buttonInteraction.update({
+                                        content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(0, 1)}?`,
+                                        components: buttonWrapper([botPerformSendMessageButton]),
+                                    });
+                                }
                                 break;
                             // Player Modification Buttons
                             case "modify_stats":
@@ -465,6 +502,11 @@ module.exports = {
                             case "delete_item":
                                 // Handle "Delete Item" button click
                                 yield statusAdminHandler.handleDeleteItemModal(buttonInteraction);
+                                break;
+                            // Bot Perform Buttons
+                            case "send_message":
+                                // Handle "Send Message" button click
+                                yield statusAdminHandler.handleSendMessageModal(buttonInteraction);
                                 break;
                             // Status Effect Modification Buttons
                             case "create_status_effect":

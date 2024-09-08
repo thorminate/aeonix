@@ -555,6 +555,43 @@ module.exports = {
       console.log("Error handling Revoke Status Effect modal:", error);
     }
   },
+  handleSendMessageModal: async (interaction) => {
+    try {
+      // Set up the Send Message modal
+      const sendMessageModal = new ModalBuilder()
+        .setCustomId("send-message-modal")
+        .setTitle("Send Message");
+
+      const sendMessageTargetChannelInput = new TextInputBuilder()
+        .setCustomId("send-message-target-channel-input")
+        .setLabel("Target channel ID")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
+
+      const sendMessageContentInput = new TextInputBuilder()
+        .setCustomId("send-message-content-input")
+        .setLabel("Message content")
+        .setStyle(TextInputStyle.Paragraph)
+        .setRequired(true);
+
+      const sendMessageTargetChannelRow = new ActionRowBuilder().addComponents(
+        sendMessageTargetChannelInput
+      );
+      const sendMessageContentRow = new ActionRowBuilder().addComponents(
+        sendMessageContentInput
+      );
+
+      sendMessageModal.addComponents(
+        sendMessageTargetChannelRow,
+        sendMessageContentRow
+      );
+
+      // Show the modal
+      await interaction.showModal(sendMessageModal);
+    } catch (error) {
+      console.log("Error handling Send Message modal:", error);
+    }
+  },
   handleBanUserModal: async (interaction) => {
     try {
       // Set up the Ban User modal

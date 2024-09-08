@@ -4,6 +4,7 @@ import {
   Interaction,
   Client,
   GuildMemberRoleManager,
+  TextChannel,
 } from "discord.js";
 const buttonWrapper = require("../../utils/buttonWrapper");
 const userData = require("../../models/userDatabaseSchema");
@@ -828,6 +829,40 @@ module.exports = async (bot: Client, modalInteraction: Interaction) => {
 
         break;
 
+      // Bot Perform Modals
+      case "send-message-modal":
+        // get input values
+
+        let sendMessageChannel = modalInteraction.fields
+          .getTextInputValue("send-message-target-channel-input")
+          .toLowerCase();
+        const sendMessageContent = modalInteraction.fields.getTextInputValue(
+          "send-message-content-input"
+        );
+
+        if (sendMessageChannel === "here") {
+          sendMessageChannel = modalInteraction.channel.id;
+        }
+        const sendMessageChannelObj =
+          await modalInteraction.guild.channels.cache.get(sendMessageChannel);
+
+        if (!sendMessageChannelObj) {
+          await modalInteraction.reply({
+            content: "Channel not found!",
+            ephemeral: true,
+          });
+          return;
+        }
+
+        // send message
+
+        await (sendMessageChannelObj as TextChannel).send(sendMessageContent);
+        await modalInteraction.reply({
+          content: `Sent message in ${sendMessageChannelObj.name}.`,
+          ephemeral: true,
+        });
+
+        break;
       // Moderation Modals
       case "ban-user-modal":
         // get input values
