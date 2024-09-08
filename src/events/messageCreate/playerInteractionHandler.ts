@@ -1,11 +1,9 @@
-import userData from "../../models/userDatabaseSchema";
-import skillData from "../../models/skillDatabaseSchema";
-import itemData from "../../models/itemDatabaseSchema";
+import { Message, Client } from "discord.js";
+const userData = require("../../models/userDatabaseSchema");
+const skillData = require("../../models/skillDatabaseSchema");
+const itemData = require("../../models/itemDatabaseSchema");
 
-module.exports = async (
-  bot: any,
-  message: { inGuild: () => any; author: { bot: any }; content: string }
-) => {
+module.exports = async (bot: Client, message: Message) => {
   // if message was not made in a guild, author was a bot or the cooldown is active, return
   if (!message.inGuild() || message.author.bot) return;
   async function consumeItem(message: any, itemName: any) {

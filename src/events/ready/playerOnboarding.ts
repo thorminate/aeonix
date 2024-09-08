@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 
-export default function playerOnboarding(bot) {
+module.exports = (bot) => {
   const welcomeChannel = bot.channels.cache.get("1270790941892153404");
   welcomeChannel.bulkDelete(100);
 
@@ -26,4 +26,4 @@ export default function playerOnboarding(bot) {
       components: [welcomeChannelBeginOnboardingRow],
     });
   }, 1500);
-}
+};

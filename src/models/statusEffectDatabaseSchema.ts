@@ -23,4 +23,4 @@ const statusEffectData = new Schema({
   },
 });
 
-export default model("statusEffectData", statusEffectData);
+module.exports = model("statusEffectData", statusEffectData);

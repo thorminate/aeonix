@@ -1,8 +1,8 @@
 // Define Requirements
 require("dotenv").config();
-const { Client, IntentsBitField } = require("discord.js");
-const mongoose = require("mongoose");
-const eventHandler = require("./handlers/eventHandler");
+import { Client, IntentsBitField } from "discord.js";
+import mongoose from "mongoose";
+import eventHandler from "./handlers/eventHandler";
 
 // Define 'bot'
 const bot = new Client({

@@ -3,7 +3,7 @@
 const path = require("path");
 const fs = require("fs");
 
-export default function getAllFiles(directory, foldersOnly = false) {
+module.exports = (directory, foldersOnly = false) => {
   // define fileNames as an array
   let fileNames = [];
 
@@ -30,4 +30,4 @@ export default function getAllFiles(directory, foldersOnly = false) {
   }
 
   return fileNames;
-}
+};

@@ -1,9 +1,10 @@
 // when an event is triggered, it runs all files in that event's folder
 
+import { Client } from "discord.js";
 import path from "path";
-import getAllFiles from "../utils/getAllFiles";
+const getAllFiles = require("../utils/getAllFiles");
 
-module.exports = (bot) => {
+export default function eventHandler(bot: Client) {
   // Finds event folders
   const eventFolders = getAllFiles(path.join(__dirname, "..", "events"), true);
 
@@ -22,4 +23,4 @@ module.exports = (bot) => {
       }
     });
   }
-};
+}

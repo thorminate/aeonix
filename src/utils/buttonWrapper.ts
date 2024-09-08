@@ -1,6 +1,6 @@
 const { ActionRowBuilder } = require("discord.js");
 
-export default async function buttonWrapper(buttons) {
+module.exports = (buttons) => {
   const components = [];
   let currentRow = new ActionRowBuilder();
 
@@ -18,4 +18,4 @@ export default async function buttonWrapper(buttons) {
   }
 
   return components;
-}
+};

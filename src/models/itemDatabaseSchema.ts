@@ -23,4 +23,4 @@ const itemData = new Schema({
   },
 });
 
-export default model("itemData", itemData);
+module.exports = model("itemData", itemData);

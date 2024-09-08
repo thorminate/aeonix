@@ -4,8 +4,10 @@ import {
   StringSelectMenuOptionBuilder,
   ButtonBuilder,
   ButtonStyle,
+  Client,
+  Interaction,
 } from "discord.js";
-import userData from "../../models/userDatabaseSchema";
+const userData = require("../../models/userDatabaseSchema");
 
 module.exports = async (bot, interaction) => {
   if (!interaction.isButton()) return;

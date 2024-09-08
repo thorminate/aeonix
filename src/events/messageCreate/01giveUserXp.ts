@@ -1,24 +1,17 @@
 // on event messageCreate, do this
 import { Client, Message } from "discord.js";
-import userData from "../../models/userDatabaseSchema";
-import calculateLevelExp from "../../utils/calculateLevelExp";
+const userData = require("../../models/userDatabaseSchema");
+const calculateLevelExp = require("../../utils/calculateLevelExp");
 const cooldowns = new Set();
 
 // gets random number based on set parameters min and max
-function getRandomExp(min, max) {
+function getRandomExp(min: number, max: number) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// enables intellisense on bot and message object
-/**
- *
- * @param {Client} bot
- * @param {Message} message
- */
-
-module.exports = async (bot, message) => {
+module.exports = async (bot: Client, message: Message) => {
   // if message was not made in a guild, author was a bot or the cooldown is active, return
   if (
     !message.inGuild() ||
@@ -62,9 +55,8 @@ module.exports = async (bot, message) => {
 
         await level.save();
 
-        const botMessage = await message.channel.send({
+        const botMessage = await message.reply({
           content: `Hello, <@${message.member.id}>! you have leveled up!\nPlease check your status menu for your new stats!`,
-          ephemeral: true,
         });
 
         setTimeout(() => {
@@ -73,7 +65,7 @@ module.exports = async (bot, message) => {
       }
 
       // save new userData(aka level), if it fails, log error
-      await level.save().catch((e) => {
+      await level.save().catch((e: any) => {
         console.log(`Error saving level: ${e}`);
         return;
       });

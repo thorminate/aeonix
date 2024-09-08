@@ -1,6 +1,6 @@
 const { ShardingManager } = require("discord.js");
 
-const manager = new ShardingManager("./dist/bot.js", {
+const manager = new ShardingManager("./dist/src/bot.js", {
   token: process.env.TOKEN,
 });
 
