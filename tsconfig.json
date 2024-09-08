@@ -4,7 +4,8 @@
     "outDir": "./dist", // Specify the output folder for compiled JavaScript
     "allowJs": true,
     "moduleResolution": "NodeNext",
-    "module": "NodeNext"
+    "module": "NodeNext",
+    "resolveJsonModule": true
   },
   "exclude": ["./node_modules/**"],
   "include": ["./src/**/*"] // Specify the path to your TypeScript files

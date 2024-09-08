@@ -27,4 +27,4 @@ const skillData = new Schema({
   },
 });
 
-export default model("skillData", skillData);
+module.exports = model("skillData", skillData);

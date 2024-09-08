@@ -85,4 +85,4 @@ const userData = new Schema({
 });
 
 // Exports the model
-export default model("userDatabase", userData);
+module.exports = model("userDatabase", userData);

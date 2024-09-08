@@ -1,11 +1,10 @@
 // Register, edit and delete commands
-const config = require("../../../config.json");
-const { primaryServer } = config;
-import areCommandsDifferent from "../../utils/areCommandsDifferent";
-import getApplicationCommands from "../../utils/getApplicationCommands";
+import { primaryServer } from "../../../config.json";
+const areCommandsDifferent = require("../../utils/areCommandsDifferent");
+const getApplicationCommands = require("../../utils/getApplicationCommands");
 import getLocalCommands from "../../utils/getLocalCommands";
 
-export default async function registerCommands(bot) {
+module.exports = async (bot) => {
   try {
     // Define local commands and application commands
     const localCommands = getLocalCommands();
@@ -66,4 +65,4 @@ export default async function registerCommands(bot) {
   } catch (error) {
     console.log(`There was an error: ${error}`);
   }
-}
+};

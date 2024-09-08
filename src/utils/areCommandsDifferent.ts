@@ -1,8 +1,5 @@
 // checks if local command is different to existing command
-export default async function areCommandsDifferent(
-  existingCommand,
-  localCommand
-) {
+module.exports = (existingCommand, localCommand) => {
   // If existingChoices is different to localChoices, return true.
   const areChoicesDifferent = (existingChoices, localChoices) => {
     for (const localChoice of localChoices) {
@@ -58,4 +55,4 @@ export default async function areCommandsDifferent(
   }
 
   return false;
-}
+};

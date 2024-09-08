@@ -1,12 +1,18 @@
-import { ButtonBuilder, ButtonStyle } from "discord.js";
-import buttonWrapper from "../../utils/buttonWrapper";
-import userData from "../../models/userDatabaseSchema";
-import skillData from "../../models/skillDatabaseSchema";
-import itemData from "../../models/itemDatabaseSchema";
-import statusEffectData from "../../models/statusEffectDatabaseSchema";
+import {
+  ButtonBuilder,
+  ButtonStyle,
+  Interaction,
+  Client,
+  GuildMemberRoleManager,
+} from "discord.js";
+const buttonWrapper = require("../../utils/buttonWrapper");
+const userData = require("../../models/userDatabaseSchema");
+const skillData = require("../../models/skillDatabaseSchema");
+const itemData = require("../../models/itemDatabaseSchema");
+const statusEffectData = require("../../models/statusEffectDatabaseSchema");
 import ms from "ms";
 
-module.exports = async (bot, modalInteraction) => {
+module.exports = async (bot: Client, modalInteraction: Interaction) => {
   try {
     if (!modalInteraction.isModalSubmit()) return;
 
@@ -465,8 +471,8 @@ module.exports = async (bot, modalInteraction) => {
       */
         // Validate the inputs
         if (
-          itemActionable !== "interact" ||
-          itemActionable !== "consume" ||
+          itemActionable !== "interact" &&
+          itemActionable !== "consume" &&
           itemActionable !== "use"
         ) {
           modalInteraction.reply({
@@ -525,8 +531,8 @@ module.exports = async (bot, modalInteraction) => {
           "give-item-target-input"
         );
 
-        const giveItemAmount = modalInteraction.fields.getTextInputValue(
-          "give-item-amount-input"
+        const giveItemAmount = parseInt(
+          modalInteraction.fields.getTextInputValue("give-item-amount-input")
         );
 
         if (isNaN(giveItemAmount)) {
@@ -572,7 +578,7 @@ module.exports = async (bot, modalInteraction) => {
           await giveItemTargetData.save();
         } else {
           giveItemTargetData.inventory[giveItemIndex].itemAmount +=
-            parseInt(giveItemAmount);
+            giveItemAmount;
 
           await giveItemTargetData.save();
         }
@@ -857,7 +863,7 @@ module.exports = async (bot, modalInteraction) => {
         await modalInteraction.reply({
           content: "Are you sure you want to ban this user?",
           ephemeral: true,
-          components: buttonWrapper([buttonConfirm, buttonCancel]),
+          components: await buttonWrapper([buttonConfirm, buttonCancel]),
         });
 
         const collector =
@@ -916,8 +922,9 @@ module.exports = async (bot, modalInteraction) => {
         }
         // define the target user role position and request user role position
         const kickUserRolePosition = kickUser.roles.highest.position;
-        const kickUserRequesterRolePosition =
-          modalInteraction.member.roles.highest.position;
+        const kickUserRequesterRolePosition = (
+          modalInteraction.member.roles as GuildMemberRoleManager
+        ).highest.position;
         const kickUserBotRolePosition =
           modalInteraction.guild.members.me.roles.highest.position;
 
@@ -1000,10 +1007,10 @@ module.exports = async (bot, modalInteraction) => {
         }
 
         //get duration in ms
-        timeoutUserDuration = ms(timeoutUserDuration);
+        const timeoutUserDurationMs = ms(timeoutUserDuration);
 
         //check if duration is valid
-        if (isNaN(timeoutUserDuration)) {
+        if (isNaN(timeoutUserDurationMs)) {
           await modalInteraction.reply({
             content: "Invalid duration. Please enter a valid duration.",
             ephemeral: true,
@@ -1013,8 +1020,8 @@ module.exports = async (bot, modalInteraction) => {
 
         //check if the duration is below 5 seconds or above 28 days
         if (
-          timeoutUserDuration < 5000 ||
-          timeoutUserDuration > 28 * 24 * 60 * 60 * 1000
+          timeoutUserDurationMs < 5000 ||
+          timeoutUserDurationMs > 28 * 24 * 60 * 60 * 1000
         ) {
           await modalInteraction.reply({
             content:
@@ -1026,8 +1033,9 @@ module.exports = async (bot, modalInteraction) => {
 
         // define role positions
         const timeoutUserRolePosition = timeoutUser.roles.highest.position;
-        const timeoutUserRequesterRolePosition =
-          modalInteraction.member.roles.highest.position;
+        const timeoutUserRequesterRolePosition = (
+          modalInteraction.member.roles as GuildMemberRoleManager
+        ).highest.position;
         const timeoutUserBotRolePosition =
           modalInteraction.guild.members.me.roles.highest.position;
 
