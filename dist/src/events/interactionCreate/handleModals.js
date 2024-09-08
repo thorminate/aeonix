@@ -25,7 +25,7 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
         if (!modalInteraction.isModalSubmit())
             return;
         switch (modalInteraction.customId) {
-            // Stat Modals
+            // Stat Modal
             case "stats-giver-modal":
                 // get input values
                 const statAmount = parseInt(modalInteraction.fields.getTextInputValue("stats-giver-input"));
@@ -652,6 +652,31 @@ module.exports = (bot, modalInteraction) => __awaiter(void 0, void 0, void 0, fu
                 });
                 yield modalInteraction.reply({
                     content: `Successfully deleted status effect ${deleteStatusEffectName}.`,
+                    ephemeral: true,
+                });
+                break;
+            // Bot Perform Modals
+            case "send-message-modal":
+                // get input values
+                let sendMessageChannel = modalInteraction.fields
+                    .getTextInputValue("send-message-target-channel-input")
+                    .toLowerCase();
+                const sendMessageContent = modalInteraction.fields.getTextInputValue("send-message-content-input");
+                if (sendMessageChannel === "here") {
+                    sendMessageChannel = modalInteraction.channel.id;
+                }
+                const sendMessageChannelObj = yield modalInteraction.guild.channels.cache.get(sendMessageChannel);
+                if (!sendMessageChannelObj) {
+                    yield modalInteraction.reply({
+                        content: "Channel not found!",
+                        ephemeral: true,
+                    });
+                    return;
+                }
+                // send message
+                yield sendMessageChannelObj.send(sendMessageContent);
+                yield modalInteraction.reply({
+                    content: `Sent message in ${sendMessageChannelObj.name}.`,
                     ephemeral: true,
                 });
                 break;
