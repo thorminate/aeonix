@@ -1,13 +1,7 @@
 // gets application commands from guild or global.
-import {
-  ApplicationCommand,
-  ApplicationCommandManager,
-  Client,
-  GuildApplicationCommandManager,
-  GuildResolvable,
-} from "discord.js";
+import { Client } from "discord.js";
 
-module.exports = async (bot: Client, guildId: string | null) => {
+export default async function (bot: Client, guildId: string | null) {
   //define applicationCommands.
   let applicationCommands: any;
 
@@ -22,4 +16,4 @@ module.exports = async (bot: Client, guildId: string | null) => {
   // fetch and return application commands.
   await applicationCommands.fetch();
   return applicationCommands;
-};
+}

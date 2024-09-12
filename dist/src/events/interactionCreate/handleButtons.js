@@ -49,9 +49,9 @@ module.exports = async (bot, interaction) => {
         const beginOnboardingButtonData = actionRow.components[0].data;
         // Recreate the button using ButtonBuilder
         const beginOnboardingButton = new discord_js_1.ButtonBuilder()
-            .setCustomId(beginOnboardingButtonData.custom_id)
+            .setCustomId("welcome-channel-begin-onboarding")
             .setLabel("Onboarding player...")
-            .setStyle(beginOnboardingButtonData.style)
+            .setStyle(discord_js_1.ButtonStyle.Success)
             .setDisabled(true);
         const row = new discord_js_1.ActionRowBuilder().addComponents(beginOnboardingButton);
         await message.edit({
@@ -64,7 +64,7 @@ module.exports = async (bot, interaction) => {
         // Function to reset the button
         const resetButton = async () => {
             const resetButton = new discord_js_1.ButtonBuilder()
-                .setCustomId(beginOnboardingButtonData.custom_id)
+                .setCustomId("welcome-channel-begin-onboarding")
                 .setLabel("Begin Onboarding")
                 .setStyle(discord_js_1.ButtonStyle.Success)
                 .setDisabled(false);

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // The database schema. Every user will have their own set of data, here we define what that data is.
-const { Schema, model } = require("mongoose");
-const userData = new Schema({
+const mongoose_1 = require("mongoose");
+const userData = new mongoose_1.Schema({
     // The unique ID of the user. Will be different for everyone
     userId: {
         type: String,
@@ -85,4 +85,4 @@ const userData = new Schema({
     },
 });
 // Exports the model
-module.exports = model("userDatabase", userData);
+exports.default = (0, mongoose_1.model)("userDatabase", userData);

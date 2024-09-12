@@ -3,16 +3,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// Register, edit and delete commands
 const config_json_1 = require("../../../config.json");
-const areCommandsDifferent = require("../../utils/areCommandsDifferent");
-const getApplicationCommands = require("../../utils/getApplicationCommands");
+const areCommandsDifferent_1 = __importDefault(require("../../utils/areCommandsDifferent"));
+const getApplicationCommands_1 = __importDefault(require("../../utils/getApplicationCommands"));
 const getLocalCommands_1 = __importDefault(require("../../utils/getLocalCommands"));
 module.exports = async (bot) => {
     try {
         // Define local commands and application commands
         const localCommands = (0, getLocalCommands_1.default)();
-        const applicationCommands = await getApplicationCommands(bot, config_json_1.primaryServer);
+        const applicationCommands = await (0, getApplicationCommands_1.default)(bot, config_json_1.primaryServer);
         // loop through all local commands
         for (const localCommand of localCommands) {
             const { name, description, options } = localCommand;
@@ -30,7 +29,7 @@ module.exports = async (bot) => {
                     continue;
                 }
                 // if commands are different, then update it.
-                if (areCommandsDifferent(existingCommand, localCommand)) {
+                if ((0, areCommandsDifferent_1.default)(existingCommand, localCommand)) {
                     await applicationCommands.edit(existingCommand.id, {
                         description,
                         options,

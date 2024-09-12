@@ -3,11 +3,12 @@ const {
   TextInputBuilder,
   TextInputStyle,
   ActionRowBuilder,
+  Interaction,
 } = require("discord.js");
 const userData = require("../../models/userDatabaseSchema");
 
 module.exports = {
-  handleStatsGiverModal: async (interaction) => {
+  handleStatsGiverModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Stats Giver modal
       const statsGiverModal = new ModalBuilder()
@@ -67,7 +68,7 @@ module.exports = {
       console.log("Error handling Stats Giver modal:", error);
     }
   },
-  handleCreateSkillModal: async (interaction) => {
+  handleCreateSkillModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Create Skill modal
       const createSkillModal = new ModalBuilder()
@@ -135,7 +136,7 @@ module.exports = {
       console.log("Error handling Create Skill modal:", error);
     }
   },
-  handleDeleteSkillModal: async (interaction) => {
+  handleDeleteSkillModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Delete Skill modal
 
@@ -161,7 +162,7 @@ module.exports = {
       console.log("Error handling Delete Skill modal:", error);
     }
   },
-  handleGrantSkillModal: async (interaction) => {
+  handleGrantSkillModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Grant Skill modal
       const grantSkillModal = new ModalBuilder()
@@ -196,7 +197,7 @@ module.exports = {
       console.log("Error handling Grant Skill modal:", error);
     }
   },
-  handleRevokeSkillModal: async (interaction) => {
+  handleRevokeSkillModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Revoke Skill modal
       const revokeSkillModal = new ModalBuilder()
@@ -231,7 +232,7 @@ module.exports = {
       console.log("Error handling Revoke Skill modal:", error);
     }
   },
-  handleCreateItemModal: async (interaction) => {
+  handleCreateItemModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Create Item modal
       const createItemModal = new ModalBuilder()
@@ -288,7 +289,7 @@ module.exports = {
       console.log("Error handling Create Item modal:", error);
     }
   },
-  handleGiveItemModal: async (interaction) => {
+  handleGiveItemModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Give Item modal
       const giveItemModal = new ModalBuilder()
@@ -337,7 +338,7 @@ module.exports = {
       console.log("Error handling Give Item modal:", error);
     }
   },
-  handleRemoveItemModal: async (interaction) => {
+  handleRemoveItemModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Remove Item modal
       const removeItemModal = new ModalBuilder()
@@ -372,7 +373,7 @@ module.exports = {
       console.log("Error handling Remove Item modal:", error);
     }
   },
-  handleDeleteItemModal: async (interaction) => {
+  handleDeleteItemModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Delete Item modal
       const deleteItemModal = new ModalBuilder()
@@ -397,7 +398,7 @@ module.exports = {
       console.log("Error handling Delete Item modal:", error);
     }
   },
-  handleCreateStatusEffectModal: async (interaction) => {
+  handleCreateStatusEffectModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Create Status Effect modal
       const createStatusEffectModal = new ModalBuilder()
@@ -454,7 +455,7 @@ module.exports = {
       console.log("Error handling Create Status Effect modal:", error);
     }
   },
-  handleDeleteStatusEffectModal: async (interaction) => {
+  handleDeleteStatusEffectModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Delete Status Effect modal
       const deleteStatusEffectModal = new ModalBuilder()
@@ -479,7 +480,7 @@ module.exports = {
       console.log("Error handling Delete Status Effect modal:", error);
     }
   },
-  handleGrantStatusEffectModal: async (interaction) => {
+  handleGrantStatusEffectModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Grant Status Effect modal
       const grantStatusEffectModal = new ModalBuilder()
@@ -517,7 +518,7 @@ module.exports = {
       console.log("Error handling Grant Status Effect modal:", error);
     }
   },
-  handleRevokeStatusEffectModal: async (interaction) => {
+  handleRevokeStatusEffectModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Revoke Status Effect modal
       const revokeStatusEffectModal = new ModalBuilder()
@@ -555,7 +556,7 @@ module.exports = {
       console.log("Error handling Revoke Status Effect modal:", error);
     }
   },
-  handleSendMessageModal: async (interaction) => {
+  handleSendMessageModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Send Message modal
       const sendMessageModal = new ModalBuilder()
@@ -592,7 +593,7 @@ module.exports = {
       console.log("Error handling Send Message modal:", error);
     }
   },
-  handleBanUserModal: async (interaction) => {
+  handleBanUserModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Ban User modal
       const banUserModal = new ModalBuilder()
@@ -627,7 +628,7 @@ module.exports = {
       console.log("Error handling Ban User modal:", error);
     }
   },
-  handleKickUserModal: async (interaction) => {
+  handleKickUserModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Kick User modal
       const kickUserModal = new ModalBuilder()
@@ -662,7 +663,7 @@ module.exports = {
       console.log("Error handling Kick User modal:", error);
     }
   },
-  handleTimeoutUserModal: async (interaction) => {
+  handleTimeoutUserModal: async (interaction: typeof Interaction) => {
     try {
       // Set up the Timeout User modal
       const timeoutUserModal = new ModalBuilder()

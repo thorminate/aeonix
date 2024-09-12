@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = default_1;
 // checks if local command is different to existing command
-module.exports = (existingCommand, localCommand) => {
+function default_1(existingCommand, localCommand) {
     // If existingChoices is different to localChoices, return true.
     const areChoicesDifferent = (existingChoices, localChoices) => {
         for (const localChoice of localChoices) {
@@ -39,4 +40,4 @@ module.exports = (existingCommand, localCommand) => {
         return true;
     }
     return false;
-};
+}

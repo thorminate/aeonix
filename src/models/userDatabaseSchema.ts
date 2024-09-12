@@ -1,5 +1,5 @@
 // The database schema. Every user will have their own set of data, here we define what that data is.
-const { Schema, model } = require("mongoose");
+import { Schema, model } from "mongoose";
 
 const userData = new Schema({
   // The unique ID of the user. Will be different for everyone
@@ -85,4 +85,4 @@ const userData = new Schema({
 });
 
 // Exports the model
-module.exports = model("userDatabase", userData);
+export default model("userDatabase", userData);

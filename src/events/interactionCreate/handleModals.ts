@@ -829,6 +829,61 @@ module.exports = async (bot: Client, modalInteraction: Interaction) => {
 
         break;
 
+      case "grant-status-effect-modal":
+        // get input values
+        const grantStatusEffectName = modalInteraction.fields.getTextInputValue(
+          "grant-status-effect-name-input"
+        );
+        const grantStatusEffectTarget =
+          modalInteraction.fields.getTextInputValue(
+            "grant-status-effect-target-input"
+          );
+
+        // Validate the inputs
+        const grantStatusEffectData = await statusEffectData.findOne({
+          statusEffectName: grantStatusEffectName,
+        });
+
+        if (!grantStatusEffectData) {
+          await modalInteraction.reply({
+            content:
+              "Status effect not found, make sure it exists in the database",
+            ephemeral: true,
+          });
+          return;
+        }
+
+        const grantStatusEffectTargetData = await userData.findOne({
+          userId: grantStatusEffectTarget,
+          guildId: modalInteraction.guild.id,
+        });
+
+        if (!grantStatusEffectTargetData) {
+          await modalInteraction.reply({
+            content: "User not found!",
+            ephemeral: true,
+          });
+          return;
+        }
+
+        grantStatusEffectTargetData.statusEffects.push(
+          grantStatusEffectData.statusEffectName
+        );
+
+        await grantStatusEffectTargetData.save();
+        await modalInteraction.reply({
+          content: `Successfully granted status effect ${grantStatusEffectName} to ${grantStatusEffectTarget}.`,
+          ephemeral: true,
+        });
+
+        setTimeout(async () => {
+          grantStatusEffectTargetData.statusEffects =
+            grantStatusEffectTargetData.statusEffects.filter(
+              (effect: any) => effect !== grantStatusEffectData.statusEffectName
+            );
+        }, grantStatusEffectData.statusEffectDuration);
+        break;
+
       // Bot Perform Modals
       case "send-message-modal":
         // get input values
@@ -840,6 +895,7 @@ module.exports = async (bot: Client, modalInteraction: Interaction) => {
           "send-message-content-input"
         );
 
+        // Validate and format the inputs
         if (sendMessageChannel === "here") {
           sendMessageChannel = modalInteraction.channel.id;
         }
@@ -855,7 +911,6 @@ module.exports = async (bot: Client, modalInteraction: Interaction) => {
         }
 
         // send message
-
         await (sendMessageChannelObj as TextChannel).send(sendMessageContent);
         await modalInteraction.reply({
           content: `Sent message in ${sendMessageChannelObj.name}.`,
@@ -863,6 +918,7 @@ module.exports = async (bot: Client, modalInteraction: Interaction) => {
         });
 
         break;
+
       // Moderation Modals
       case "ban-user-modal":
         // get input values

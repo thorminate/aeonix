@@ -1,16 +1,19 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const userData = require("../../models/userDatabaseSchema");
-const { ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ButtonBuilder, ButtonStyle, } = require("discord.js");
+const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseSchema"));
+const discord_js_1 = require("discord.js");
 const selectedValues = [];
 module.exports = async (bot, interaction) => {
     if (!interaction.isStringSelectMenu())
         return;
     switch (interaction.customId) {
         case "species-select":
-            let user = await userData.findOne({ userId: interaction.user.id });
+            let user = await userDatabaseSchema_1.default.findOne({ userId: interaction.user.id });
             if (!user) {
-                const newUser = new userData({
+                const newUser = new userDatabaseSchema_1.default({
                     userId: interaction.user.id,
                     guildId: interaction.guild.id,
                 });
@@ -39,23 +42,23 @@ module.exports = async (bot, interaction) => {
                     user.cognitionMultiplier = 0.9;
                 }
                 await user.save();
-                const classMenu = new StringSelectMenuBuilder()
+                const classMenu = new discord_js_1.StringSelectMenuBuilder()
                     .setCustomId("class-select")
                     .setPlaceholder("Select your class!")
-                    .addOptions(new StringSelectMenuOptionBuilder()
+                    .addOptions(new discord_js_1.StringSelectMenuOptionBuilder()
                     .setLabel("Warrior")
                     .setDescription("Warriors are the most common and versatile class.")
                     .setEmoji("⚔️")
-                    .setValue("Warrior"), new StringSelectMenuOptionBuilder()
+                    .setValue("Warrior"), new discord_js_1.StringSelectMenuOptionBuilder()
                     .setLabel("Ranger")
                     .setDescription("Rangers are known for their quick and stealthy moves.")
                     .setEmoji("🏹")
-                    .setValue("Ranger"), new StringSelectMenuOptionBuilder()
+                    .setValue("Ranger"), new discord_js_1.StringSelectMenuOptionBuilder()
                     .setLabel("Rogue")
                     .setDescription("Rogues are known for their sneaky and stealthy moves.")
                     .setEmoji("🗡️")
                     .setValue("Rogue"));
-                const classRow = new ActionRowBuilder().addComponents(classMenu);
+                const classRow = new discord_js_1.ActionRowBuilder().addComponents(classMenu);
                 interaction.reply({
                     content: "Perfect! Now select your class!",
                     components: [classRow],
@@ -65,7 +68,7 @@ module.exports = async (bot, interaction) => {
             break;
         case "class-select":
             const selectedClass = interaction.values[0];
-            const userClass = await userData.findOne({ userId: interaction.user.id });
+            const userClass = await userDatabaseSchema_1.default.findOne({ userId: interaction.user.id });
             if (userClass) {
                 userClass.class = selectedClass;
                 userClass.isOnboard = true;
@@ -75,14 +78,21 @@ module.exports = async (bot, interaction) => {
                     ephemeral: true,
                 });
                 const onboardingChannel = interaction.guild.channels.cache.get("1270790941892153404");
+                if (!onboardingChannel) {
+                    interaction.reply({
+                        content: "Onboarding channel doesn't exist! Please contact an admin.",
+                        ephemeral: true,
+                    });
+                    return;
+                }
                 const messages = await onboardingChannel.messages.fetch({ limit: 1 });
                 const message = messages.first();
-                const resetButton = new ButtonBuilder()
+                const resetButton = new discord_js_1.ButtonBuilder()
                     .setCustomId("welcome-channel-begin-onboarding")
                     .setLabel("Begin Onboarding")
-                    .setStyle(ButtonStyle.Success)
+                    .setStyle(discord_js_1.ButtonStyle.Success)
                     .setDisabled(false);
-                const resetRow = new ActionRowBuilder().addComponents(resetButton);
+                const resetRow = new discord_js_1.ActionRowBuilder().addComponents(resetButton);
                 await message.edit({
                     components: [resetRow],
                 });
