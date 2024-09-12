@@ -1,4 +1,4 @@
-const { Schema, model } = require("mongoose");
+import { Schema, model } from "mongoose";
 
 const skillData = new Schema({
   skillName: {
@@ -27,4 +27,4 @@ const skillData = new Schema({
   },
 });
 
-module.exports = model("skillData", skillData);
+export default model("skillData", skillData);

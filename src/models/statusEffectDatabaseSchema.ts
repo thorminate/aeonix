@@ -1,4 +1,4 @@
-const { Schema, model } = require("mongoose");
+import { Schema, model } from "mongoose";
 
 const statusEffectData = new Schema({
   statusEffectName: {
@@ -23,4 +23,4 @@ const statusEffectData = new Schema({
   },
 });
 
-module.exports = model("statusEffectData", statusEffectData);
+export default model("statusEffectData", statusEffectData);

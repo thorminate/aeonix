@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const { Schema, model } = require("mongoose");
-const skillData = new Schema({
+const mongoose_1 = require("mongoose");
+const skillData = new mongoose_1.Schema({
     skillName: {
         type: String,
         required: true,
@@ -27,4 +27,4 @@ const skillData = new Schema({
         default: [],
     },
 });
-module.exports = model("skillData", skillData);
+exports.default = (0, mongoose_1.model)("skillData", skillData);

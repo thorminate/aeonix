@@ -39,10 +39,13 @@ const DiscordToken = process.env.TOKEN;
 // Connect to DB and Discord.
 (async () => {
     try {
-        await mongoose_1.default.connect(MongoDBToken);
-        console.log("Connected to DB.");
+        console.log("Attempting to connect to DB...");
+        await mongoose_1.default.connect(MongoDBToken).then(() => console.log("OK"));
+        console.log("Setting up events...");
         (0, eventHandler_1.default)(bot);
-        bot.login(DiscordToken);
+        console.log("OK");
+        console.log("Connecting to Discord...");
+        await bot.login(DiscordToken).then(() => console.log("OK"));
     }
     catch (error) {
         console.log(`Index Error: ${error}`);

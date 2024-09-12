@@ -6,10 +6,13 @@ import {
   ButtonStyle,
   Client,
   Interaction,
+  GuildMemberRoleManager,
+  TextChannel,
+  GuildChannelManager,
 } from "discord.js";
 const userData = require("../../models/userDatabaseSchema");
 
-module.exports = async (bot, interaction) => {
+module.exports = async (bot: Client, interaction: Interaction) => {
   if (!interaction.isButton()) return;
 
   if (interaction.customId === "welcome-channel-begin-onboarding") {
@@ -38,8 +41,9 @@ module.exports = async (bot, interaction) => {
           "You have already completed the onboarding process, but you don't have the player role. Fixing...",
         ephemeral: true,
       });
+
       setTimeout(() => {
-        interaction.member.roles.add(
+        (interaction.member.roles as GuildMemberRoleManager).add(
           interaction.guild.roles.cache.find(
             (role) => role.id === "1270791621289578607"
           )
@@ -53,9 +57,9 @@ module.exports = async (bot, interaction) => {
       });
       return;
     }
-    const onboardingChannel = interaction.guild.channels.cache.get(
-      "1270790941892153404"
-    );
+    const onboardingChannel = (
+      interaction.guild.channels as GuildChannelManager
+    ).cache.get("1270790941892153404") as TextChannel;
     const messages = await onboardingChannel.messages.fetch({ limit: 1 });
     const message = messages.first();
 
@@ -70,12 +74,14 @@ module.exports = async (bot, interaction) => {
 
     // Recreate the button using ButtonBuilder
     const beginOnboardingButton = new ButtonBuilder()
-      .setCustomId(beginOnboardingButtonData.custom_id)
+      .setCustomId("welcome-channel-begin-onboarding")
       .setLabel("Onboarding player...")
-      .setStyle(beginOnboardingButtonData.style)
+      .setStyle(ButtonStyle.Success)
       .setDisabled(true);
 
-    const row = new ActionRowBuilder().addComponents(beginOnboardingButton);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      beginOnboardingButton
+    );
 
     await message.edit({
       components: [row],
@@ -89,12 +95,14 @@ module.exports = async (bot, interaction) => {
     // Function to reset the button
     const resetButton = async () => {
       const resetButton = new ButtonBuilder()
-        .setCustomId(beginOnboardingButtonData.custom_id)
+        .setCustomId("welcome-channel-begin-onboarding")
         .setLabel("Begin Onboarding")
         .setStyle(ButtonStyle.Success)
         .setDisabled(false);
 
-      const resetRow = new ActionRowBuilder().addComponents(resetButton);
+      const resetRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+        resetButton
+      );
 
       await message.edit({
         components: [resetRow],
@@ -135,7 +143,10 @@ module.exports = async (bot, interaction) => {
           .setEmoji("🧟")
           .setValue("orc")
       );
-    const speciesRow = new ActionRowBuilder().addComponents(speciesMenu);
+    const speciesRow =
+      new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+        speciesMenu
+      );
 
     interaction.reply({
       content: "First off, select your species!",

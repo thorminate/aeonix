@@ -6,15 +6,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = getLocalCommands;
 // function to get all local commands
 const path_1 = __importDefault(require("path"));
-const getAllFiles = require("../utils/getAllFiles");
+const getAllFiles_1 = __importDefault(require("../utils/getAllFiles"));
 function getLocalCommands(exceptions = []) {
     // define local commands as an array
     let localCommands = [];
     // get all command categories and store in an array
-    const commandCategories = getAllFiles(path_1.default.join(__dirname, "..", "commands"), true);
+    const commandCategories = (0, getAllFiles_1.default)(path_1.default.join(__dirname, "..", "commands"), true);
     // loop through all command categories...
     for (const commandCategory of commandCategories) {
-        const commandFiles = getAllFiles(commandCategory);
+        const commandFiles = (0, getAllFiles_1.default)(commandCategory);
         // ...and perform the following:
         for (const commandFile of commandFiles) {
             const commandObject = require(commandFile);
