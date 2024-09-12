@@ -9,7 +9,7 @@ module.exports = async (bot: Client, interaction: Interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   // get already registered commands
-  const localCommands = getLocalCommands();
+  const localCommands = await getLocalCommands();
 
   try {
     // check if command name is in localCommands

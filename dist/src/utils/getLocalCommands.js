@@ -3,11 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = getLocalCommands;
 // function to get all local commands
 const path_1 = __importDefault(require("path"));
 const getAllFiles_1 = __importDefault(require("../utils/getAllFiles"));
-function getLocalCommands(exceptions = []) {
+exports.default = async (exceptions = []) => {
     // define local commands as an array
     let localCommands = [];
     // get all command categories and store in an array
@@ -25,4 +24,4 @@ function getLocalCommands(exceptions = []) {
         }
     }
     return localCommands;
-}
+};

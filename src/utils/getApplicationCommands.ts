@@ -10,7 +10,7 @@ export default async function (bot: Client, guildId: string | null) {
     const guild = await bot.guilds.fetch(guildId);
     applicationCommands = guild.commands;
   } else {
-    applicationCommands = await bot.application.commands;
+    applicationCommands = bot.application.commands;
   }
 
   // fetch and return application commands.
