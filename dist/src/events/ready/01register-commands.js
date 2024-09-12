@@ -10,7 +10,7 @@ const getLocalCommands_1 = __importDefault(require("../../utils/getLocalCommands
 module.exports = async (bot) => {
     try {
         // Define local commands and application commands
-        const localCommands = (0, getLocalCommands_1.default)();
+        const localCommands = await (0, getLocalCommands_1.default)();
         const applicationCommands = await (0, getApplicationCommands_1.default)(bot, config_json_1.primaryServer);
         // loop through all local commands
         for (const localCommand of localCommands) {

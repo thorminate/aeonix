@@ -10,7 +10,7 @@ async function default_1(bot, guildId) {
         applicationCommands = guild.commands;
     }
     else {
-        applicationCommands = await bot.application.commands;
+        applicationCommands = bot.application.commands;
     }
     // fetch and return application commands.
     await applicationCommands.fetch();

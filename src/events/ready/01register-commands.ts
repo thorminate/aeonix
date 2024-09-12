@@ -8,7 +8,7 @@ import getLocalCommands from "../../utils/getLocalCommands";
 module.exports = async (bot: Client) => {
   try {
     // Define local commands and application commands
-    const localCommands = getLocalCommands();
+    const localCommands = await getLocalCommands();
     const applicationCommands = await getApplicationCommands(
       bot,
       primaryServer
