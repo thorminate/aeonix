@@ -1,9 +1,9 @@
 // takes a directory and returns an array of all files/folders in that directory.
 
-const path = require("path");
-const fs = require("fs");
+import path from "path";
+import fs from "fs";
 
-module.exports = (directory, foldersOnly = false) => {
+export default function (directory: string, foldersOnly = false) {
   // define fileNames as an array
   let fileNames = [];
 
@@ -30,4 +30,4 @@ module.exports = (directory, foldersOnly = false) => {
   }
 
   return fileNames;
-};
+}

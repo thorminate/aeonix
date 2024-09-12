@@ -1,10 +1,10 @@
 // checks if local command is different to existing command
-module.exports = (existingCommand, localCommand) => {
+export default function (existingCommand: any, localCommand: any) {
   // If existingChoices is different to localChoices, return true.
-  const areChoicesDifferent = (existingChoices, localChoices) => {
+  const areChoicesDifferent = (existingChoices: any, localChoices: any) => {
     for (const localChoice of localChoices) {
       const existingChoice = existingChoices?.find(
-        (choice) => choice.name === localChoice.name
+        (choice: { name: any }) => choice.name === localChoice.name
       );
 
       if (!existingChoice) {
@@ -19,10 +19,10 @@ module.exports = (existingCommand, localCommand) => {
   };
 
   // If existingOptions is different to localOptions, return true.
-  const areOptionsDifferent = (existingOptions, localOptions) => {
+  const areOptionsDifferent = (existingOptions: any, localOptions: any) => {
     for (const localOption of localOptions) {
       const existingOption = existingOptions?.find(
-        (option) => option.name === localOption.name
+        (option: any) => option.name === localOption.name
       );
 
       if (!existingOption) {
@@ -55,4 +55,4 @@ module.exports = (existingCommand, localCommand) => {
   }
 
   return false;
-};
+}

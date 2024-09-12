@@ -1,6 +1,6 @@
-const { ActionRowBuilder } = require("discord.js");
+import { ActionRowBuilder } from "discord.js";
 
-module.exports = (buttons) => {
+export default function (buttons: any) {
   const components = [];
   let currentRow = new ActionRowBuilder();
 
@@ -18,4 +18,4 @@ module.exports = (buttons) => {
   }
 
   return components;
-};
+}

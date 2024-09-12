@@ -1,10 +1,11 @@
 // Register, edit and delete commands
+import { Client } from "discord.js";
 import { primaryServer } from "../../../config.json";
-const areCommandsDifferent = require("../../utils/areCommandsDifferent");
-const getApplicationCommands = require("../../utils/getApplicationCommands");
+import areCommandsDifferent from "../../utils/areCommandsDifferent";
+import getApplicationCommands from "../../utils/getApplicationCommands";
 import getLocalCommands from "../../utils/getLocalCommands";
 
-module.exports = async (bot) => {
+module.exports = async (bot: Client) => {
   try {
     // Define local commands and application commands
     const localCommands = getLocalCommands();
@@ -23,7 +24,7 @@ module.exports = async (bot) => {
 
       // check if command already exists and store in a variable
       const existingCommand = await applicationCommands.cache.find(
-        (cmd) => cmd.name === name
+        (cmd: any) => cmd.name === name
       );
 
       // if command exists, check if it's set to be deleted

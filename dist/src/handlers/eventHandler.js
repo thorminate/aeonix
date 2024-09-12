@@ -6,13 +6,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = eventHandler;
 const path_1 = __importDefault(require("path"));
-const getAllFiles = require("../utils/getAllFiles");
+const getAllFiles_1 = __importDefault(require("../utils/getAllFiles"));
 function eventHandler(bot) {
     // Finds event folders
-    const eventFolders = getAllFiles(path_1.default.join(__dirname, "..", "events"), true);
+    const eventFolders = (0, getAllFiles_1.default)(path_1.default.join(__dirname, "..", "events"), true);
     // Gets event files
     for (const eventFolder of eventFolders) {
-        const eventFiles = getAllFiles(eventFolder);
+        const eventFiles = (0, getAllFiles_1.default)(eventFolder);
         eventFiles.sort((a, b) => a.localeCompare(b));
         const eventName = eventFolder.replace(/\\/g, "/").split("/").pop();
         // Runs files in event folders if folder's name matches event name

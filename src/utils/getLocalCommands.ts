@@ -1,6 +1,6 @@
 // function to get all local commands
 import path from "path";
-const getAllFiles = require("../utils/getAllFiles");
+import getAllFiles from "../utils/getAllFiles";
 
 export default function getLocalCommands(exceptions = []) {
   // define local commands as an array

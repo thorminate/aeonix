@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const { Schema, model } = require("mongoose");
-const statusEffectData = new Schema({
+const mongoose_1 = require("mongoose");
+const statusEffectData = new mongoose_1.Schema({
     statusEffectName: {
         type: String,
         required: true,
@@ -23,4 +23,4 @@ const statusEffectData = new Schema({
         default: [],
     },
 });
-module.exports = model("statusEffectData", statusEffectData);
+exports.default = (0, mongoose_1.model)("statusEffectData", statusEffectData);

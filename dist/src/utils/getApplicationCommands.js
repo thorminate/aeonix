@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-module.exports = async (bot, guildId) => {
+exports.default = default_1;
+async function default_1(bot, guildId) {
     //define applicationCommands.
     let applicationCommands;
     // if guildId is not undefined, fetch guild commands. else fetch global commands.
@@ -14,4 +15,4 @@ module.exports = async (bot, guildId) => {
     // fetch and return application commands.
     await applicationCommands.fetch();
     return applicationCommands;
-};
+}

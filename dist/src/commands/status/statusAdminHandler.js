@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, } = require("discord.js");
+const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, Interaction, } = require("discord.js");
 const userData = require("../../models/userDatabaseSchema");
 module.exports = {
     handleStatsGiverModal: async (interaction) => {

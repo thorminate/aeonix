@@ -1,14 +1,18 @@
-const userData = require("../../models/userDatabaseSchema");
-const {
+import userData from "../../models/userDatabaseSchema";
+import {
   ActionRowBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
   ButtonBuilder,
   ButtonStyle,
-} = require("discord.js");
+  Client,
+  Interaction,
+  TextChannel,
+  GuildMemberRoleManager,
+} from "discord.js";
 
 const selectedValues = [];
-module.exports = async (bot, interaction) => {
+module.exports = async (bot: Client, interaction: Interaction) => {
   if (!interaction.isStringSelectMenu()) return;
 
   switch (interaction.customId) {
@@ -71,7 +75,10 @@ module.exports = async (bot, interaction) => {
               .setValue("Rogue")
           );
 
-        const classRow = new ActionRowBuilder().addComponents(classMenu);
+        const classRow =
+          new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+            classMenu
+          );
 
         interaction.reply({
           content: "Perfect! Now select your class!",
@@ -97,7 +104,16 @@ module.exports = async (bot, interaction) => {
         });
         const onboardingChannel = interaction.guild.channels.cache.get(
           "1270790941892153404"
-        );
+        ) as TextChannel;
+
+        if (!onboardingChannel) {
+          interaction.reply({
+            content:
+              "Onboarding channel doesn't exist! Please contact an admin.",
+            ephemeral: true,
+          });
+          return;
+        }
         const messages = await onboardingChannel.messages.fetch({ limit: 1 });
         const message = messages.first();
         const resetButton = new ButtonBuilder()
@@ -106,13 +122,17 @@ module.exports = async (bot, interaction) => {
           .setStyle(ButtonStyle.Success)
           .setDisabled(false);
 
-        const resetRow = new ActionRowBuilder().addComponents(resetButton);
+        const resetRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+          resetButton
+        );
 
         await message.edit({
           components: [resetRow],
         });
         setTimeout(() => {
-          interaction.member.roles.add("1270791621289578607");
+          (interaction.member.roles as GuildMemberRoleManager).add(
+            "1270791621289578607"
+          );
         }, 4000);
       }
       break;

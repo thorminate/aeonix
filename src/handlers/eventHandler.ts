@@ -2,7 +2,7 @@
 
 import { Client } from "discord.js";
 import path from "path";
-const getAllFiles = require("../utils/getAllFiles");
+import getAllFiles from "../utils/getAllFiles";
 
 export default function eventHandler(bot: Client) {
   // Finds event folders
@@ -11,7 +11,7 @@ export default function eventHandler(bot: Client) {
   // Gets event files
   for (const eventFolder of eventFolders) {
     const eventFiles = getAllFiles(eventFolder);
-    eventFiles.sort((a, b) => a.localeCompare(b));
+    eventFiles.sort((a: string, b: string) => a.localeCompare(b));
 
     const eventName = eventFolder.replace(/\\/g, "/").split("/").pop();
 
