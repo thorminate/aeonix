@@ -2,7 +2,7 @@
 import path from "path";
 import getAllFiles from "../utils/getAllFiles";
 
-export default function getLocalCommands(exceptions = []) {
+export default async (exceptions = []) => {
   // define local commands as an array
   let localCommands = [];
 
@@ -28,4 +28,4 @@ export default function getLocalCommands(exceptions = []) {
   }
 
   return localCommands;
-}
+};

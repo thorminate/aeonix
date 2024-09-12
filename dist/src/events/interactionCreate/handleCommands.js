@@ -12,7 +12,7 @@ module.exports = async (bot, interaction) => {
     if (!interaction.isChatInputCommand())
         return;
     // get already registered commands
-    const localCommands = (0, getLocalCommands_1.default)();
+    const localCommands = await (0, getLocalCommands_1.default)();
     try {
         // check if command name is in localCommands
         const commandObject = localCommands.find((cmd) => cmd.name === interaction.commandName);
