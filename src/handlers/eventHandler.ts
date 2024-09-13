@@ -19,7 +19,7 @@ export default function eventHandler(bot: Client) {
     bot.on(eventName, async (arg) => {
       for (const eventFile of eventFiles) {
         const eventFunction = require(eventFile);
-        await eventFunction(bot, arg);
+        eventFunction(bot, arg);
       }
     });
   }
