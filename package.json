@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "main": "dist/src/index.js",
   "scripts": {
-    "start": "tsc && node dist/src/index.js"
+    "start": "tsc && node dist/src/index.js",
+    "install": "npm i discord.js typescript mongodb mongoose pretty-ms ms"
   },
   "keywords": [],
   "author": "Thorminate",
