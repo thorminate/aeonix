@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // Define Requirements
 const discord_js_1 = require("discord.js");
-const discord_js_rate_limiter_1 = require("discord.js-rate-limiter");
 const mongoose_1 = __importDefault(require("mongoose"));
 const eventHandler_1 = __importDefault(require("./handlers/eventHandler"));
 // Define 'bot'
@@ -34,8 +33,6 @@ const bot = new discord_js_1.Client({
         discord_js_1.IntentsBitField.Flags.GuildPresences,
     ],
 });
-// Define 'RateLimiter'
-const limiter = new discord_js_rate_limiter_1.RateLimiter(1, 1000);
 const MongoDBToken = process.env.MONGODB_URI + "/the_system";
 const DiscordToken = process.env.TOKEN;
 // Connect to DB and Discord.
