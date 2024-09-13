@@ -1,6 +1,5 @@
 // Define Requirements
 import { Client, IntentsBitField } from "discord.js";
-import { RateLimiter } from "discord.js-rate-limiter";
 import mongoose from "mongoose";
 import eventHandler from "./handlers/eventHandler";
 
@@ -30,9 +29,6 @@ const bot = new Client({
     IntentsBitField.Flags.GuildPresences,
   ],
 });
-
-// Define 'RateLimiter'
-const limiter = new RateLimiter(1, 1000);
 
 const MongoDBToken = process.env.MONGODB_URI + "/the_system";
 const DiscordToken = process.env.TOKEN;
