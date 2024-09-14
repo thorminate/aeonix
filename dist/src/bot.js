@@ -3,13 +3,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// Define Requirements
-const discord_js_1 = require("discord.js");
-const mongoose_1 = __importDefault(require("mongoose"));
-const eventHandler_1 = __importDefault(require("./handlers/eventHandler"));
+/**
+ * This file is the main entrypoint for the shards.
+ * It defines the bot and connects it to the Discord and MongoDB.
+ * @param {Client} bot
+ * @param {string} token
+ */
+const discord_js_1 = require("discord.js"); // Get the discord.js library.
+const mongoose_1 = __importDefault(require("mongoose")); // Get the mongoose library.
+const eventHandler_1 = __importDefault(require("./handlers/eventHandler")); // Get the event handler.
 // Define 'bot'
 const bot = new discord_js_1.Client({
+    // Create the bot.
     intents: [
+        // With all the intents.
         discord_js_1.IntentsBitField.Flags.Guilds,
         discord_js_1.IntentsBitField.Flags.GuildModeration,
         discord_js_1.IntentsBitField.Flags.GuildEmojisAndStickers,
@@ -33,20 +40,23 @@ const bot = new discord_js_1.Client({
         discord_js_1.IntentsBitField.Flags.GuildPresences,
     ],
 });
-const MongoDBToken = process.env.MONGODB_URI + "/the_system";
-const DiscordToken = process.env.TOKEN;
+const MongoDBToken = process.env.MONGODB_URI + "/the_system"; // Get the MongoDB token.
+const DiscordToken = process.env.TOKEN; // Get the Discord token.
 // Connect to DB and Discord.
 (async () => {
+    // Connect to MongoDB and Discord asynchronously.
     try {
-        console.log("Attempting to connect to DB...");
-        await mongoose_1.default.connect(MongoDBToken).then(() => console.log("OK"));
-        console.log("Setting up events...");
-        (0, eventHandler_1.default)(bot);
-        console.log("OK");
-        console.log("Connecting to Discord...");
-        await bot.login(DiscordToken).then(() => console.log("OK"));
+        // Try
+        console.log("Attempting to connect to DB..."); // Log that we are attempting to connect to the DB.
+        await mongoose_1.default.connect(MongoDBToken).then(() => console.log("OK")); // Connect to the DB. When the connection is successful, log that it was successful.
+        console.log("Setting up events..."); // Log that we are setting up the events.
+        (0, eventHandler_1.default)(bot); // Set up the events.
+        console.log("OK"); // Log that it was successful.
+        console.log("Connecting to Discord..."); // Log that we are connecting to Discord.
+        await bot.login(DiscordToken).then(() => console.log("OK")); // Connect to Discord. When the connection is successful, log that it was successful.
     }
     catch (error) {
-        console.log(`Index Error: ${error}`);
+        // Catch
+        console.log(`Index Error: ${error}`); // Log the error.
     }
 })();

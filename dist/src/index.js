@@ -23,58 +23,73 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// Sharding!
-const discord_js_1 = require("discord.js");
-const ReadLine = __importStar(require("node:readline"));
+// This is the entrypoint for the the script.
+// This essentially divides the bot into multiple shards for more efficiency.
+const discord_js_1 = require("discord.js"); // First, we import the ShardingManager.
+const ReadLine = __importStar(require("node:readline")); // Then we import the readline module, this is used later for the CLI.
 const manager = new discord_js_1.ShardingManager("./dist/src/bot.js", {
-    token: process.env.TOKEN,
-    respawn: true,
+    // Then we create the ShardingManager with the bot entrypoint.
+    token: process.env.TOKEN, // We use the token from the environment variables.
+    respawn: true, // We make sure the bot will respawn if it crashes.
 });
 manager.on("shardCreate", (shard) => {
-    console.log(`Launched shard ${shard.id}`);
+    // This event is fired when a shard is spawned.
+    shard.on("spawn", () => {
+        shard.on("ready", async () => {
+            // This event is fired when the shard is ready.
+            console.clear(); // Clear the console.
+            console.log(`Logged in as ${await shard.fetchClientValue("user.tag")}!`, `\n   System Info:`, `\n     Running on ${await shard.fetchClientValue("guilds.cache.size")} server(s)!`, `\n     Running with ${await shard.fetchClientValue("users.cache.size")} member(s)!`, `\n     API Latency: ${await shard.fetchClientValue("ws.ping")}ms`, `\n     Shards: ${await shard.fetchClientValue("shard.count")}`); // Log that the the information.
+            const rl = ReadLine.createInterface({
+                // Create the readline interface.
+                input: process.stdin, // input
+                output: process.stdout, // output
+            });
+            rl.setPrompt("> "); // Set the prompt.
+            rl.prompt(); // Give the prompt.
+            rl.on("line", (input) => {
+                // When a line is typed.
+                switch (input.split(" ")[0] // Switch on the first word in the line.
+                ) {
+                    case "help": // Give info on the CLI commands.
+                        console.log("'exit' to quit and turn off the bot", "\n'help' for help", "\n'clear' to clear the console", "\n'echo <text>' to echo text", "\n'eval <code>' to evaluate code");
+                        break;
+                    case "clear": // Clear the console.
+                        console.clear();
+                        break;
+                    case "echo": // Echo the rest of the line.
+                        const echo = input.split(" ")[1];
+                        if (!echo)
+                            console.log("Nothing to echo");
+                        else
+                            console.log(echo);
+                        break;
+                    case "exit": // Exit the bot.
+                        console.log("Exit command received, shutting down...");
+                        rl.question("Are you sure? (y/n) ", (answer) => {
+                            if (answer.toLowerCase() === "y") {
+                                manager.broadcastEval((c) => c.destroy());
+                                setTimeout(() => {
+                                    console.clear();
+                                    process.exit();
+                                }, 1000);
+                            }
+                            else {
+                                console.log("Aborted.");
+                            }
+                        });
+                        break;
+                    default: // Invalid command handling.
+                        console.error("Invalid command");
+                        console.log("Use 'exit' to quit and turn off the bot, or 'help' for help");
+                        break;
+                }
+                rl.prompt(); // re-give the prompt.
+            });
+        });
+    });
 });
-manager
-    .spawn()
-    .then(() => {
-    setTimeout(() => {
-        const rl = ReadLine.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-        });
-        rl.setPrompt("> ");
-        rl.prompt();
-        rl.on("line", (input) => {
-            switch (input) {
-                case "exit":
-                    console.log("Exit command received, shutting down...");
-                    manager.broadcastEval((c) => c.destroy());
-                    process.exit();
-                case "help":
-                    console.log(`'exit' to quit and turn off the bot
-'help' for help
-'clear' to clear the console
-'echo <text>' to echo text`);
-                    break;
-                case "clear":
-                    console.clear();
-                    break;
-                case "echo":
-                    const echo = rl.question("Text: ", (text) => {
-                        console.log(text);
-                    });
-                    break;
-                default:
-                    console.error("Invalid command");
-                    console.log("Use 'exit' to quit and turn off the bot, or 'help' for help");
-                    break;
-            }
-            rl.prompt();
-        });
-    }, 100);
-})
-    .catch((error) => {
-    console.error(`The shard failed to launch: ${error}\n Attempting to restart...`);
-    setTimeout(() => {
-        manager.spawn();
-    }, 5000);
+manager.spawn().catch((error) => {
+    // Spawn the shards. Catch errors.
+    console.error("The shard failed to launch:"); // Log the error.
+    console.error(error.stack, error.message, error.name, error.cause, error); // Log the error.
 });

@@ -1,26 +1,27 @@
 // when an event is triggered, it runs all files in that event's folder
 
-import { Client } from "discord.js";
-import path from "path";
-import getAllFiles from "../utils/getAllFiles";
+import { Client } from "discord.js"; // Get the discord.js library for setting the type of the bot parameter.
+import path from "path"; // Get the path library.
+import getAllFiles from "../utils/getAllFiles"; // Get the getAllFiles function.
 
-export default function eventHandler(bot: Client) {
-  // Finds event folders
-  const eventFolders = getAllFiles(path.join(__dirname, "..", "events"), true);
+export default (bot: Client) => {
+  // Export the function.
+  const eventFolders = getAllFiles(path.join(__dirname, "..", "events"), true); // Get the event folders.
 
-  // Gets event files
   for (const eventFolder of eventFolders) {
-    const eventFiles = getAllFiles(eventFolder);
-    eventFiles.sort((a: string, b: string) => a.localeCompare(b));
+    // Loop through the event folders.
+    const eventFiles = getAllFiles(eventFolder); // Get the event files.
+    eventFiles.sort((a: string, b: string) => a.localeCompare(b)); // Sort the event files.
 
-    const eventName = eventFolder.replace(/\\/g, "/").split("/").pop();
+    const eventName = eventFolder.replace(/\\/g, "/").split("/").pop(); // Get the event name.
 
-    // Runs files in event folders if folder's name matches event name
     bot.on(eventName, async (arg) => {
+      // When the event that is the same name as the event folder is triggered.
       for (const eventFile of eventFiles) {
-        const eventFunction = require(eventFile);
-        eventFunction(bot, arg);
+        // Loop through the event files.
+        const eventFunction = require(eventFile); // Get the event function.
+        eventFunction(bot, arg); // Run the event function.
       }
     });
   }
-}
+};
