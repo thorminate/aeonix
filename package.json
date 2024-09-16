@@ -4,7 +4,7 @@
   "main": "dist/src/index.js",
   "scripts": {
     "start": "tsc && node dist/src/index.js",
-    "install": "npm i discord.js typescript mongodb mongoose pretty-ms ms"
+    "install": "npm i discord.js typescript mongodb mongoose pretty-ms ms && npm i -g typescript && npm i --save-dev @types/ms"
   },
   "keywords": [],
   "author": "Thorminate",
