@@ -1,18 +1,21 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const userData = require("../../models/userDatabaseSchema");
-const skillData = require("../../models/skillDatabaseSchema");
-const itemData = require("../../models/itemDatabaseSchema");
+const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseSchema"));
+const skillDatabaseSchema_1 = __importDefault(require("../../models/skillDatabaseSchema"));
+const itemDatabaseSchema_1 = __importDefault(require("../../models/itemDatabaseSchema"));
 module.exports = async (bot, message) => {
     // if message was not made in a guild, author was a bot or the cooldown is active, return
     if (!message.inGuild() || message.author.bot)
         return;
     async function consumeItem(message, itemName) {
         const userId = message.author.id;
-        const user = await userData.findOne({ userId: userId });
+        const user = await userDatabaseSchema_1.default.findOne({ userId: userId });
         if (user) {
             const itemIndex = Array.prototype.findIndex.call(user.inventory, (item) => item && item.itemName === itemName);
-            const itemDataConsume = await itemData.findOne({ itemName: itemName });
+            const itemDataConsume = await itemDatabaseSchema_1.default.findOne({ itemName: itemName });
             if (itemIndex > -1) {
                 if (!itemDataConsume)
                     return;
@@ -55,10 +58,10 @@ module.exports = async (bot, message) => {
     }
     async function useSkill(message, skillName) {
         const userId = message.author.id;
-        const user = await userData.findOne({ userId: userId });
+        const user = await userDatabaseSchema_1.default.findOne({ userId: userId });
         if (user) {
             if (user.skills.includes(skillName)) {
-                const skill = await skillData.findOne({ skillName: skillName });
+                const skill = await skillDatabaseSchema_1.default.findOne({ skillName: skillName });
                 if (skill) {
                     // Perform the skill action here
                     const skillAction = skill.skillAction;

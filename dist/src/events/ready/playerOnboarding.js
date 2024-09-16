@@ -7,7 +7,7 @@ module.exports = async (bot) => {
         return;
     await welcomeChannel.bulkDelete(100);
     const welcomeChannelBeginOnboarding = new discord_js_1.ButtonBuilder()
-        .setCustomId("welcome-channel-begin-onboarding")
+        .setCustomId("begin-onboarding")
         .setLabel("Begin Onboarding")
         .setStyle(discord_js_1.ButtonStyle.Success)
         .setDisabled(false);
@@ -19,7 +19,8 @@ module.exports = async (bot) => {
             " These channels are for setting you up, (such as initializing your persona into the database, the persona being your digital presence with the system)" +
             " we will also go through the skill system and how other important stats work." +
             "\n\nWhen you have read through the information, please press the button below, and the bot will validate your persona's existence in the database," +
-            " thereafter giving you the <@&1270791621289578607> role.",
+            " thereafter giving you the <@&1270791621289578607> role." +
+            "\n\n-# By pressing 'Begin Onboarding', you agree to the [terms and conditions](<https://github.com/thorminate/The-System/wiki/Terms-of-Service>) and [privacy policy](<https://github.com/thorminate/The-System/wiki/Privacy-Policy>).",
         components: [welcomeChannelBeginOnboardingRow],
     });
 };

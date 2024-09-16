@@ -14,7 +14,7 @@ export default (buttons: any) => {
       currentRow = new ActionRowBuilder<ButtonBuilder>(); // Set currentRow as an ActionRowBuilder.
     }
 
-    currentRow.addComponents(buttons[button]); // Add the button to currentRow.
+    currentRow.addComponents(button); // Add the button to currentRow.
   }
 
   if (currentRow.components.length > 0) {

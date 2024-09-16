@@ -21,7 +21,7 @@ import commandVerify from "../../utils/commandVerify";
 const statusAdminHandler = require("./statusAdminHandler");
 
 module.exports = {
-  name: "stats",
+  name: "status",
   description: "Shows your personal menu",
   //devOnly: Boolean,
   testOnly: true,

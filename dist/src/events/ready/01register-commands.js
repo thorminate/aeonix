@@ -55,6 +55,6 @@ module.exports = async (bot) => {
         }
     }
     catch (error) {
-        console.log(`There was an error: ${error}`);
+        console.log(`There was an error: ${error}`); // Log the error
     }
 };
