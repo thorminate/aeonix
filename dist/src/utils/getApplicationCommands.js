@@ -7,11 +7,12 @@ async function default_1(bot, guildId) {
     if (guildId) {
         // if guildId is not undefined
         const guild = await bot.guilds.fetch(guildId); // fetch guild
-        applicationCommands = guild.commands;
+        applicationCommands = guild.commands; // get guild commands
     }
     else {
-        applicationCommands = bot.application.commands;
+        // if guildId is undefined
+        applicationCommands = bot.application.commands; // get global commands
     }
-    await applicationCommands.fetch();
-    return applicationCommands;
+    await applicationCommands.fetch(); // fetch commands
+    return applicationCommands; // return commands
 }

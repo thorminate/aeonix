@@ -1,88 +1,88 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-// The database schema. Every user will have their own set of data, here we define what that data is.
-const mongoose_1 = require("mongoose");
+// The schema for the user database
+const mongoose_1 = require("mongoose"); // Import the mongoose library.
 const userData = new mongoose_1.Schema({
-    // The unique ID of the user. Will be different for everyone
+    // Define the schema.
     userId: {
+        // Define the user id.
         type: String,
         required: true,
     },
-    // The unique ID of the guild. Will be different for every guild.
     guildId: {
+        // Define the guild id.
         type: String,
         required: true,
     },
-    // The amount of exp the user has.
     exp: {
+        // Define the exp.
         type: Number,
         default: 0,
     },
-    // The level of the user.
     level: {
+        // Define the level.
         type: Number,
         default: 1,
     },
-    // The amount of strength the user has.
     strength: {
+        // Define the strength.
         type: Number,
         default: 0,
     },
-    // The amount of will the user has.
     will: {
+        // Define the will.
         type: Number,
         default: 0,
     },
-    // The amount of cognition/intelligence the user has.
     cognition: {
+        // Define the cognition.
         type: Number,
         default: 0,
     },
-    // array of skills
     skills: {
+        // Define the skills.
         type: Array,
         default: [],
     },
-    // array of items in inventory
     inventory: {
+        // Define the inventory.
         type: Array,
         default: [],
     },
-    // The species of the user
     species: {
+        // Define the species.
         type: String,
         default: "human",
     },
-    // if the user has gone through the onboarding process
     isOnboard: {
+        // Define the isOnboard.
         type: Boolean,
         default: false,
     },
-    // class of the user
     class: {
+        // Define the class.
         type: String,
         default: "warrior",
     },
-    // will multiplier
     willMultiplier: {
+        // Define the will multiplier.
         type: Number,
         default: 1,
     },
-    // strength multiplier
     strengthMultiplier: {
+        // Define the strength multiplier.
         type: Number,
         default: 1,
     },
-    // cognition multiplier
     cognitionMultiplier: {
+        // Define the cognition multiplier.
         type: Number,
         default: 1,
     },
-    // status effects
     statusEffects: {
+        // Define the status effects.
         type: Array,
         default: [],
     },
 });
-// Exports the model
-exports.default = (0, mongoose_1.model)("userDatabase", userData);
+exports.default = (0, mongoose_1.model)("userDatabase", userData); // Export the model.
