@@ -22,17 +22,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 // This is the entrypoint for the the script.
 // This essentially divides the bot into multiple shards for more efficiency.
 const discord_js_1 = require("discord.js"); // First, we import the ShardingManager.
 const ReadLine = __importStar(require("node:readline")); // Then we import the readline module, this is used later for the CLI.
-const getAllFiles_1 = __importDefault(require("./utils/getAllFiles"));
-const path_1 = __importDefault(require("path"));
-const fs = __importStar(require("fs"));
 const manager = new discord_js_1.ShardingManager("./dist/src/bot.js", {
     // Then we create the ShardingManager with the bot entrypoint.
     token: process.env.TOKEN, // We use the token from the environment variables.
@@ -99,36 +93,3 @@ manager.spawn().catch((error) => {
     console.error("The shard failed to launch:"); // Log the error.
     console.error(error.stack, error.message, error.name, error.cause, error); // Log the error.
 });
-function getAllFilesGlobal(root) {
-    const allFiles = [];
-    (0, getAllFiles_1.default)(path_1.default.join(root), true).forEach((folder) => {
-        allFiles.push(getAllFilesGlobal(folder));
-    });
-    (0, getAllFiles_1.default)(path_1.default.join(root), false).forEach((file) => {
-        allFiles.push(file);
-    });
-    return allFiles.flat();
-}
-console.log(getAllFilesGlobal(path_1.default.join(__dirname, "..", "src")));
-function checkFileModified(filePath) {
-    // Get the last modified time of the file
-    const modifiedTime = fs.statSync(filePath).mtimeMs;
-    // Get the current time
-    const currentTime = Date.now();
-    // Get the time the code started
-    const startTime = process.uptime() * 1000;
-    // Check if the file has been modified since the code started
-    if (modifiedTime > currentTime - startTime) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-setInterval(() => {
-    for (const file of getAllFilesGlobal(path_1.default.join(__dirname, "..", "src"))) {
-        if (checkFileModified(file)) {
-            console.log("File has been modified, Restarting...");
-        }
-    }
-}, 2.5 * 1000);

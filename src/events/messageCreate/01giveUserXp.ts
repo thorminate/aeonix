@@ -1,7 +1,7 @@
 // on event messageCreate, do this
 import { Client, Message } from "discord.js";
-const userData = require("../../models/userDatabaseSchema");
-const calculateLevelExp = require("../../utils/calculateLevelExp");
+import userData from "../../models/userDatabaseSchema";
+import calculateLevelExp from "../../utils/calculateLevelExp";
 const cooldowns = new Set();
 
 // gets random number based on set parameters min and max

@@ -1,23 +1,33 @@
+/**
+ * Handles the modals.
+ * @param {Client} bot The instantiating client.
+ * @param {Interaction} modalInteraction The interaction that ran the command.
+ */
 import {
   ButtonBuilder,
   ButtonStyle,
-  Interaction,
+  ModalSubmitInteraction,
   Client,
   GuildMemberRoleManager,
   TextChannel,
 } from "discord.js";
-const buttonWrapper = require("../../utils/buttonWrapper");
-const userData = require("../../models/userDatabaseSchema");
-const skillData = require("../../models/skillDatabaseSchema");
-const itemData = require("../../models/itemDatabaseSchema");
-const statusEffectData = require("../../models/statusEffectDatabaseSchema");
+import buttonWrapper from "../../utils/buttonWrapper";
+import userData from "../../models/userDatabaseSchema";
+import skillData from "../../models/skillDatabaseSchema";
+import itemData from "../../models/itemDatabaseSchema";
+import statusEffectData from "../../models/statusEffectDatabaseSchema";
 import ms from "ms";
 
-module.exports = async (bot: Client, modalInteraction: Interaction) => {
+module.exports = async (
+  bot: Client,
+  modalInteraction: ModalSubmitInteraction
+) => {
+  // Export the function
+  if (!modalInteraction.isModalSubmit()) return;
   try {
-    if (!modalInteraction.isModalSubmit()) return;
-
-    switch (modalInteraction.customId) {
+    switch (
+      modalInteraction.customId // Switch on the (pretty self-explanatory) custom IDs
+    ) {
       // Stat Modal
       case "stats-giver-modal":
         // get input values
@@ -686,8 +696,8 @@ module.exports = async (bot: Client, modalInteraction: Interaction) => {
             (item) => item.itemName === deleteItemName
           );
           if (deleteItemIndex > -1) {
-            userData.inventory.splice(deleteItemIndex, 1);
-            await userData.save();
+            deleteItemUserData.inventory.splice(deleteItemIndex, 1);
+            await deleteItemUserData.save();
           }
         }
 

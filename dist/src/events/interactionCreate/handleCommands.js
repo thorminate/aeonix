@@ -3,26 +3,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// When command is called run this
-const config = require("../../../config.json");
-const { devs, primaryServer } = config;
+/**
+ * Handles the slash commands.
+ * @param {Client} bot The instantiating client.
+ * @param {Interaction} interaction The interaction that ran the command.
+ */
+const config_json_1 = require("../../../config.json");
 const getLocalCommands_1 = __importDefault(require("../../utils/getLocalCommands"));
-module.exports = async (bot, interaction) => {
-    // check if it's a chat input command, else return.
-    if (!interaction.isChatInputCommand())
+module.exports = async (bot, commandInteraction) => {
+    if (!commandInteraction.isChatInputCommand())
         return;
     // get already registered commands
-    const localCommands = await (0, getLocalCommands_1.default)();
+    const localCommands = (0, getLocalCommands_1.default)();
     try {
         // check if command name is in localCommands
-        const commandObject = localCommands.find((cmd) => cmd.name === interaction.commandName);
+        const commandObject = localCommands.find((cmd) => cmd.name === commandInteraction.commandName);
         // if commandObject does not exist, return
         if (!commandObject)
             return;
         // if command is devOnly and user is not an admin, return
         if (commandObject.devOnly) {
-            if ("id" in interaction.member && !devs.includes(interaction.member.id)) {
-                interaction.reply({
+            if ("id" in commandInteraction.member &&
+                !config_json_1.devs.includes(commandInteraction.member.id)) {
+                commandInteraction.reply({
                     content: "Only administrators can run this command",
                     ephemeral: true,
                 });
@@ -30,8 +33,8 @@ module.exports = async (bot, interaction) => {
             }
         }
         // if command is testOnly and user is not in primaryServer, return
-        if (!(interaction.guild.id === primaryServer)) {
-            interaction.reply({
+        if (!(commandInteraction.guild.id === config_json_1.primaryServer)) {
+            commandInteraction.reply({
                 content: "Nuh uh, wrong server.",
                 ephemeral: true,
             });
@@ -40,8 +43,8 @@ module.exports = async (bot, interaction) => {
         // if command requires permissions and user does not have aforementioned permission, return
         if (commandObject.permissionsRequired?.length) {
             for (const permission of commandObject.permissionsRequired) {
-                if (!interaction.member.permissions.has(permission)) {
-                    interaction.reply({
+                if (!commandInteraction.member.permissions.has(permission)) {
+                    commandInteraction.reply({
                         content: "Access Denied",
                         ephemeral: true,
                     });
@@ -52,9 +55,9 @@ module.exports = async (bot, interaction) => {
         // if command requires bot permissions and bot does not have aforementioned permission, return
         if (commandObject.botPermissions?.length) {
             for (const permission of commandObject.botPermissions) {
-                const bot = interaction.guild.members.me;
+                const bot = commandInteraction.guild.members.me;
                 if (!bot.permissions.has(permission)) {
-                    interaction.reply({
+                    commandInteraction.reply({
                         content: "I don't have enough permissions.",
                         ephemeral: true,
                     });
@@ -63,7 +66,7 @@ module.exports = async (bot, interaction) => {
             }
         }
         // if all goes well, run the commands callback function.
-        await commandObject.callback(bot, interaction);
+        await commandObject.callback(bot, commandInteraction);
     }
     catch (error) {
         console.log(`There was an error running this command: ${error}`);

@@ -3,18 +3,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Handles the modals.
+ * @param {Client} bot The instantiating client.
+ * @param {Interaction} modalInteraction The interaction that ran the command.
+ */
 const discord_js_1 = require("discord.js");
-const buttonWrapper = require("../../utils/buttonWrapper");
-const userData = require("../../models/userDatabaseSchema");
-const skillData = require("../../models/skillDatabaseSchema");
-const itemData = require("../../models/itemDatabaseSchema");
-const statusEffectData = require("../../models/statusEffectDatabaseSchema");
+const buttonWrapper_1 = __importDefault(require("../../utils/buttonWrapper"));
+const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseSchema"));
+const skillDatabaseSchema_1 = __importDefault(require("../../models/skillDatabaseSchema"));
+const itemDatabaseSchema_1 = __importDefault(require("../../models/itemDatabaseSchema"));
+const statusEffectDatabaseSchema_1 = __importDefault(require("../../models/statusEffectDatabaseSchema"));
 const ms_1 = __importDefault(require("ms"));
 module.exports = async (bot, modalInteraction) => {
+    // Export the function
+    if (!modalInteraction.isModalSubmit())
+        return;
     try {
-        if (!modalInteraction.isModalSubmit())
-            return;
-        switch (modalInteraction.customId) {
+        switch (modalInteraction.customId // Switch on the (pretty self-explanatory) custom IDs
+        ) {
             // Stat Modal
             case "stats-giver-modal":
                 // get input values
@@ -52,7 +59,7 @@ module.exports = async (bot, modalInteraction) => {
                 }
                 // Fetch the target user and update their stats
                 const statsTargetUserObj = await modalInteraction.guild.members.fetch(statsTargetUserInput);
-                const statsTargetUserData = await userData.findOne({
+                const statsTargetUserData = await userDatabaseSchema_1.default.findOne({
                     userId: statsTargetUserObj.user.id,
                     guildId: modalInteraction.guild.id,
                 });
@@ -166,7 +173,7 @@ module.exports = async (bot, modalInteraction) => {
                     return;
                 }
                 // check if skill already exists
-                if (await skillData.findOne({ skillName: createSkillName })) {
+                if (await skillDatabaseSchema_1.default.findOne({ skillName: createSkillName })) {
                     await modalInteraction.reply({
                         content: "Skill already exists. Please choose a different name.",
                         ephemeral: true,
@@ -174,7 +181,7 @@ module.exports = async (bot, modalInteraction) => {
                     return;
                 }
                 // create a new skill and store it in the database
-                const newSkill = new skillData({
+                const newSkill = new skillDatabaseSchema_1.default({
                     skillName: createSkillName,
                     skillDescription: createSkillDescription,
                     skillAction: createSkillAction,
@@ -201,7 +208,7 @@ module.exports = async (bot, modalInteraction) => {
                     return;
                 }
                 // first delete the skill from all users that have it
-                const skillUsers = await userData.find({
+                const skillUsers = await userDatabaseSchema_1.default.find({
                     skills: { $elemMatch: { skillName: deleteSkillName } },
                 });
                 for (const skillUser of skillUsers) {
@@ -212,7 +219,7 @@ module.exports = async (bot, modalInteraction) => {
                     await skillUser.save();
                 }
                 // delete the skill from the database
-                const deletedSkill = await skillData.deleteOne({
+                const deletedSkill = await skillDatabaseSchema_1.default.deleteOne({
                     skillName: deleteSkillName,
                 });
                 if (deletedSkill.deletedCount === 0) {
@@ -243,7 +250,7 @@ module.exports = async (bot, modalInteraction) => {
                     return;
                 }
                 // grant the skill to the target user
-                const grantSkillTargetUserData = await userData.findOne({
+                const grantSkillTargetUserData = await userDatabaseSchema_1.default.findOne({
                     userId: grantSkillTarget,
                 });
                 if (!grantSkillTargetUserData) {
@@ -253,7 +260,7 @@ module.exports = async (bot, modalInteraction) => {
                     });
                     return;
                 }
-                const grantSkillSkill = await skillData.findOne({
+                const grantSkillSkill = await skillDatabaseSchema_1.default.findOne({
                     skillName: grantSkillName,
                 });
                 if (!grantSkillSkill) {
@@ -287,7 +294,7 @@ module.exports = async (bot, modalInteraction) => {
                     .toLowerCase();
                 const revokeSkillTarget = modalInteraction.fields.getTextInputValue("revoke-skill-target-input");
                 // Validate the inputs
-                const revokeSkillData = await skillData.findOne({
+                const revokeSkillData = await skillDatabaseSchema_1.default.findOne({
                     skillName: revokeSkillName,
                 });
                 if (!revokeSkillData) {
@@ -297,7 +304,7 @@ module.exports = async (bot, modalInteraction) => {
                     });
                     return;
                 }
-                const revokeSkillTargetData = await userData.findOne({
+                const revokeSkillTargetData = await userDatabaseSchema_1.default.findOne({
                     userId: revokeSkillTarget,
                     guildId: modalInteraction.guild.id,
                 });
@@ -395,7 +402,7 @@ module.exports = async (bot, modalInteraction) => {
                     });
                     return;
                 }
-                const existingItem = await itemData.findOne({
+                const existingItem = await itemDatabaseSchema_1.default.findOne({
                     itemName: itemName,
                 });
                 if (existingItem) {
@@ -405,7 +412,7 @@ module.exports = async (bot, modalInteraction) => {
                     });
                     return;
                 }
-                const newItem = new itemData({
+                const newItem = new itemDatabaseSchema_1.default({
                     itemName: itemName,
                     itemDescription: itemDescription,
                     itemActionable: itemActionable,
@@ -431,7 +438,7 @@ module.exports = async (bot, modalInteraction) => {
                     });
                     return;
                 }
-                const giveItemTargetData = await userData.findOne({
+                const giveItemTargetData = await userDatabaseSchema_1.default.findOne({
                     userId: giveItemTarget,
                     guildId: modalInteraction.guild.id,
                 });
@@ -441,7 +448,7 @@ module.exports = async (bot, modalInteraction) => {
                         ephemeral: true,
                     });
                 }
-                const giveItemData = await itemData.findOne({
+                const giveItemData = await itemDatabaseSchema_1.default.findOne({
                     itemName: giveItemName,
                 });
                 if (!giveItemData) {
@@ -478,7 +485,7 @@ module.exports = async (bot, modalInteraction) => {
                     .toLowerCase();
                 const removeItemTarget = modalInteraction.fields.getTextInputValue("remove-item-target-input");
                 // Validate the inputs
-                const removeItemData = await itemData.findOne({
+                const removeItemData = await itemDatabaseSchema_1.default.findOne({
                     itemName: removeItemName,
                 });
                 if (!removeItemData) {
@@ -488,7 +495,7 @@ module.exports = async (bot, modalInteraction) => {
                     });
                     return;
                 }
-                const removeItemTargetData = await userData.findOne({
+                const removeItemTargetData = await userDatabaseSchema_1.default.findOne({
                     userId: removeItemTarget,
                     guildId: modalInteraction.guild.id,
                 });
@@ -522,7 +529,7 @@ module.exports = async (bot, modalInteraction) => {
                     .getTextInputValue("delete-item-name-input")
                     .toLowerCase();
                 // Validate the inputs
-                const deleteItemData = await itemData.findOne({
+                const deleteItemData = await itemDatabaseSchema_1.default.findOne({
                     itemName: deleteItemName,
                 });
                 if (!deleteItemData) {
@@ -534,17 +541,17 @@ module.exports = async (bot, modalInteraction) => {
                 }
                 const deleteItemUsers = deleteItemData.itemUsers;
                 for (const user of deleteItemUsers) {
-                    const deleteItemUserData = await userData.findOne({
+                    const deleteItemUserData = await userDatabaseSchema_1.default.findOne({
                         userId: user,
                         guildId: modalInteraction.guild.id,
                     });
                     const deleteItemIndex = deleteItemUserData.inventory.findIndex((item) => item.itemName === deleteItemName);
                     if (deleteItemIndex > -1) {
-                        userData.inventory.splice(deleteItemIndex, 1);
-                        await userData.save();
+                        deleteItemUserData.inventory.splice(deleteItemIndex, 1);
+                        await deleteItemUserData.save();
                     }
                 }
-                itemData.deleteOne({ itemName: deleteItemName });
+                itemDatabaseSchema_1.default.deleteOne({ itemName: deleteItemName });
                 await modalInteraction.reply({
                     content: `Successfully deleted item ${deleteItemName}.`,
                     ephemeral: true,
@@ -580,7 +587,7 @@ module.exports = async (bot, modalInteraction) => {
                     return;
                 }
                 // check if status effect already exists
-                const statusEffectExistingData = await statusEffectData.findOne({
+                const statusEffectExistingData = await statusEffectDatabaseSchema_1.default.findOne({
                     statusEffectName: statusEffectName,
                 });
                 if (statusEffectExistingData) {
@@ -601,7 +608,7 @@ module.exports = async (bot, modalInteraction) => {
                     return;
                 }
                 // create status effect
-                const statusEffectNew = new statusEffectData({
+                const statusEffectNew = new statusEffectDatabaseSchema_1.default({
                     statusEffectName: statusEffectName,
                     statusEffectDuration: statusEffectDurationMs,
                     statusEffectDescription: statusEffectDescription,
@@ -619,7 +626,7 @@ module.exports = async (bot, modalInteraction) => {
                     .getTextInputValue("delete-status-effect-name-input")
                     .toLowerCase();
                 // Validate the inputs
-                const deleteStatusEffectData = await statusEffectData.findOne({
+                const deleteStatusEffectData = await statusEffectDatabaseSchema_1.default.findOne({
                     statusEffectName: deleteStatusEffectName,
                 });
                 if (!deleteStatusEffectData) {
@@ -631,13 +638,13 @@ module.exports = async (bot, modalInteraction) => {
                 }
                 // delete status effect from all users
                 deleteStatusEffectData.statusEffectUsers.forEach(async (user) => {
-                    await userData.findOne({ userId: user }).then((user) => {
+                    await userDatabaseSchema_1.default.findOne({ userId: user }).then((user) => {
                         if (user) {
                             user.statusEffects = user.statusEffects.filter((effect) => effect.statusEffectName !== deleteStatusEffectName);
                         }
                     });
                 });
-                await statusEffectData.deleteOne({
+                await statusEffectDatabaseSchema_1.default.deleteOne({
                     statusEffectName: deleteStatusEffectName,
                 });
                 await modalInteraction.reply({
@@ -650,7 +657,7 @@ module.exports = async (bot, modalInteraction) => {
                 const grantStatusEffectName = modalInteraction.fields.getTextInputValue("grant-status-effect-name-input");
                 const grantStatusEffectTarget = modalInteraction.fields.getTextInputValue("grant-status-effect-target-input");
                 // Validate the inputs
-                const grantStatusEffectData = await statusEffectData.findOne({
+                const grantStatusEffectData = await statusEffectDatabaseSchema_1.default.findOne({
                     statusEffectName: grantStatusEffectName,
                 });
                 if (!grantStatusEffectData) {
@@ -660,7 +667,7 @@ module.exports = async (bot, modalInteraction) => {
                     });
                     return;
                 }
-                const grantStatusEffectTargetData = await userData.findOne({
+                const grantStatusEffectTargetData = await userDatabaseSchema_1.default.findOne({
                     userId: grantStatusEffectTarget,
                     guildId: modalInteraction.guild.id,
                 });
@@ -734,7 +741,7 @@ module.exports = async (bot, modalInteraction) => {
                 await modalInteraction.reply({
                     content: "Are you sure you want to ban this user?",
                     ephemeral: true,
-                    components: await buttonWrapper([buttonConfirm, buttonCancel]),
+                    components: await (0, buttonWrapper_1.default)([buttonConfirm, buttonCancel]),
                 });
                 const collector = modalInteraction.channel.createMessageComponentCollector({
                     filter: (m) => m.user.id === modalInteraction.user.id,

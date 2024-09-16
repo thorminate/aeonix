@@ -1,7 +1,7 @@
 import { Message, Client } from "discord.js";
-const userData = require("../../models/userDatabaseSchema");
-const skillData = require("../../models/skillDatabaseSchema");
-const itemData = require("../../models/itemDatabaseSchema");
+import userData from "../../models/userDatabaseSchema";
+import skillData from "../../models/skillDatabaseSchema";
+import itemData from "../../models/itemDatabaseSchema";
 
 module.exports = async (bot: Client, message: Message) => {
   // if message was not made in a guild, author was a bot or the cooldown is active, return

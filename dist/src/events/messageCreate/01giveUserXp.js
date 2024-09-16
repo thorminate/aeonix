@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const userData = require("../../models/userDatabaseSchema");
-const calculateLevelExp = require("../../utils/calculateLevelExp");
+const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseSchema"));
+const calculateLevelExp_1 = __importDefault(require("../../utils/calculateLevelExp"));
 const cooldowns = new Set();
 // gets random number based on set parameters min and max
 function getRandomExp(min, max) {
@@ -24,12 +27,12 @@ module.exports = async (bot, message) => {
     };
     try {
         // gets userData(aka level) from database based on query
-        const level = await userData.findOne(query);
+        const level = await userDatabaseSchema_1.default.findOne(query);
         // if userData(aka level) exists in database, give exp to user.
         if (level) {
             level.exp += expToGive;
             // if user has gained enough exp to level up, level up and say so to user.
-            if (level.exp > calculateLevelExp(level.level)) {
+            if (level.exp > (0, calculateLevelExp_1.default)(level.level)) {
                 const strengthMultiplied = 12 * level.strengthMultiplier;
                 const willMultiplied = 12 * level.willMultiplier;
                 const cognitionMultiplied = 12 * level.cognitionMultiplier;
@@ -63,7 +66,7 @@ module.exports = async (bot, message) => {
             // if userData(aka level) doesn't exist in database, create it and give exp to user.
         }
         else {
-            const newUser = new userData({
+            const newUser = new userDatabaseSchema_1.default({
                 userId: message.author.id,
                 guildId: message.guild.id,
                 exp: expToGive,
