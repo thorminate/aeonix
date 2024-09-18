@@ -31,7 +31,7 @@ module.exports = async (bot: Client) => {
       " we will also go through the skill system and how other important stats work." +
       "\n\nWhen you have read through the information, please press the button below, and the bot will validate your persona's existence in the database," +
       " thereafter giving you the <@&1270791621289578607> role." +
-      "\n\n-# By pressing 'Begin Onboarding', you agree to the [terms and conditions](<https://github.com/thorminate/The-System/wiki/Terms-of-Service>) and [privacy policy](<https://github.com/thorminate/The-System/wiki/Privacy-Policy>).",
+      "\n\nBy pressing 'Begin Onboarding', you agree to the [Terms of Service](<https://github.com/thorminate/The-System/wiki/Terms-of-Service>) and [Privacy Policy](<https://github.com/thorminate/The-System/wiki/Privacy-Policy>).",
     components: [welcomeChannelBeginOnboardingRow],
   });
 };
