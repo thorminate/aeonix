@@ -13,6 +13,6 @@ async function default_1(bot, guildId) {
         // if guildId is undefined
         applicationCommands = bot.application.commands; // get global commands
     }
-    await applicationCommands.fetch(); // fetch commands
+    await applicationCommands.fetch({}); // fetch commands
     return applicationCommands; // return commands
 }

@@ -46,49 +46,49 @@ manager.spawn().catch((error) => {
     console.error("The shard failed to launch:"); // Log the error.
     console.error(error.stack, error.message, error.name, error.cause, error); // Log the error.
 });
+const rl = ReadLine.createInterface({
+    // Create the readline interface.
+    input: process.stdin, // input
+    output: process.stdout, // output
+});
+rl.setPrompt("> "); // Set the prompt.
 setTimeout(() => {
-    const rl = ReadLine.createInterface({
-        // Create the readline interface.
-        input: process.stdin, // input
-        output: process.stdout, // output
-    });
-    rl.setPrompt("> "); // Set the prompt.
     rl.prompt(); // Give the prompt.
-    rl.on("line", async (input) => {
-        // When a line is typed.
-        switch (input.split(" ")[0] // Switch on the first word in the line.
-        ) {
-            case "help": // Give info on the CLI commands.
-                console.log("'exit' to quit and turn off the bot", "\n'help' for help", "\n'clear' to clear the console", "\n'echo <text>' to echo text", "\n'restart' to restart the bot");
-                break; //
-            case "clear": // Clear the console.
+}, 100); // Give the prompt.
+rl.on("line", async (input) => {
+    // When a line is typed.
+    switch (input.split(" ")[0] // Switch on the first word in the line.
+    ) {
+        case "help": // Give info on the CLI commands.
+            console.log("'exit' to quit and turn off the bot", "\n'help' for help", "\n'clear' to clear the console", "\n'echo <text>' to echo text", "\n'restart' to restart the bot");
+            break; //
+        case "clear": // Clear the console.
+            console.clear();
+            break;
+        case "echo": // Echo the rest of the line.
+            const echo = input.split(" ")[1];
+            if (!echo)
+                console.log("Nothing to echo");
+            else
+                console.log(echo);
+            break;
+        case "exit": // Exit the bot.
+            console.log("Exit command received, shutting down...");
+            manager.broadcastEval((c) => c.destroy());
+            setTimeout(() => {
                 console.clear();
-                break;
-            case "echo": // Echo the rest of the line.
-                const echo = input.split(" ")[1];
-                if (!echo)
-                    console.log("Nothing to echo");
-                else
-                    console.log(echo);
-                break;
-            case "exit": // Exit the bot.
-                console.log("Exit command received, shutting down...");
-                manager.broadcastEval((c) => c.destroy());
-                setTimeout(() => {
-                    console.clear();
-                    process.exit();
-                }, 1000);
-                break;
-            case "restart": // Restart the bot.
-                console.log("Restart command received, restarting...");
-                await manager.broadcastEval((c) => c.destroy());
-                await manager.respawnAll();
-                break;
-            default: // Invalid command handling.
-                console.error("Invalid command");
-                console.log("Use 'exit' to quit and turn off the bot, or 'help' for help");
-                break;
-        }
-        rl.prompt(); // re-give the prompt.
-    });
-}, 2500);
+                process.exit();
+            }, 1000);
+            break;
+        case "restart": // Restart the bot.
+            console.log("Restart command received, restarting...");
+            await manager.broadcastEval((c) => c.destroy());
+            await manager.respawnAll();
+            break;
+        default: // Invalid command handling.
+            console.error("Invalid command");
+            console.log("Use 'exit' to quit and turn off the bot, or 'help' for help");
+            break;
+    }
+    rl.prompt(); // re-give the prompt.
+});
