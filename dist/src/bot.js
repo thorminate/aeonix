@@ -47,13 +47,18 @@ const DiscordToken = process.env.TOKEN; // Get the Discord token.
     // Connect to MongoDB and Discord asynchronously.
     try {
         // Try
-        console.log("Attempting to connect to DB..."); // Log that we are attempting to connect to the DB.
-        await mongoose_1.default.connect(MongoDBToken).then(() => console.log("OK")); // Connect to the DB. When the connection is successful, log that it was successful.
-        console.log("Setting up events..."); // Log that we are setting up the events.
+        process.stdout.write("Attempting to connect to DB..."); // Log that we are attempting to connect to the DB.
+        await mongoose_1.default.connect(MongoDBToken).then(() => {
+            //Change the text to say "Attempting to connect to DB... Connected"
+            process.stdout.write(" Connected\n");
+        }); // Connect to the DB. When the connection is successful, log that it was successful.
+        process.stdout.write("Setting up events..."); // Log that we are setting up the events.
         (0, eventHandler_1.default)(bot); // Set up the events.
-        console.log("OK"); // Log that it was successful.
-        console.log("Connecting to Discord..."); // Log that we are connecting to Discord.
-        await bot.login(DiscordToken).then(() => console.log("OK")); // Connect to Discord. When the connection is successful, log that it was successful.
+        process.stdout.write(" Confirmed\n");
+        process.stdout.write("Establishing connection to Discord..."); // Log that we are connecting to Discord.
+        await bot
+            .login(DiscordToken)
+            .then(() => process.stdout.write(" Connected\n")); // Connect to Discord. When the connection is successful, log that it was successful.
     }
     catch (error) {
         // Catch

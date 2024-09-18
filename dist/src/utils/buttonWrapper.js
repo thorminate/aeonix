@@ -13,11 +13,7 @@ exports.default = (buttons) => {
             components.push(currentRow); // Push currentRow to components.
             currentRow = new discord_js_1.ActionRowBuilder(); // Set currentRow as an ActionRowBuilder.
         }
-<<<<<<< HEAD
-        currentRow.addComponents(buttons[button]); // Add the button to currentRow.
-=======
         currentRow.addComponents(button); // Add the button to currentRow.
->>>>>>> 9ba4f68 (More commenting and bug fixing.)
     }
     if (currentRow.components.length > 0) {
         // If currentRow has components.

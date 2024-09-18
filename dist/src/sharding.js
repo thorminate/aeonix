@@ -52,7 +52,7 @@ manager.on("shardCreate", (shard) => {
                 ) {
                     case "help": // Give info on the CLI commands.
                         console.log("'exit' to quit and turn off the bot", "\n'help' for help", "\n'clear' to clear the console", "\n'echo <text>' to echo text", "\n'eval <code>' to evaluate code");
-                        break;
+                        break; //
                     case "clear": // Clear the console.
                         console.clear();
                         break;
