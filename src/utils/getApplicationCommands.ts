@@ -1,19 +1,24 @@
-// gets application commands from guild or global.
-import { Client } from "discord.js";
+import {
+  Client,
+  ApplicationCommandManager,
+  GuildApplicationCommandManager,
+} from "discord.js"; // Get the discord.js library.
 
 export default async function (bot: Client, guildId: string | null) {
-  //define applicationCommands.
-  let applicationCommands: any;
+  // Export the function.
+  let applicationCommands:
+    | ApplicationCommandManager
+    | GuildApplicationCommandManager; // define applicationCommands.
 
-  // if guildId is not undefined, fetch guild commands. else fetch global commands.
   if (guildId) {
-    const guild = await bot.guilds.fetch(guildId);
-    applicationCommands = guild.commands;
+    // if guildId is not undefined
+    const guild = await bot.guilds.fetch(guildId); // fetch guild
+    applicationCommands = guild.commands; // get guild commands
   } else {
-    applicationCommands = bot.application.commands;
+    // if guildId is undefined
+    applicationCommands = bot.application.commands; // get global commands
   }
 
-  // fetch and return application commands.
-  await applicationCommands.fetch();
-  return applicationCommands;
+  await applicationCommands.fetch({}); // fetch commands
+  return applicationCommands; // return commands
 }

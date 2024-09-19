@@ -3,14 +3,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = default_1;
 // checks if local command is different to existing command
 function default_1(existingCommand, localCommand) {
-    // If existingChoices is different to localChoices, return true.
+    // Export the function.
     const areChoicesDifferent = (existingChoices, localChoices) => {
+        // Define the areChoicesDifferent function.
         for (const localChoice of localChoices) {
-            const existingChoice = existingChoices?.find((choice) => choice.name === localChoice.name);
+            // Loop through the localChoices array.
+            const existingChoice = existingChoices?.find(
+            // Find the choice in the existingChoices array.
+            (choice) => choice.name === localChoice.name // If the choice name matches the localChoice name, return true.
+            );
             if (!existingChoice) {
+                // If the existingChoice is not found, return true.
                 return true;
             }
             if (localChoice.value !== existingChoice.value) {
+                // If the localChoice value is different from the existingChoice value, return true.
                 return true;
             }
         }
@@ -18,23 +25,33 @@ function default_1(existingCommand, localCommand) {
     };
     // If existingOptions is different to localOptions, return true.
     const areOptionsDifferent = (existingOptions, localOptions) => {
+        // Define the areOptionsDifferent function.
         for (const localOption of localOptions) {
-            const existingOption = existingOptions?.find((option) => option.name === localOption.name);
+            // Loop through the localOptions array.
+            const existingOption = existingOptions?.find(
+            // Find the option in the existingOptions array.
+            (option) => option.name === localOption.name // If the option name matches the localOption name, return true.
+            );
             if (!existingOption) {
+                // If the existingOption is not found, return true.
                 return true;
             }
-            if (localOption.description !== existingOption.description ||
-                localOption.type !== existingOption.type ||
-                (localOption.required || false) !== existingOption.required ||
+            if (localOption.description !== existingOption.description || // If the localOption description is different from the existingOption description, return true.
+                localOption.type !== existingOption.type || // If the localOption type is different from the existingOption type, return true.
+                (localOption.required || false) !== existingOption.required || // If the localOption required is different from the existingOption required, return true.
                 (localOption.choices?.length || 0) !==
-                    (existingOption.choices?.length || 0) ||
-                areChoicesDifferent(localOption.choices || [], existingOption.choices || [])) {
+                    (existingOption.choices?.length || 0) || // If the localOption choices length is different from the existingOption choices length, return true.
+                areChoicesDifferent(
+                // If the areChoicesDifferent function returns true, return true.
+                localOption.choices || [], existingOption.choices || [])) {
                 return true;
             }
         }
         return false;
     };
-    if (existingCommand.description !== localCommand.description ||
+    if (
+    // If the following conditions are true, return true.
+    existingCommand.description !== localCommand.description ||
         existingCommand.options?.length !== (localCommand.options?.length || 0) ||
         areOptionsDifferent(existingCommand.options, localCommand.options || [])) {
         return true;

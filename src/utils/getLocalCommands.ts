@@ -1,31 +1,31 @@
-// function to get all local commands
-import path from "path";
-import getAllFiles from "../utils/getAllFiles";
+import path from "path"; // Get the path library.
+import getAllFiles from "../utils/getAllFiles"; // Get the getAllFiles function.
 
-export default async (exceptions = []) => {
-  // define local commands as an array
-  let localCommands = [];
+export default (exceptions = []) => {
+  // Export the function.
+  let localCommands = []; // define local commands as an array
 
-  // get all command categories and store in an array
   const commandCategories = getAllFiles(
-    path.join(__dirname, "..", "commands"),
-    true
+    // get all command categories and store in an array
+    path.join(__dirname, "..", "commands"), // get the path to the commands folder
+    true // folders only
   );
 
-  // loop through all command categories...
   for (const commandCategory of commandCategories) {
-    const commandFiles = getAllFiles(commandCategory);
-    // ...and perform the following:
+    // loop through all command categories.
+    const commandFiles = getAllFiles(commandCategory); // get all files in the command category
     for (const commandFile of commandFiles) {
-      const commandObject = require(commandFile);
+      // loop through all files in the command category
+      const commandObject = require(commandFile); // require the file
 
       if (exceptions.includes(commandObject.name)) {
-        continue;
+        // if the command name is in the exceptions array
+        continue; // skip the command
       }
 
-      localCommands.push(commandObject);
+      localCommands.push(commandObject); // add the command to the local commands array
     }
   }
 
-  return localCommands;
+  return localCommands; // return the array of local commands
 };

@@ -1,14 +1,13 @@
-const {
+import {
   ModalBuilder,
   TextInputBuilder,
   TextInputStyle,
   ActionRowBuilder,
-  Interaction,
-} = require("discord.js");
-const userData = require("../../models/userDatabaseSchema");
+  CommandInteraction,
+} from "discord.js";
 
 module.exports = {
-  handleStatsGiverModal: async (interaction: typeof Interaction) => {
+  handleStatsGiverModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Stats Giver modal
       const statsGiverModal = new ModalBuilder()
@@ -43,18 +42,20 @@ module.exports = {
         .setRequired(true)
         .setMinLength(18);
 
-      const statsGiverRow = new ActionRowBuilder().addComponents(
-        statsGiverInput
-      );
-      const statsGiverVariantRow = new ActionRowBuilder().addComponents(
-        statsGiverVariantInput
-      );
-      const statsGiverTargetRow = new ActionRowBuilder().addComponents(
-        statsGiverTargetInput
-      );
-      const statsGiverModifierRow = new ActionRowBuilder().addComponents(
-        statsGiverModifierInput
-      );
+      const statsGiverRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(statsGiverInput);
+      const statsGiverVariantRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          statsGiverVariantInput
+        );
+      const statsGiverTargetRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          statsGiverTargetInput
+        );
+      const statsGiverModifierRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          statsGiverModifierInput
+        );
       statsGiverModal.addComponents(
         statsGiverRow,
         statsGiverVariantRow,
@@ -68,7 +69,7 @@ module.exports = {
       console.log("Error handling Stats Giver modal:", error);
     }
   },
-  handleCreateSkillModal: async (interaction: typeof Interaction) => {
+  handleCreateSkillModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Create Skill modal
       const createSkillModal = new ModalBuilder()
@@ -105,22 +106,27 @@ module.exports = {
         .setStyle(TextInputStyle.Short)
         .setRequired(true);
 
-      const createSkillWillRow = new ActionRowBuilder().addComponents(
-        createSkillWillInput
-      );
-      const createSkillCooldownRow = new ActionRowBuilder().addComponents(
-        createSkillCooldownInput
-      );
+      const createSkillWillRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          createSkillWillInput
+        );
+      const createSkillCooldownRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          createSkillCooldownInput
+        );
 
-      const createSkillActionRow = new ActionRowBuilder().addComponents(
-        createSkillActionInput
-      );
-      const createSkillDescriptionRow = new ActionRowBuilder().addComponents(
-        createSkillDescriptionInput
-      );
-      const createSkillNameRow = new ActionRowBuilder().addComponents(
-        createSkillNameInput
-      );
+      const createSkillActionRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          createSkillActionInput
+        );
+      const createSkillDescriptionRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          createSkillDescriptionInput
+        );
+      const createSkillNameRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          createSkillNameInput
+        );
 
       createSkillModal.addComponents(
         createSkillNameRow,
@@ -136,7 +142,7 @@ module.exports = {
       console.log("Error handling Create Skill modal:", error);
     }
   },
-  handleDeleteSkillModal: async (interaction: typeof Interaction) => {
+  handleDeleteSkillModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Delete Skill modal
 
@@ -150,9 +156,10 @@ module.exports = {
         .setStyle(TextInputStyle.Short)
         .setRequired(true);
 
-      const deleteSkillNameRow = new ActionRowBuilder().addComponents(
-        deleteSkillNameInput
-      );
+      const deleteSkillNameRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          deleteSkillNameInput
+        );
 
       deleteSkillModal.addComponents(deleteSkillNameRow);
 
@@ -162,7 +169,7 @@ module.exports = {
       console.log("Error handling Delete Skill modal:", error);
     }
   },
-  handleGrantSkillModal: async (interaction: typeof Interaction) => {
+  handleGrantSkillModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Grant Skill modal
       const grantSkillModal = new ModalBuilder()
@@ -182,12 +189,14 @@ module.exports = {
         .setRequired(true)
         .setMinLength(18);
 
-      const grantSkillTargetRow = new ActionRowBuilder().addComponents(
-        grantSkillTargetInput
-      );
-      const grantSkillNameRow = new ActionRowBuilder().addComponents(
-        grantSkillNameInput
-      );
+      const grantSkillTargetRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          grantSkillTargetInput
+        );
+      const grantSkillNameRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          grantSkillNameInput
+        );
 
       grantSkillModal.addComponents(grantSkillNameRow, grantSkillTargetRow);
 
@@ -197,7 +206,7 @@ module.exports = {
       console.log("Error handling Grant Skill modal:", error);
     }
   },
-  handleRevokeSkillModal: async (interaction: typeof Interaction) => {
+  handleRevokeSkillModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Revoke Skill modal
       const revokeSkillModal = new ModalBuilder()
@@ -217,12 +226,14 @@ module.exports = {
         .setStyle(TextInputStyle.Short)
         .setRequired(true);
 
-      const revokeSkillTargetRow = new ActionRowBuilder().addComponents(
-        revokeSkillTargetInput
-      );
-      const revokeSkillNameRow = new ActionRowBuilder().addComponents(
-        revokeSkillNameInput
-      );
+      const revokeSkillTargetRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          revokeSkillTargetInput
+        );
+      const revokeSkillNameRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          revokeSkillNameInput
+        );
 
       revokeSkillModal.addComponents(revokeSkillNameRow, revokeSkillTargetRow);
 
@@ -232,7 +243,7 @@ module.exports = {
       console.log("Error handling Revoke Skill modal:", error);
     }
   },
-  handleCreateItemModal: async (interaction: typeof Interaction) => {
+  handleCreateItemModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Create Item modal
       const createItemModal = new ModalBuilder()
@@ -263,18 +274,22 @@ module.exports = {
         .setStyle(TextInputStyle.Paragraph)
         .setRequired(true);
 
-      const createItemNameRow = new ActionRowBuilder().addComponents(
-        createItemNameInput
-      );
-      const createItemDescriptionRow = new ActionRowBuilder().addComponents(
-        createItemDescriptionInput
-      );
-      const createItemActionableRow = new ActionRowBuilder().addComponents(
-        createItemActionableInput
-      );
-      const createItemActionRow = new ActionRowBuilder().addComponents(
-        createItemActionInput
-      );
+      const createItemNameRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          createItemNameInput
+        );
+      const createItemDescriptionRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          createItemDescriptionInput
+        );
+      const createItemActionableRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          createItemActionableInput
+        );
+      const createItemActionRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          createItemActionInput
+        );
 
       createItemModal.addComponents(
         createItemNameRow,
@@ -289,7 +304,7 @@ module.exports = {
       console.log("Error handling Create Item modal:", error);
     }
   },
-  handleGiveItemModal: async (interaction: typeof Interaction) => {
+  handleGiveItemModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Give Item modal
       const giveItemModal = new ModalBuilder()
@@ -316,15 +331,18 @@ module.exports = {
         .setRequired(true)
         .setMinLength(1);
 
-      const giveItemTargetRow = new ActionRowBuilder().addComponents(
-        giveItemTargetInput
-      );
-      const giveItemNameRow = new ActionRowBuilder().addComponents(
-        giveItemNameInput
-      );
-      const giveItemAmountRow = new ActionRowBuilder().addComponents(
-        giveItemAmountInput
-      );
+      const giveItemTargetRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          giveItemTargetInput
+        );
+      const giveItemNameRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          giveItemNameInput
+        );
+      const giveItemAmountRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          giveItemAmountInput
+        );
 
       giveItemModal.addComponents(
         giveItemNameRow,
@@ -338,7 +356,7 @@ module.exports = {
       console.log("Error handling Give Item modal:", error);
     }
   },
-  handleRemoveItemModal: async (interaction: typeof Interaction) => {
+  handleRemoveItemModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Remove Item modal
       const removeItemModal = new ModalBuilder()
@@ -358,12 +376,14 @@ module.exports = {
         .setStyle(TextInputStyle.Short)
         .setRequired(true);
 
-      const removeItemTargetRow = new ActionRowBuilder().addComponents(
-        removeItemTargetInput
-      );
-      const removeItemNameRow = new ActionRowBuilder().addComponents(
-        removeItemNameInput
-      );
+      const removeItemTargetRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          removeItemTargetInput
+        );
+      const removeItemNameRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          removeItemNameInput
+        );
 
       removeItemModal.addComponents(removeItemNameRow, removeItemTargetRow);
 
@@ -373,7 +393,7 @@ module.exports = {
       console.log("Error handling Remove Item modal:", error);
     }
   },
-  handleDeleteItemModal: async (interaction: typeof Interaction) => {
+  handleDeleteItemModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Delete Item modal
       const deleteItemModal = new ModalBuilder()
@@ -386,9 +406,10 @@ module.exports = {
         .setStyle(TextInputStyle.Short)
         .setRequired(true);
 
-      const deleteItemNameRow = new ActionRowBuilder().addComponents(
-        deleteItemNameInput
-      );
+      const deleteItemNameRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          deleteItemNameInput
+        );
 
       deleteItemModal.addComponents(deleteItemNameRow);
 
@@ -398,7 +419,7 @@ module.exports = {
       console.log("Error handling Delete Item modal:", error);
     }
   },
-  handleCreateStatusEffectModal: async (interaction: typeof Interaction) => {
+  handleCreateStatusEffectModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Create Status Effect modal
       const createStatusEffectModal = new ModalBuilder()
@@ -429,18 +450,22 @@ module.exports = {
         .setStyle(TextInputStyle.Short)
         .setRequired(true);
 
-      const createStatusEffectNameRow = new ActionRowBuilder().addComponents(
-        createStatusEffectNameInput
-      );
+      const createStatusEffectNameRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          createStatusEffectNameInput
+        );
       const createStatusEffectDescriptionRow =
-        new ActionRowBuilder().addComponents(
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
           createStatusEffectDescriptionInput
         );
-      const createStatusEffectActionRow = new ActionRowBuilder().addComponents(
-        createStatusEffectActionInput
-      );
+      const createStatusEffectActionRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          createStatusEffectActionInput
+        );
       const createStatusEffectDurationRow =
-        new ActionRowBuilder().addComponents(createStatusEffectDurationInput);
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          createStatusEffectDurationInput
+        );
 
       createStatusEffectModal.addComponents(
         createStatusEffectNameRow,
@@ -455,7 +480,7 @@ module.exports = {
       console.log("Error handling Create Status Effect modal:", error);
     }
   },
-  handleDeleteStatusEffectModal: async (interaction: typeof Interaction) => {
+  handleDeleteStatusEffectModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Delete Status Effect modal
       const deleteStatusEffectModal = new ModalBuilder()
@@ -468,9 +493,10 @@ module.exports = {
         .setStyle(TextInputStyle.Short)
         .setRequired(true);
 
-      const deleteStatusEffectNameRow = new ActionRowBuilder().addComponents(
-        deleteStatusEffectNameInput
-      );
+      const deleteStatusEffectNameRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          deleteStatusEffectNameInput
+        );
 
       deleteStatusEffectModal.addComponents(deleteStatusEffectNameRow);
 
@@ -480,7 +506,7 @@ module.exports = {
       console.log("Error handling Delete Status Effect modal:", error);
     }
   },
-  handleGrantStatusEffectModal: async (interaction: typeof Interaction) => {
+  handleGrantStatusEffectModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Grant Status Effect modal
       const grantStatusEffectModal = new ModalBuilder()
@@ -500,12 +526,14 @@ module.exports = {
         .setRequired(true)
         .setMinLength(18);
 
-      const grantStatusEffectNameRow = new ActionRowBuilder().addComponents(
-        grantStatusEffectNameInput
-      );
-      const grantStatusEffectTargetRow = new ActionRowBuilder().addComponents(
-        grantStatusEffectTargetInput
-      );
+      const grantStatusEffectNameRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          grantStatusEffectNameInput
+        );
+      const grantStatusEffectTargetRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          grantStatusEffectTargetInput
+        );
 
       grantStatusEffectModal.addComponents(
         grantStatusEffectNameRow,
@@ -518,7 +546,7 @@ module.exports = {
       console.log("Error handling Grant Status Effect modal:", error);
     }
   },
-  handleRevokeStatusEffectModal: async (interaction: typeof Interaction) => {
+  handleRevokeStatusEffectModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Revoke Status Effect modal
       const revokeStatusEffectModal = new ModalBuilder()
@@ -538,12 +566,14 @@ module.exports = {
         .setRequired(true)
         .setMinLength(18);
 
-      const revokeStatusEffectNameRow = new ActionRowBuilder().addComponents(
-        revokeStatusEffectNameInput
-      );
-      const revokeStatusEffectTargetRow = new ActionRowBuilder().addComponents(
-        revokeStatusEffectTargetInput
-      );
+      const revokeStatusEffectNameRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          revokeStatusEffectNameInput
+        );
+      const revokeStatusEffectTargetRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          revokeStatusEffectTargetInput
+        );
 
       revokeStatusEffectModal.addComponents(
         revokeStatusEffectNameRow,
@@ -556,7 +586,7 @@ module.exports = {
       console.log("Error handling Revoke Status Effect modal:", error);
     }
   },
-  handleSendMessageModal: async (interaction: typeof Interaction) => {
+  handleSendMessageModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Send Message modal
       const sendMessageModal = new ModalBuilder()
@@ -575,12 +605,14 @@ module.exports = {
         .setStyle(TextInputStyle.Paragraph)
         .setRequired(true);
 
-      const sendMessageTargetChannelRow = new ActionRowBuilder().addComponents(
-        sendMessageTargetChannelInput
-      );
-      const sendMessageContentRow = new ActionRowBuilder().addComponents(
-        sendMessageContentInput
-      );
+      const sendMessageTargetChannelRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          sendMessageTargetChannelInput
+        );
+      const sendMessageContentRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          sendMessageContentInput
+        );
 
       sendMessageModal.addComponents(
         sendMessageTargetChannelRow,
@@ -593,7 +625,7 @@ module.exports = {
       console.log("Error handling Send Message modal:", error);
     }
   },
-  handleBanUserModal: async (interaction: typeof Interaction) => {
+  handleBanUserModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Ban User modal
       const banUserModal = new ModalBuilder()
@@ -613,13 +645,15 @@ module.exports = {
         .setStyle(TextInputStyle.Short)
         .setRequired(false);
 
-      const banUserTargetRow = new ActionRowBuilder().addComponents(
-        banUserTargetInput
-      );
+      const banUserTargetRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          banUserTargetInput
+        );
 
-      const banUserReasonRow = new ActionRowBuilder().addComponents(
-        banUserReasonInput
-      );
+      const banUserReasonRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          banUserReasonInput
+        );
 
       banUserModal.addComponents(banUserTargetRow, banUserReasonRow);
 
@@ -628,7 +662,7 @@ module.exports = {
       console.log("Error handling Ban User modal:", error);
     }
   },
-  handleKickUserModal: async (interaction: typeof Interaction) => {
+  handleKickUserModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Kick User modal
       const kickUserModal = new ModalBuilder()
@@ -648,13 +682,15 @@ module.exports = {
         .setStyle(TextInputStyle.Short)
         .setRequired(false);
 
-      const kickUserTargetRow = new ActionRowBuilder().addComponents(
-        kickUserTargetInput
-      );
+      const kickUserTargetRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          kickUserTargetInput
+        );
 
-      const kickUserReasonRow = new ActionRowBuilder().addComponents(
-        kickUserReasonInput
-      );
+      const kickUserReasonRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          kickUserReasonInput
+        );
 
       kickUserModal.addComponents(kickUserTargetRow, kickUserReasonRow);
 
@@ -663,7 +699,7 @@ module.exports = {
       console.log("Error handling Kick User modal:", error);
     }
   },
-  handleTimeoutUserModal: async (interaction: typeof Interaction) => {
+  handleTimeoutUserModal: async (interaction: CommandInteraction) => {
     try {
       // Set up the Timeout User modal
       const timeoutUserModal = new ModalBuilder()
@@ -689,17 +725,20 @@ module.exports = {
         .setStyle(TextInputStyle.Short)
         .setRequired(false);
 
-      const timeoutUserTargetRow = new ActionRowBuilder().addComponents(
-        timeoutUserTargetInput
-      );
+      const timeoutUserTargetRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          timeoutUserTargetInput
+        );
 
-      const timeoutUserDurationRow = new ActionRowBuilder().addComponents(
-        timeoutUserDurationInput
-      );
+      const timeoutUserDurationRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          timeoutUserDurationInput
+        );
 
-      const timeoutUserReasonRow = new ActionRowBuilder().addComponents(
-        timeoutUserReasonInput
-      );
+      const timeoutUserReasonRow =
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          timeoutUserReasonInput
+        );
 
       timeoutUserModal.addComponents(
         timeoutUserTargetRow,

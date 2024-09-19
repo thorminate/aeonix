@@ -1,3 +1,8 @@
+/**
+ * Handles the select menus.
+ * @param {Client} bot The instantiating client.
+ * @param {Interaction} interaction The interaction that ran the command.
+ */
 import userData from "../../models/userDatabaseSchema";
 import {
   ActionRowBuilder,
@@ -6,17 +11,27 @@ import {
   ButtonBuilder,
   ButtonStyle,
   Client,
-  Interaction,
+  StringSelectMenuInteraction,
+  RoleSelectMenuInteraction,
+  UserSelectMenuInteraction,
+  ChannelSelectMenuInteraction,
+  MentionableSelectMenuInteraction,
   TextChannel,
   GuildMemberRoleManager,
 } from "discord.js";
 
-const selectedValues = [];
-module.exports = async (bot: Client, interaction: Interaction) => {
-  if (!interaction.isStringSelectMenu()) return;
-
+module.exports = async (
+  bot: Client,
+  interaction:
+    | StringSelectMenuInteraction
+    | RoleSelectMenuInteraction
+    | UserSelectMenuInteraction
+    | ChannelSelectMenuInteraction
+    | MentionableSelectMenuInteraction
+) => {
   switch (interaction.customId) {
     case "species-select":
+      if (!interaction.isStringSelectMenu()) return;
       let user = await userData.findOne({ userId: interaction.user.id });
 
       if (!user) {
@@ -89,6 +104,7 @@ module.exports = async (bot: Client, interaction: Interaction) => {
       break;
 
     case "class-select":
+      if (!interaction.isStringSelectMenu()) return;
       const selectedClass = interaction.values[0];
 
       const userClass = await userData.findOne({ userId: interaction.user.id });

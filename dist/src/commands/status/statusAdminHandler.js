@@ -1,42 +1,41 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, Interaction, } = require("discord.js");
-const userData = require("../../models/userDatabaseSchema");
+const discord_js_1 = require("discord.js");
 module.exports = {
     handleStatsGiverModal: async (interaction) => {
         try {
             // Set up the Stats Giver modal
-            const statsGiverModal = new ModalBuilder()
+            const statsGiverModal = new discord_js_1.ModalBuilder()
                 .setCustomId("stats-giver-modal")
                 .setTitle("Stat Giver");
-            const statsGiverModifierInput = new TextInputBuilder()
+            const statsGiverModifierInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("stats-giver-modifier-input")
                 .setLabel("Modifier of stats to give")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true)
                 .setMinLength(1);
-            const statsGiverVariantInput = new TextInputBuilder()
+            const statsGiverVariantInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("stats-giver-variant-input")
                 .setLabel("Variant of stats to give")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true)
                 .setMinLength(1);
-            const statsGiverInput = new TextInputBuilder()
+            const statsGiverInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("stats-giver-input")
                 .setLabel("Amount of stat points to give, remove or set")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true)
                 .setMinLength(1);
-            const statsGiverTargetInput = new TextInputBuilder()
+            const statsGiverTargetInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("stats-giver-target-input")
                 .setLabel("Target user ID")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true)
                 .setMinLength(18);
-            const statsGiverRow = new ActionRowBuilder().addComponents(statsGiverInput);
-            const statsGiverVariantRow = new ActionRowBuilder().addComponents(statsGiverVariantInput);
-            const statsGiverTargetRow = new ActionRowBuilder().addComponents(statsGiverTargetInput);
-            const statsGiverModifierRow = new ActionRowBuilder().addComponents(statsGiverModifierInput);
+            const statsGiverRow = new discord_js_1.ActionRowBuilder().addComponents(statsGiverInput);
+            const statsGiverVariantRow = new discord_js_1.ActionRowBuilder().addComponents(statsGiverVariantInput);
+            const statsGiverTargetRow = new discord_js_1.ActionRowBuilder().addComponents(statsGiverTargetInput);
+            const statsGiverModifierRow = new discord_js_1.ActionRowBuilder().addComponents(statsGiverModifierInput);
             statsGiverModal.addComponents(statsGiverRow, statsGiverVariantRow, statsGiverTargetRow, statsGiverModifierRow);
             // Show the modal
             await interaction.showModal(statsGiverModal);
@@ -48,39 +47,39 @@ module.exports = {
     handleCreateSkillModal: async (interaction) => {
         try {
             // Set up the Create Skill modal
-            const createSkillModal = new ModalBuilder()
+            const createSkillModal = new discord_js_1.ModalBuilder()
                 .setCustomId("create-skill-modal")
                 .setTitle("Create Skill");
-            const createSkillNameInput = new TextInputBuilder()
+            const createSkillNameInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("create-skill-name-input")
                 .setLabel("Skill name, no special characters!")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const createSkillDescriptionInput = new TextInputBuilder()
+            const createSkillDescriptionInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("create-skill-description-input")
                 .setLabel("Skill description")
-                .setStyle(TextInputStyle.Paragraph)
+                .setStyle(discord_js_1.TextInputStyle.Paragraph)
                 .setRequired(true);
-            const createSkillActionInput = new TextInputBuilder()
+            const createSkillActionInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("create-skill-action-input")
                 .setLabel("What the system says when the skill is used")
-                .setStyle(TextInputStyle.Paragraph)
+                .setStyle(discord_js_1.TextInputStyle.Paragraph)
                 .setRequired(true);
-            const createSkillCooldownInput = new TextInputBuilder()
+            const createSkillCooldownInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("create-skill-cooldown-input")
                 .setLabel("Skill cooldown")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const createSkillWillInput = new TextInputBuilder()
+            const createSkillWillInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("create-skill-will-input")
                 .setLabel("Will requirement")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const createSkillWillRow = new ActionRowBuilder().addComponents(createSkillWillInput);
-            const createSkillCooldownRow = new ActionRowBuilder().addComponents(createSkillCooldownInput);
-            const createSkillActionRow = new ActionRowBuilder().addComponents(createSkillActionInput);
-            const createSkillDescriptionRow = new ActionRowBuilder().addComponents(createSkillDescriptionInput);
-            const createSkillNameRow = new ActionRowBuilder().addComponents(createSkillNameInput);
+            const createSkillWillRow = new discord_js_1.ActionRowBuilder().addComponents(createSkillWillInput);
+            const createSkillCooldownRow = new discord_js_1.ActionRowBuilder().addComponents(createSkillCooldownInput);
+            const createSkillActionRow = new discord_js_1.ActionRowBuilder().addComponents(createSkillActionInput);
+            const createSkillDescriptionRow = new discord_js_1.ActionRowBuilder().addComponents(createSkillDescriptionInput);
+            const createSkillNameRow = new discord_js_1.ActionRowBuilder().addComponents(createSkillNameInput);
             createSkillModal.addComponents(createSkillNameRow, createSkillDescriptionRow, createSkillActionRow, createSkillCooldownRow, createSkillWillRow);
             // Show the modal
             await interaction.showModal(createSkillModal);
@@ -92,15 +91,15 @@ module.exports = {
     handleDeleteSkillModal: async (interaction) => {
         try {
             // Set up the Delete Skill modal
-            const deleteSkillModal = new ModalBuilder()
+            const deleteSkillModal = new discord_js_1.ModalBuilder()
                 .setCustomId("delete-skill-modal")
                 .setTitle("Delete Skill");
-            const deleteSkillNameInput = new TextInputBuilder()
+            const deleteSkillNameInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("delete-skill-name-input")
                 .setLabel("Skill name")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const deleteSkillNameRow = new ActionRowBuilder().addComponents(deleteSkillNameInput);
+            const deleteSkillNameRow = new discord_js_1.ActionRowBuilder().addComponents(deleteSkillNameInput);
             deleteSkillModal.addComponents(deleteSkillNameRow);
             // Show the modal
             await interaction.showModal(deleteSkillModal);
@@ -112,22 +111,22 @@ module.exports = {
     handleGrantSkillModal: async (interaction) => {
         try {
             // Set up the Grant Skill modal
-            const grantSkillModal = new ModalBuilder()
+            const grantSkillModal = new discord_js_1.ModalBuilder()
                 .setCustomId("grant-skill-modal")
                 .setTitle("Grant Skill");
-            const grantSkillNameInput = new TextInputBuilder()
+            const grantSkillNameInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("grant-skill-name-input")
                 .setLabel("Skill name")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const grantSkillTargetInput = new TextInputBuilder()
+            const grantSkillTargetInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("grant-skill-target-input")
                 .setLabel("Target user ID")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true)
                 .setMinLength(18);
-            const grantSkillTargetRow = new ActionRowBuilder().addComponents(grantSkillTargetInput);
-            const grantSkillNameRow = new ActionRowBuilder().addComponents(grantSkillNameInput);
+            const grantSkillTargetRow = new discord_js_1.ActionRowBuilder().addComponents(grantSkillTargetInput);
+            const grantSkillNameRow = new discord_js_1.ActionRowBuilder().addComponents(grantSkillNameInput);
             grantSkillModal.addComponents(grantSkillNameRow, grantSkillTargetRow);
             // Show the modal
             await interaction.showModal(grantSkillModal);
@@ -139,22 +138,22 @@ module.exports = {
     handleRevokeSkillModal: async (interaction) => {
         try {
             // Set up the Revoke Skill modal
-            const revokeSkillModal = new ModalBuilder()
+            const revokeSkillModal = new discord_js_1.ModalBuilder()
                 .setCustomId("revoke-skill-modal")
                 .setTitle("Revoke Skill");
-            const revokeSkillTargetInput = new TextInputBuilder()
+            const revokeSkillTargetInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("revoke-skill-target-input")
                 .setLabel("The user who's skill you want to revoke")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true)
                 .setMinLength(18);
-            const revokeSkillNameInput = new TextInputBuilder()
+            const revokeSkillNameInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("revoke-skill-name-input")
                 .setLabel("The Name of the skill you want to revoke")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const revokeSkillTargetRow = new ActionRowBuilder().addComponents(revokeSkillTargetInput);
-            const revokeSkillNameRow = new ActionRowBuilder().addComponents(revokeSkillNameInput);
+            const revokeSkillTargetRow = new discord_js_1.ActionRowBuilder().addComponents(revokeSkillTargetInput);
+            const revokeSkillNameRow = new discord_js_1.ActionRowBuilder().addComponents(revokeSkillNameInput);
             revokeSkillModal.addComponents(revokeSkillNameRow, revokeSkillTargetRow);
             // Show the modal
             await interaction.showModal(revokeSkillModal);
@@ -166,33 +165,33 @@ module.exports = {
     handleCreateItemModal: async (interaction) => {
         try {
             // Set up the Create Item modal
-            const createItemModal = new ModalBuilder()
+            const createItemModal = new discord_js_1.ModalBuilder()
                 .setCustomId("create-item-modal")
                 .setTitle("Create Item");
-            const createItemNameInput = new TextInputBuilder()
+            const createItemNameInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("create-item-name-input")
                 .setLabel("Item Descriptor/Name")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const createItemDescriptionInput = new TextInputBuilder()
+            const createItemDescriptionInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("create-item-description-input")
                 .setLabel("Item Description")
-                .setStyle(TextInputStyle.Paragraph)
+                .setStyle(discord_js_1.TextInputStyle.Paragraph)
                 .setRequired(true);
-            const createItemActionableInput = new TextInputBuilder()
+            const createItemActionableInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("create-item-actionable-input")
                 .setLabel("What the item does, use/consume/interact")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const createItemActionInput = new TextInputBuilder()
+            const createItemActionInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("create-item-action-input")
                 .setLabel("What happens when you interact?")
-                .setStyle(TextInputStyle.Paragraph)
+                .setStyle(discord_js_1.TextInputStyle.Paragraph)
                 .setRequired(true);
-            const createItemNameRow = new ActionRowBuilder().addComponents(createItemNameInput);
-            const createItemDescriptionRow = new ActionRowBuilder().addComponents(createItemDescriptionInput);
-            const createItemActionableRow = new ActionRowBuilder().addComponents(createItemActionableInput);
-            const createItemActionRow = new ActionRowBuilder().addComponents(createItemActionInput);
+            const createItemNameRow = new discord_js_1.ActionRowBuilder().addComponents(createItemNameInput);
+            const createItemDescriptionRow = new discord_js_1.ActionRowBuilder().addComponents(createItemDescriptionInput);
+            const createItemActionableRow = new discord_js_1.ActionRowBuilder().addComponents(createItemActionableInput);
+            const createItemActionRow = new discord_js_1.ActionRowBuilder().addComponents(createItemActionInput);
             createItemModal.addComponents(createItemNameRow, createItemDescriptionRow, createItemActionableRow, createItemActionRow);
             // Show the modal
             await interaction.showModal(createItemModal);
@@ -204,29 +203,29 @@ module.exports = {
     handleGiveItemModal: async (interaction) => {
         try {
             // Set up the Give Item modal
-            const giveItemModal = new ModalBuilder()
+            const giveItemModal = new discord_js_1.ModalBuilder()
                 .setCustomId("give-item-modal")
                 .setTitle("Give Item");
-            const giveItemTargetInput = new TextInputBuilder()
+            const giveItemTargetInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("give-item-target-input")
                 .setLabel("Target user ID")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true)
                 .setMinLength(18);
-            const giveItemNameInput = new TextInputBuilder()
+            const giveItemNameInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("give-item-name-input")
                 .setLabel("Item Descriptor/Name")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const giveItemAmountInput = new TextInputBuilder()
+            const giveItemAmountInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("give-item-amount-input")
                 .setLabel("Amount")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true)
                 .setMinLength(1);
-            const giveItemTargetRow = new ActionRowBuilder().addComponents(giveItemTargetInput);
-            const giveItemNameRow = new ActionRowBuilder().addComponents(giveItemNameInput);
-            const giveItemAmountRow = new ActionRowBuilder().addComponents(giveItemAmountInput);
+            const giveItemTargetRow = new discord_js_1.ActionRowBuilder().addComponents(giveItemTargetInput);
+            const giveItemNameRow = new discord_js_1.ActionRowBuilder().addComponents(giveItemNameInput);
+            const giveItemAmountRow = new discord_js_1.ActionRowBuilder().addComponents(giveItemAmountInput);
             giveItemModal.addComponents(giveItemNameRow, giveItemTargetRow, giveItemAmountRow);
             // Show the modal
             await interaction.showModal(giveItemModal);
@@ -238,22 +237,22 @@ module.exports = {
     handleRemoveItemModal: async (interaction) => {
         try {
             // Set up the Remove Item modal
-            const removeItemModal = new ModalBuilder()
+            const removeItemModal = new discord_js_1.ModalBuilder()
                 .setCustomId("remove-item-modal")
                 .setTitle("Remove Item");
-            const removeItemTargetInput = new TextInputBuilder()
+            const removeItemTargetInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("remove-item-target-input")
                 .setLabel("Target user ID")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true)
                 .setMinLength(18);
-            const removeItemNameInput = new TextInputBuilder()
+            const removeItemNameInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("remove-item-name-input")
                 .setLabel("Item Descriptor/Name")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const removeItemTargetRow = new ActionRowBuilder().addComponents(removeItemTargetInput);
-            const removeItemNameRow = new ActionRowBuilder().addComponents(removeItemNameInput);
+            const removeItemTargetRow = new discord_js_1.ActionRowBuilder().addComponents(removeItemTargetInput);
+            const removeItemNameRow = new discord_js_1.ActionRowBuilder().addComponents(removeItemNameInput);
             removeItemModal.addComponents(removeItemNameRow, removeItemTargetRow);
             // Show the modal
             await interaction.showModal(removeItemModal);
@@ -265,15 +264,15 @@ module.exports = {
     handleDeleteItemModal: async (interaction) => {
         try {
             // Set up the Delete Item modal
-            const deleteItemModal = new ModalBuilder()
+            const deleteItemModal = new discord_js_1.ModalBuilder()
                 .setCustomId("delete-item-modal")
                 .setTitle("Delete Item");
-            const deleteItemNameInput = new TextInputBuilder()
+            const deleteItemNameInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("delete-item-name-input")
                 .setLabel("Item Descriptor/Name")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const deleteItemNameRow = new ActionRowBuilder().addComponents(deleteItemNameInput);
+            const deleteItemNameRow = new discord_js_1.ActionRowBuilder().addComponents(deleteItemNameInput);
             deleteItemModal.addComponents(deleteItemNameRow);
             // Show the modal
             await interaction.showModal(deleteItemModal);
@@ -285,33 +284,33 @@ module.exports = {
     handleCreateStatusEffectModal: async (interaction) => {
         try {
             // Set up the Create Status Effect modal
-            const createStatusEffectModal = new ModalBuilder()
+            const createStatusEffectModal = new discord_js_1.ModalBuilder()
                 .setCustomId("create-status-effect-modal")
                 .setTitle("Create Status Effect");
-            const createStatusEffectNameInput = new TextInputBuilder()
+            const createStatusEffectNameInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("create-status-effect-name-input")
                 .setLabel("Status Effect name, no special characters!")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const createStatusEffectDescriptionInput = new TextInputBuilder()
+            const createStatusEffectDescriptionInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("create-status-effect-description-input")
                 .setLabel("Status Effect description")
-                .setStyle(TextInputStyle.Paragraph)
+                .setStyle(discord_js_1.TextInputStyle.Paragraph)
                 .setRequired(true);
-            const createStatusEffectActionInput = new TextInputBuilder()
+            const createStatusEffectActionInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("create-status-effect-action-input")
                 .setLabel("What the system does when applied")
-                .setStyle(TextInputStyle.Paragraph)
+                .setStyle(discord_js_1.TextInputStyle.Paragraph)
                 .setRequired(true);
-            const createStatusEffectDurationInput = new TextInputBuilder()
+            const createStatusEffectDurationInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("create-status-effect-duration-input")
                 .setLabel("Status Effect duration")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const createStatusEffectNameRow = new ActionRowBuilder().addComponents(createStatusEffectNameInput);
-            const createStatusEffectDescriptionRow = new ActionRowBuilder().addComponents(createStatusEffectDescriptionInput);
-            const createStatusEffectActionRow = new ActionRowBuilder().addComponents(createStatusEffectActionInput);
-            const createStatusEffectDurationRow = new ActionRowBuilder().addComponents(createStatusEffectDurationInput);
+            const createStatusEffectNameRow = new discord_js_1.ActionRowBuilder().addComponents(createStatusEffectNameInput);
+            const createStatusEffectDescriptionRow = new discord_js_1.ActionRowBuilder().addComponents(createStatusEffectDescriptionInput);
+            const createStatusEffectActionRow = new discord_js_1.ActionRowBuilder().addComponents(createStatusEffectActionInput);
+            const createStatusEffectDurationRow = new discord_js_1.ActionRowBuilder().addComponents(createStatusEffectDurationInput);
             createStatusEffectModal.addComponents(createStatusEffectNameRow, createStatusEffectDescriptionRow, createStatusEffectActionRow, createStatusEffectDurationRow);
             // Show the modal
             await interaction.showModal(createStatusEffectModal);
@@ -323,15 +322,15 @@ module.exports = {
     handleDeleteStatusEffectModal: async (interaction) => {
         try {
             // Set up the Delete Status Effect modal
-            const deleteStatusEffectModal = new ModalBuilder()
+            const deleteStatusEffectModal = new discord_js_1.ModalBuilder()
                 .setCustomId("delete-status-effect-modal")
                 .setTitle("Delete Status Effect");
-            const deleteStatusEffectNameInput = new TextInputBuilder()
+            const deleteStatusEffectNameInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("delete-status-effect-name-input")
                 .setLabel("Status Effect name")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const deleteStatusEffectNameRow = new ActionRowBuilder().addComponents(deleteStatusEffectNameInput);
+            const deleteStatusEffectNameRow = new discord_js_1.ActionRowBuilder().addComponents(deleteStatusEffectNameInput);
             deleteStatusEffectModal.addComponents(deleteStatusEffectNameRow);
             // Show the modal
             await interaction.showModal(deleteStatusEffectModal);
@@ -343,22 +342,22 @@ module.exports = {
     handleGrantStatusEffectModal: async (interaction) => {
         try {
             // Set up the Grant Status Effect modal
-            const grantStatusEffectModal = new ModalBuilder()
+            const grantStatusEffectModal = new discord_js_1.ModalBuilder()
                 .setCustomId("grant-status-effect-modal")
                 .setTitle("Grant Status Effect");
-            const grantStatusEffectNameInput = new TextInputBuilder()
+            const grantStatusEffectNameInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("grant-status-effect-name-input")
                 .setLabel("Status Effect name")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const grantStatusEffectTargetInput = new TextInputBuilder()
+            const grantStatusEffectTargetInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("grant-status-effect-target-input")
                 .setLabel("Target user ID")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true)
                 .setMinLength(18);
-            const grantStatusEffectNameRow = new ActionRowBuilder().addComponents(grantStatusEffectNameInput);
-            const grantStatusEffectTargetRow = new ActionRowBuilder().addComponents(grantStatusEffectTargetInput);
+            const grantStatusEffectNameRow = new discord_js_1.ActionRowBuilder().addComponents(grantStatusEffectNameInput);
+            const grantStatusEffectTargetRow = new discord_js_1.ActionRowBuilder().addComponents(grantStatusEffectTargetInput);
             grantStatusEffectModal.addComponents(grantStatusEffectNameRow, grantStatusEffectTargetRow);
             // Show the modal
             await interaction.showModal(grantStatusEffectModal);
@@ -370,22 +369,22 @@ module.exports = {
     handleRevokeStatusEffectModal: async (interaction) => {
         try {
             // Set up the Revoke Status Effect modal
-            const revokeStatusEffectModal = new ModalBuilder()
+            const revokeStatusEffectModal = new discord_js_1.ModalBuilder()
                 .setCustomId("revoke-status-effect-modal")
                 .setTitle("Revoke Status Effect");
-            const revokeStatusEffectNameInput = new TextInputBuilder()
+            const revokeStatusEffectNameInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("revoke-status-effect-name-input")
                 .setLabel("Status Effect name")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const revokeStatusEffectTargetInput = new TextInputBuilder()
+            const revokeStatusEffectTargetInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("revoke-status-effect-target-input")
                 .setLabel("Target user ID")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true)
                 .setMinLength(18);
-            const revokeStatusEffectNameRow = new ActionRowBuilder().addComponents(revokeStatusEffectNameInput);
-            const revokeStatusEffectTargetRow = new ActionRowBuilder().addComponents(revokeStatusEffectTargetInput);
+            const revokeStatusEffectNameRow = new discord_js_1.ActionRowBuilder().addComponents(revokeStatusEffectNameInput);
+            const revokeStatusEffectTargetRow = new discord_js_1.ActionRowBuilder().addComponents(revokeStatusEffectTargetInput);
             revokeStatusEffectModal.addComponents(revokeStatusEffectNameRow, revokeStatusEffectTargetRow);
             // Show the modal
             await interaction.showModal(revokeStatusEffectModal);
@@ -397,21 +396,21 @@ module.exports = {
     handleSendMessageModal: async (interaction) => {
         try {
             // Set up the Send Message modal
-            const sendMessageModal = new ModalBuilder()
+            const sendMessageModal = new discord_js_1.ModalBuilder()
                 .setCustomId("send-message-modal")
                 .setTitle("Send Message");
-            const sendMessageTargetChannelInput = new TextInputBuilder()
+            const sendMessageTargetChannelInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("send-message-target-channel-input")
                 .setLabel("Target channel ID")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const sendMessageContentInput = new TextInputBuilder()
+            const sendMessageContentInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("send-message-content-input")
                 .setLabel("Message content")
-                .setStyle(TextInputStyle.Paragraph)
+                .setStyle(discord_js_1.TextInputStyle.Paragraph)
                 .setRequired(true);
-            const sendMessageTargetChannelRow = new ActionRowBuilder().addComponents(sendMessageTargetChannelInput);
-            const sendMessageContentRow = new ActionRowBuilder().addComponents(sendMessageContentInput);
+            const sendMessageTargetChannelRow = new discord_js_1.ActionRowBuilder().addComponents(sendMessageTargetChannelInput);
+            const sendMessageContentRow = new discord_js_1.ActionRowBuilder().addComponents(sendMessageContentInput);
             sendMessageModal.addComponents(sendMessageTargetChannelRow, sendMessageContentRow);
             // Show the modal
             await interaction.showModal(sendMessageModal);
@@ -423,22 +422,22 @@ module.exports = {
     handleBanUserModal: async (interaction) => {
         try {
             // Set up the Ban User modal
-            const banUserModal = new ModalBuilder()
+            const banUserModal = new discord_js_1.ModalBuilder()
                 .setCustomId("ban-user-modal")
                 .setTitle("Ban User, very dangerous!");
-            const banUserTargetInput = new TextInputBuilder()
+            const banUserTargetInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("ban-user-target-input")
                 .setLabel("Target user ID")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true)
                 .setMinLength(18);
-            const banUserReasonInput = new TextInputBuilder()
+            const banUserReasonInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("ban-user-reason-input")
                 .setLabel("Reason for ban")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(false);
-            const banUserTargetRow = new ActionRowBuilder().addComponents(banUserTargetInput);
-            const banUserReasonRow = new ActionRowBuilder().addComponents(banUserReasonInput);
+            const banUserTargetRow = new discord_js_1.ActionRowBuilder().addComponents(banUserTargetInput);
+            const banUserReasonRow = new discord_js_1.ActionRowBuilder().addComponents(banUserReasonInput);
             banUserModal.addComponents(banUserTargetRow, banUserReasonRow);
             await interaction.showModal(banUserModal);
         }
@@ -449,22 +448,22 @@ module.exports = {
     handleKickUserModal: async (interaction) => {
         try {
             // Set up the Kick User modal
-            const kickUserModal = new ModalBuilder()
+            const kickUserModal = new discord_js_1.ModalBuilder()
                 .setCustomId("kick-user-modal")
                 .setTitle("Kick User, scary!");
-            const kickUserTargetInput = new TextInputBuilder()
+            const kickUserTargetInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("kick-user-target-input")
                 .setLabel("Target user ID")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true)
                 .setMinLength(18);
-            const kickUserReasonInput = new TextInputBuilder()
+            const kickUserReasonInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("kick-user-reason-input")
                 .setLabel("Reason for kick")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(false);
-            const kickUserTargetRow = new ActionRowBuilder().addComponents(kickUserTargetInput);
-            const kickUserReasonRow = new ActionRowBuilder().addComponents(kickUserReasonInput);
+            const kickUserTargetRow = new discord_js_1.ActionRowBuilder().addComponents(kickUserTargetInput);
+            const kickUserReasonRow = new discord_js_1.ActionRowBuilder().addComponents(kickUserReasonInput);
             kickUserModal.addComponents(kickUserTargetRow, kickUserReasonRow);
             await interaction.showModal(kickUserModal);
         }
@@ -475,28 +474,28 @@ module.exports = {
     handleTimeoutUserModal: async (interaction) => {
         try {
             // Set up the Timeout User modal
-            const timeoutUserModal = new ModalBuilder()
+            const timeoutUserModal = new discord_js_1.ModalBuilder()
                 .setCustomId("timeout-user-modal")
                 .setTitle("Timeout User, fun!");
-            const timeoutUserTargetInput = new TextInputBuilder()
+            const timeoutUserTargetInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("timeout-user-target-input")
                 .setLabel("Target user ID")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true)
                 .setMinLength(18);
-            const timeoutUserDurationInput = new TextInputBuilder()
+            const timeoutUserDurationInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("timeout-user-duration-input")
                 .setLabel("Duration")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(true);
-            const timeoutUserReasonInput = new TextInputBuilder()
+            const timeoutUserReasonInput = new discord_js_1.TextInputBuilder()
                 .setCustomId("timeout-user-reason-input")
                 .setLabel("Reason for timeout")
-                .setStyle(TextInputStyle.Short)
+                .setStyle(discord_js_1.TextInputStyle.Short)
                 .setRequired(false);
-            const timeoutUserTargetRow = new ActionRowBuilder().addComponents(timeoutUserTargetInput);
-            const timeoutUserDurationRow = new ActionRowBuilder().addComponents(timeoutUserDurationInput);
-            const timeoutUserReasonRow = new ActionRowBuilder().addComponents(timeoutUserReasonInput);
+            const timeoutUserTargetRow = new discord_js_1.ActionRowBuilder().addComponents(timeoutUserTargetInput);
+            const timeoutUserDurationRow = new discord_js_1.ActionRowBuilder().addComponents(timeoutUserDurationInput);
+            const timeoutUserReasonRow = new discord_js_1.ActionRowBuilder().addComponents(timeoutUserReasonInput);
             timeoutUserModal.addComponents(timeoutUserTargetRow, timeoutUserDurationRow, timeoutUserReasonRow);
             await interaction.showModal(timeoutUserModal);
         }

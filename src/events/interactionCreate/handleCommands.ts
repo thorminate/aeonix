@@ -1,20 +1,28 @@
-// When command is called run this
-const config = require("../../../config.json");
-const { devs, primaryServer } = config;
+/**
+ * Handles the slash commands.
+ * @param {Client} bot The instantiating client.
+ * @param {Interaction} interaction The interaction that ran the command.
+ */
+import { devs, primaryServer } from "../../../config.json";
 import getLocalCommands from "../../utils/getLocalCommands";
-import type { Client, Interaction, PermissionsBitField } from "discord.js";
+import type {
+  Client,
+  CommandInteraction,
+  PermissionsBitField,
+} from "discord.js";
 
-module.exports = async (bot: Client, interaction: Interaction) => {
-  // check if it's a chat input command, else return.
-  if (!interaction.isChatInputCommand()) return;
-
+module.exports = async (
+  bot: Client,
+  commandInteraction: CommandInteraction
+) => {
+  if (!commandInteraction.isChatInputCommand()) return;
   // get already registered commands
-  const localCommands = await getLocalCommands();
+  const localCommands = getLocalCommands();
 
   try {
     // check if command name is in localCommands
     const commandObject = localCommands.find(
-      (cmd) => cmd.name === interaction.commandName
+      (cmd) => cmd.name === commandInteraction.commandName
     );
 
     // if commandObject does not exist, return
@@ -22,8 +30,11 @@ module.exports = async (bot: Client, interaction: Interaction) => {
 
     // if command is devOnly and user is not an admin, return
     if (commandObject.devOnly) {
-      if ("id" in interaction.member && !devs.includes(interaction.member.id)) {
-        interaction.reply({
+      if (
+        "id" in commandInteraction.member &&
+        !devs.includes(commandInteraction.member.id)
+      ) {
+        commandInteraction.reply({
           content: "Only administrators can run this command",
           ephemeral: true,
         });
@@ -32,8 +43,8 @@ module.exports = async (bot: Client, interaction: Interaction) => {
     }
 
     // if command is testOnly and user is not in primaryServer, return
-    if (!(interaction.guild.id === primaryServer)) {
-      interaction.reply({
+    if (!(commandInteraction.guild.id === primaryServer)) {
+      commandInteraction.reply({
         content: "Nuh uh, wrong server.",
         ephemeral: true,
       });
@@ -43,11 +54,11 @@ module.exports = async (bot: Client, interaction: Interaction) => {
     if (commandObject.permissionsRequired?.length) {
       for (const permission of commandObject.permissionsRequired) {
         if (
-          !(interaction.member.permissions as PermissionsBitField).has(
+          !(commandInteraction.member.permissions as PermissionsBitField).has(
             permission as PermissionsBitField
           )
         ) {
-          interaction.reply({
+          commandInteraction.reply({
             content: "Access Denied",
             ephemeral: true,
           });
@@ -58,10 +69,10 @@ module.exports = async (bot: Client, interaction: Interaction) => {
     // if command requires bot permissions and bot does not have aforementioned permission, return
     if (commandObject.botPermissions?.length) {
       for (const permission of commandObject.botPermissions) {
-        const bot = interaction.guild.members.me;
+        const bot = commandInteraction.guild.members.me;
 
         if (!bot.permissions.has(permission)) {
-          interaction.reply({
+          commandInteraction.reply({
             content: "I don't have enough permissions.",
             ephemeral: true,
           });
@@ -70,7 +81,7 @@ module.exports = async (bot: Client, interaction: Interaction) => {
       }
     }
     // if all goes well, run the commands callback function.
-    await commandObject.callback(bot, interaction);
+    await commandObject.callback(bot, commandInteraction);
   } catch (error) {
     console.log(`There was an error running this command: ${error}`);
   }

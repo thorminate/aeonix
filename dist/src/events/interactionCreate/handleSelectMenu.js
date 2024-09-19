@@ -3,14 +3,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Handles the select menus.
+ * @param {Client} bot The instantiating client.
+ * @param {Interaction} interaction The interaction that ran the command.
+ */
 const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseSchema"));
 const discord_js_1 = require("discord.js");
-const selectedValues = [];
 module.exports = async (bot, interaction) => {
-    if (!interaction.isStringSelectMenu())
-        return;
     switch (interaction.customId) {
         case "species-select":
+            if (!interaction.isStringSelectMenu())
+                return;
             let user = await userDatabaseSchema_1.default.findOne({ userId: interaction.user.id });
             if (!user) {
                 const newUser = new userDatabaseSchema_1.default({
@@ -67,6 +71,8 @@ module.exports = async (bot, interaction) => {
             });
             break;
         case "class-select":
+            if (!interaction.isStringSelectMenu())
+                return;
             const selectedClass = interaction.values[0];
             const userClass = await userDatabaseSchema_1.default.findOne({ userId: interaction.user.id });
             if (userClass) {

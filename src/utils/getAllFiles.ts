@@ -1,33 +1,30 @@
-// takes a directory and returns an array of all files/folders in that directory.
+// get all files in a directory and return an array of their paths
 
-import path from "path";
-import fs from "fs";
+import path from "path"; // Get the path library.
+import fs from "fs"; // Get the file system library.
 
-export default function (directory: string, foldersOnly = false) {
-  // define fileNames as an array
-  let fileNames = [];
+export default (directory: string, foldersOnly = false) => {
+  //export the function
+  let fileNames = []; // define fileNames as an array
 
-  // get all files/folders in directory
-  const files = fs.readdirSync(directory, { withFileTypes: true });
+  const files = fs.readdirSync(directory, { withFileTypes: true }); // get all files/folders in directory
 
-  // loop through all files/folders
   for (const file of files) {
-    // get file/folder path
-    const filePath = path.join(directory, file.name);
+    // loop through all files/folders
+    const filePath = path.join(directory, file.name); // get file/folder path
 
-    // if foldersOnly is true, only push folders to fileNames
     if (foldersOnly) {
+      // if foldersOnly is true, only push folders to fileNames
       if (file.isDirectory()) {
-        fileNames.push(filePath);
+        fileNames.push(filePath); // push folders to fileNames
       }
-    }
-    // if foldersOnly is false, push both files and folders to fileNames
-    else {
+    } else {
+      // if foldersOnly is false, push both files and folders to fileNames
       if (file.isFile()) {
         fileNames.push(filePath);
       }
     }
   }
 
-  return fileNames;
-}
+  return fileNames; // return the array of file/folder paths
+};

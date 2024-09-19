@@ -1,33 +1,30 @@
 "use strict";
-// takes a directory and returns an array of all files/folders in that directory.
+// get all files in a directory and return an array of their paths
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = default_1;
-const path_1 = __importDefault(require("path"));
-const fs_1 = __importDefault(require("fs"));
-function default_1(directory, foldersOnly = false) {
-    // define fileNames as an array
-    let fileNames = [];
-    // get all files/folders in directory
-    const files = fs_1.default.readdirSync(directory, { withFileTypes: true });
-    // loop through all files/folders
+const path_1 = __importDefault(require("path")); // Get the path library.
+const fs_1 = __importDefault(require("fs")); // Get the file system library.
+exports.default = (directory, foldersOnly = false) => {
+    //export the function
+    let fileNames = []; // define fileNames as an array
+    const files = fs_1.default.readdirSync(directory, { withFileTypes: true }); // get all files/folders in directory
     for (const file of files) {
-        // get file/folder path
-        const filePath = path_1.default.join(directory, file.name);
-        // if foldersOnly is true, only push folders to fileNames
+        // loop through all files/folders
+        const filePath = path_1.default.join(directory, file.name); // get file/folder path
         if (foldersOnly) {
+            // if foldersOnly is true, only push folders to fileNames
             if (file.isDirectory()) {
-                fileNames.push(filePath);
+                fileNames.push(filePath); // push folders to fileNames
             }
         }
-        // if foldersOnly is false, push both files and folders to fileNames
         else {
+            // if foldersOnly is false, push both files and folders to fileNames
             if (file.isFile()) {
                 fileNames.push(filePath);
             }
         }
     }
-    return fileNames;
-}
+    return fileNames; // return the array of file/folder paths
+};

@@ -4,23 +4,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = eventHandler;
-const path_1 = __importDefault(require("path"));
-const getAllFiles_1 = __importDefault(require("../utils/getAllFiles"));
-function eventHandler(bot) {
-    // Finds event folders
-    const eventFolders = (0, getAllFiles_1.default)(path_1.default.join(__dirname, "..", "events"), true);
-    // Gets event files
+const path_1 = __importDefault(require("path")); // Get the path library.
+const getAllFiles_1 = __importDefault(require("../utils/getAllFiles")); // Get the getAllFiles function.
+exports.default = (bot) => {
+    // Export the function.
+    const eventFolders = (0, getAllFiles_1.default)(path_1.default.join(__dirname, "..", "events"), true); // Get the event folders.
     for (const eventFolder of eventFolders) {
-        const eventFiles = (0, getAllFiles_1.default)(eventFolder);
-        eventFiles.sort((a, b) => a.localeCompare(b));
-        const eventName = eventFolder.replace(/\\/g, "/").split("/").pop();
-        // Runs files in event folders if folder's name matches event name
+        // Loop through the event folders.
+        const eventFiles = (0, getAllFiles_1.default)(eventFolder); // Get the event files.
+        eventFiles.sort((a, b) => a.localeCompare(b)); // Sort the event files.
+        const eventName = eventFolder.replace(/\\/g, "/").split("/").pop(); // Get the event name.
         bot.on(eventName, async (arg) => {
+            // When the event that is the same name as the event folder is triggered.
             for (const eventFile of eventFiles) {
-                const eventFunction = require(eventFile);
-                await eventFunction(bot, arg);
+                // Loop through the event files.
+                const eventFunction = require(eventFile); // Get the event function.
+                eventFunction(bot, arg); // Run the event function.
             }
         });
     }
-}
+};
