@@ -10,6 +10,10 @@ import {
   Client,
   GuildMemberRoleManager,
   TextChannel,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+  ActionRowBuilder,
 } from "discord.js";
 import buttonWrapper from "../../utils/buttonWrapper";
 import userData from "../../models/userDatabaseSchema";
@@ -18,6 +22,14 @@ import itemData from "../../models/itemDatabaseSchema";
 import statusEffectData from "../../models/statusEffectDatabaseSchema";
 import environmentData from "../../models/environmentDatabaseSchema";
 import ms from "ms";
+
+class EditEnvironmentSharedState {
+  public name: string;
+
+  constructor() {
+    this.name = "";
+  }
+}
 
 module.exports = async (
   bot: Client,
@@ -1021,6 +1033,11 @@ module.exports = async (
           });
           return;
         }
+        // Share variable
+        const sharedStateInstance = new EditEnvironmentSharedState();
+        sharedStateInstance.name = editEnvironmentName;
+
+        // edit environment buttons
         const editEnvironmentButtons = [
           new ButtonBuilder()
             .setCustomId("edit-environment-items-button")
@@ -1035,29 +1052,63 @@ module.exports = async (
             .setLabel("Edit Channels")
             .setStyle(ButtonStyle.Primary),
         ];
-        const editEnvironmentReply = modalInteraction.reply({
+        modalInteraction.reply({
           components: buttonWrapper(editEnvironmentButtons),
           ephemeral: true,
         });
-        const editEnvironmentCollector = (
-          await editEnvironmentReply
-        ).createMessageComponentCollector({
-          filter: (i) => i.user.id === modalInteraction.user.id,
-        });
+        break;
 
-        editEnvironmentCollector.on("collect", async (i) => {
-          if (!i.isButton()) return;
-          switch (i.customId) {
-            case "edit-environment-items-button":
-              break;
+      case "edit-environment-items-modal":
+        // get input values
+        const editEnvironmentItemsOperator =
+          modalInteraction.fields.getTextInputValue(
+            "edit-environment-items-operator-input"
+          );
+        const editEnvironmentItemsString =
+          modalInteraction.fields.getTextInputValue(
+            "edit-environment-items-value-input"
+          );
 
-            case "edit-environment-users-button":
-              break;
+        // Validate the inputs
+        if (
+          editEnvironmentItemsOperator !== "add" &&
+          editEnvironmentItemsOperator !== "remove"
+        ) {
+          await modalInteraction.reply({
+            content: "Invalid operator! Valid operators: add, remove.",
+            ephemeral: true,
+          });
+          return;
+        }
+        const editEnvironmentItemsObjects = editEnvironmentItemsString
+          .toLowerCase()
+          .split(",")
+          .map(async (item) => {
+            item.trim();
+            const itemDataInstance = await itemData.findOne({ itemName: item });
+            if (!itemDataInstance) return null;
+            return itemDataInstance.itemName;
+          });
 
-            case "edit-environment-channels-button":
-              break;
+        for (const item of editEnvironmentItemsObjects) {
+          if (!item) {
+            await modalInteraction.reply({
+              content: `Item ${item} not found, make sure it exists in the database.`,
+              ephemeral: true,
+            });
+            return;
           }
-        });
+        }
+
+        switch (editEnvironmentItemsOperator) {
+          case "add":
+            const { name } = new EditEnvironmentSharedState();
+            console.log(name);
+            break;
+
+          case "remove":
+            break;
+        }
         break;
 
       // Bot Perform Modals

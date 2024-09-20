@@ -15,6 +15,7 @@ import {
   TextInputStyle,
   ModalBuilder,
   EmbedBuilder,
+  HTTPError,
 } from "discord.js";
 import userData from "../../models/userDatabaseSchema";
 import calculateLevelExp from "../../utils/calculateLevelExp";
@@ -1642,6 +1643,11 @@ module.exports = {
           playerMenu();
         }
     } catch (error) {
+      if (error instanceof HTTPError && error.status === 503) {
+        console.log(
+          `There was an error running status: The API did not respond. ${error.status}`
+        );
+      }
       console.log(`There was an error running status: ${error}`);
     }
   },

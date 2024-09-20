@@ -1134,6 +1134,9 @@ module.exports = {
                 }
         }
         catch (error) {
+            if (error instanceof discord_js_1.HTTPError && error.status === 503) {
+                console.log(`There was an error running status: The API did not respond. ${error.status}`);
+            }
             console.log(`There was an error running status: ${error}`);
         }
     },

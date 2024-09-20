@@ -16,6 +16,12 @@ const itemDatabaseSchema_1 = __importDefault(require("../../models/itemDatabaseS
 const statusEffectDatabaseSchema_1 = __importDefault(require("../../models/statusEffectDatabaseSchema"));
 const environmentDatabaseSchema_1 = __importDefault(require("../../models/environmentDatabaseSchema"));
 const ms_1 = __importDefault(require("ms"));
+class EditEnvironmentSharedState {
+    name;
+    constructor() {
+        this.name = "";
+    }
+}
 module.exports = async (bot, modalInteraction) => {
     // Export the function
     if (!modalInteraction.isModalSubmit())
@@ -789,6 +795,10 @@ module.exports = async (bot, modalInteraction) => {
                     });
                     return;
                 }
+                // Share variable
+                const sharedStateInstance = new EditEnvironmentSharedState();
+                sharedStateInstance.name = editEnvironmentName;
+                // edit environment buttons
                 const editEnvironmentButtons = [
                     new discord_js_1.ButtonBuilder()
                         .setCustomId("edit-environment-items-button")
@@ -803,25 +813,51 @@ module.exports = async (bot, modalInteraction) => {
                         .setLabel("Edit Channels")
                         .setStyle(discord_js_1.ButtonStyle.Primary),
                 ];
-                const editEnvironmentReply = modalInteraction.reply({
+                modalInteraction.reply({
                     components: (0, buttonWrapper_1.default)(editEnvironmentButtons),
                     ephemeral: true,
                 });
-                const editEnvironmentCollector = (await editEnvironmentReply).createMessageComponentCollector({
-                    filter: (i) => i.user.id === modalInteraction.user.id,
+                break;
+            case "edit-environment-items-modal":
+                // get input values
+                const editEnvironmentItemsOperator = modalInteraction.fields.getTextInputValue("edit-environment-items-operator-input");
+                const editEnvironmentItemsString = modalInteraction.fields.getTextInputValue("edit-environment-items-value-input");
+                // Validate the inputs
+                if (editEnvironmentItemsOperator !== "add" &&
+                    editEnvironmentItemsOperator !== "remove") {
+                    await modalInteraction.reply({
+                        content: "Invalid operator! Valid operators: add, remove.",
+                        ephemeral: true,
+                    });
+                    return;
+                }
+                const editEnvironmentItemsObjects = editEnvironmentItemsString
+                    .toLowerCase()
+                    .split(",")
+                    .map(async (item) => {
+                    item.trim();
+                    const itemDataInstance = await itemDatabaseSchema_1.default.findOne({ itemName: item });
+                    if (!itemDataInstance)
+                        return null;
+                    return itemDataInstance.itemName;
                 });
-                editEnvironmentCollector.on("collect", async (i) => {
-                    if (!i.isButton())
+                for (const item of editEnvironmentItemsObjects) {
+                    if (!item) {
+                        await modalInteraction.reply({
+                            content: `Item ${item} not found, make sure it exists in the database.`,
+                            ephemeral: true,
+                        });
                         return;
-                    switch (i.customId) {
-                        case "edit-environment-items-button":
-                            break;
-                        case "edit-environment-users-button":
-                            break;
-                        case "edit-environment-channels-button":
-                            break;
                     }
-                });
+                }
+                switch (editEnvironmentItemsOperator) {
+                    case "add":
+                        const { name } = new EditEnvironmentSharedState();
+                        console.log(name);
+                        break;
+                    case "remove":
+                        break;
+                }
                 break;
             // Bot Perform Modals
             case "send-message-modal":
