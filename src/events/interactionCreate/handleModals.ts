@@ -16,6 +16,7 @@ import userData from "../../models/userDatabaseSchema";
 import skillData from "../../models/skillDatabaseSchema";
 import itemData from "../../models/itemDatabaseSchema";
 import statusEffectData from "../../models/statusEffectDatabaseSchema";
+import environmentData from "../../models/environmentDatabaseSchema";
 import ms from "ms";
 
 module.exports = async (
@@ -685,7 +686,7 @@ module.exports = async (
           });
           return;
         }
-
+        // Delete the item from people's inventories
         const deleteItemUsers = deleteItemData.itemUsers;
         for (const user of deleteItemUsers) {
           const deleteItemUserData = await userData.findOne({
@@ -701,6 +702,26 @@ module.exports = async (
           }
         }
 
+        // Delete the item from environments
+        const deleteItemEnvironments = deleteItemData.itemEnvironments;
+        for (const environment of deleteItemEnvironments) {
+          const deleteItemEnvironmentData = await environmentData.findOne({
+            environmentName: environment,
+          });
+          const deleteItemIndex =
+            deleteItemEnvironmentData.environmentItems.findIndex(
+              (item) => item.itemName === deleteItemName
+            );
+          if (deleteItemIndex > -1) {
+            deleteItemEnvironmentData.environmentItems.splice(
+              deleteItemIndex,
+              1
+            );
+            await deleteItemEnvironmentData.save();
+          }
+        }
+
+        // Delete the item from the database.
         itemData.deleteOne({ itemName: deleteItemName });
 
         await modalInteraction.reply({
@@ -888,10 +909,160 @@ module.exports = async (
         });
         break;
 
+      // Environment Modals
+      case "create-environment-modal":
+        // get input values
+        const createEnvironmentName = modalInteraction.fields
+          .getTextInputValue("create-environment-name-input")
+          .toLowerCase();
+        const createEnvironmentItemsPromises: Array<string> =
+          modalInteraction.fields
+            .getTextInputValue("create-environment-items-input")
+            .toLowerCase()
+            .split(",");
+        const createEnvironmentChannel = parseInt(
+          modalInteraction.fields.getTextInputValue(
+            "create-environment-channel-input"
+          )
+        );
+
+        // Remove leading/trailing whitespaces from each item name
+        const createEnvironmentItems = createEnvironmentItemsPromises.map(
+          (item) => item.trim()
+        );
+
+        // Validate item names
+        const createEnvironmentItemsChecked: Array<object> = await Promise.all(
+          createEnvironmentItems.map(async (itemName: string) => {
+            const item = await itemData.findOne({ itemName });
+            return item;
+          })
+        );
+
+        // Validate the inputs
+        if (isNaN(createEnvironmentChannel)) {
+          await modalInteraction.reply({
+            content: "Channel ID invalid!",
+            ephemeral: true,
+          });
+          return;
+        }
+        if (
+          await environmentData.findOne({
+            environmentName: createEnvironmentName,
+          })
+        ) {
+          await modalInteraction.reply({
+            content: `Environment ${createEnvironmentName} already exists.`,
+            ephemeral: true,
+          });
+          return;
+        }
+
+        // Check if all items exist
+        const invalidItems = createEnvironmentItemsChecked.filter(
+          (item) => !item
+        );
+        if (invalidItems.length > 0) {
+          await modalInteraction.reply({
+            content: `Items ${invalidItems
+              .map((item, index) => createEnvironmentItems[index])
+              .join(", ")} not found, make sure they exist in the database.`,
+            ephemeral: true,
+          });
+          return;
+        } else {
+        }
+
+        // give all items the environment name
+        createEnvironmentItemsChecked.forEach(async (item: any) => {
+          const itemDataInstance = await itemData.findOne({
+            itemName: item.itemName,
+          });
+          if (!itemDataInstance) return;
+
+          itemDataInstance.itemEnvironments.push(createEnvironmentName);
+          itemDataInstance.save();
+        });
+        // create environment
+        const createEnvironment = new environmentData({
+          environmentName: createEnvironmentName,
+          environmentItems: createEnvironmentItemsChecked.map(
+            (item: any) => item.itemName
+          ),
+          environmentChannel: createEnvironmentChannel,
+        });
+
+        await createEnvironment.save();
+        await modalInteraction.reply({
+          content: `Successfully created environment ${createEnvironmentName}.\n With items ${createEnvironmentItems.join(
+            ", "
+          )}.`,
+          ephemeral: true,
+        });
+        break;
+
+      case "edit-environment-modal":
+        // get input values
+        const editEnvironmentName = modalInteraction.fields
+          .getTextInputValue("edit-environment-name-input")
+          .toLowerCase()
+          .trim();
+
+        // Validate the inputs
+        if (
+          !(await environmentData.findOne({
+            environmentName: editEnvironmentName,
+          }))
+        ) {
+          await modalInteraction.reply({
+            content: `Environment ${editEnvironmentName} not found.`,
+            ephemeral: true,
+          });
+          return;
+        }
+        const editEnvironmentButtons = [
+          new ButtonBuilder()
+            .setCustomId("edit-environment-items-button")
+            .setLabel("Edit Items")
+            .setStyle(ButtonStyle.Primary),
+          new ButtonBuilder()
+            .setCustomId("edit-environment-users-button")
+            .setLabel("Edit Users")
+            .setStyle(ButtonStyle.Primary),
+          new ButtonBuilder()
+            .setCustomId("edit-environment-channels-button")
+            .setLabel("Edit Channels")
+            .setStyle(ButtonStyle.Primary),
+        ];
+        const editEnvironmentReply = modalInteraction.reply({
+          components: buttonWrapper(editEnvironmentButtons),
+          ephemeral: true,
+        });
+        const editEnvironmentCollector = (
+          await editEnvironmentReply
+        ).createMessageComponentCollector({
+          filter: (i) => i.user.id === modalInteraction.user.id,
+        });
+
+        editEnvironmentCollector.on("collect", async (i) => {
+          if (!i.isButton()) return;
+          switch (i.customId) {
+            case "edit-environment-items-button":
+              break;
+
+            case "edit-environment-users-button":
+              break;
+
+            case "edit-environment-channels-button":
+              break;
+          }
+        });
+        break;
+
       // Bot Perform Modals
       case "send-message-modal":
         // get input values
-
         let sendMessageChannel = modalInteraction.fields
           .getTextInputValue("send-message-target-channel-input")
           .toLowerCase();
@@ -904,7 +1075,7 @@ module.exports = async (
           sendMessageChannel = modalInteraction.channel.id;
         }
         const sendMessageChannelObj =
-          await modalInteraction.guild.channels.cache.get(sendMessageChannel);
+          modalInteraction.guild.channels.cache.get(sendMessageChannel);
 
         if (!sendMessageChannelObj) {
           await modalInteraction.reply({
@@ -958,7 +1129,7 @@ module.exports = async (
         await modalInteraction.reply({
           content: "Are you sure you want to ban this user?",
           ephemeral: true,
-          components: await buttonWrapper([buttonConfirm, buttonCancel]),
+          components: buttonWrapper([buttonConfirm, buttonCancel]),
         });
 
         const collector =
@@ -1165,6 +1336,13 @@ module.exports = async (
           console.error("Error timing out user: ", error);
         }
 
+        break;
+
+      default:
+        modalInteraction.reply({
+          content: "Uhh something went wrong",
+          ephemeral: true,
+        });
         break;
     }
   } catch (error) {

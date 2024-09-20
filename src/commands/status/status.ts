@@ -1357,6 +1357,13 @@ module.exports = {
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true);
 
+                  const createEnvironmentChannelInput = new TextInputBuilder()
+                    .setCustomId("create-environment-channel-input")
+                    .setLabel("Environment channel ID")
+                    .setStyle(TextInputStyle.Short)
+                    .setRequired(true)
+                    .setMinLength(18);
+
                   const createEnvironmentNameRow =
                     new ActionRowBuilder<TextInputBuilder>().addComponents(
                       createEnvironmentNameInput
