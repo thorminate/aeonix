@@ -948,6 +948,12 @@ module.exports = {
                                     .setLabel("Environment items, comma-separated")
                                     .setStyle(discord_js_1.TextInputStyle.Short)
                                     .setRequired(true);
+                                const createEnvironmentChannelInput = new discord_js_1.TextInputBuilder()
+                                    .setCustomId("create-environment-channel-input")
+                                    .setLabel("Environment channel ID")
+                                    .setStyle(discord_js_1.TextInputStyle.Short)
+                                    .setRequired(true)
+                                    .setMinLength(18);
                                 const createEnvironmentNameRow = new discord_js_1.ActionRowBuilder().addComponents(createEnvironmentNameInput);
                                 const createEnvironmentItemsRow = new discord_js_1.ActionRowBuilder().addComponents(createEnvironmentItemsInput);
                                 createEnvironmentModal.addComponents(createEnvironmentNameRow, createEnvironmentItemsRow);
@@ -959,8 +965,46 @@ module.exports = {
                             }
                             break;
                         case "edit_environment":
+                            // Handle "Edit Environment" button click
+                            try {
+                                // Set up the Edit Environment modal
+                                const editEnvironmentModal = new discord_js_1.ModalBuilder()
+                                    .setCustomId("edit-environment-modal")
+                                    .setTitle("Edit Environment");
+                                const editEnvironmentNameInput = new discord_js_1.TextInputBuilder()
+                                    .setCustomId("edit-environment-name-input")
+                                    .setLabel("Environment name")
+                                    .setStyle(discord_js_1.TextInputStyle.Short)
+                                    .setRequired(true);
+                                const editEnvironmentNameRow = new discord_js_1.ActionRowBuilder().addComponents(editEnvironmentNameInput);
+                                editEnvironmentModal.addComponents(editEnvironmentNameRow);
+                                // Show the modal
+                                await buttonInteraction.showModal(editEnvironmentModal);
+                            }
+                            catch (error) {
+                                console.log("Error handling Edit Environment modal:", error);
+                            }
                             break;
                         case "delete_environment":
+                            // Handle "Delete Environment" button click
+                            try {
+                                // Set up the Delete Environment modal
+                                const deleteEnvironmentModal = new discord_js_1.ModalBuilder()
+                                    .setCustomId("delete-environment-modal")
+                                    .setTitle("Delete Environment");
+                                const deleteEnvironmentNameInput = new discord_js_1.TextInputBuilder()
+                                    .setCustomId("delete-environment-name-input")
+                                    .setLabel("Environment name")
+                                    .setStyle(discord_js_1.TextInputStyle.Short)
+                                    .setRequired(true);
+                                const deleteEnvironmentNameRow = new discord_js_1.ActionRowBuilder().addComponents(deleteEnvironmentNameInput);
+                                deleteEnvironmentModal.addComponents(deleteEnvironmentNameRow);
+                                // Show the modal
+                                await buttonInteraction.showModal(deleteEnvironmentModal);
+                            }
+                            catch (error) {
+                                console.log("Error handling Delete Environment modal:", error);
+                            }
                             break;
                         // Bot Perform Buttons
                         case "send_message":
