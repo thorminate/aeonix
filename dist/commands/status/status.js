@@ -408,7 +408,6 @@ module.exports = {
                             });
                             // Edit the original reply to disable the button
                             await interaction.editReply({
-                                content: `loading...`,
                                 components: modifySkillsUpdatedComponents,
                             });
                             // Define buttons for submenu
@@ -464,7 +463,6 @@ module.exports = {
                             });
                             // Edit the original reply to disable the button
                             await interaction.editReply({
-                                content: `loading...`,
                                 components: modifyItemsUpdatedComponents,
                             });
                             // Define buttons for submenu
@@ -520,7 +518,6 @@ module.exports = {
                             });
                             // Edit the original reply to disable the button
                             await interaction.editReply({
-                                content: `loading...`,
                                 components: modifyStatusEffectsUpdatedComponents,
                             });
                             // Define buttons for submenu
@@ -956,7 +953,8 @@ module.exports = {
                                     .setMinLength(18);
                                 const createEnvironmentNameRow = new discord_js_1.ActionRowBuilder().addComponents(createEnvironmentNameInput);
                                 const createEnvironmentItemsRow = new discord_js_1.ActionRowBuilder().addComponents(createEnvironmentItemsInput);
-                                createEnvironmentModal.addComponents(createEnvironmentNameRow, createEnvironmentItemsRow);
+                                const createEnvironmentChannelRow = new discord_js_1.ActionRowBuilder().addComponents(createEnvironmentChannelInput);
+                                createEnvironmentModal.addComponents(createEnvironmentNameRow, createEnvironmentItemsRow, createEnvironmentChannelRow);
                                 // Show the modal
                                 await buttonInteraction.showModal(createEnvironmentModal);
                             }
@@ -965,24 +963,41 @@ module.exports = {
                             }
                             break;
                         case "edit_environment":
-                            // Handle "Edit Environment" button click
-                            try {
-                                // Set up the Edit Environment modal
-                                const editEnvironmentModal = new discord_js_1.ModalBuilder()
-                                    .setCustomId("edit-environment-modal")
-                                    .setTitle("Edit Environment");
-                                const editEnvironmentNameInput = new discord_js_1.TextInputBuilder()
-                                    .setCustomId("edit-environment-name-input")
-                                    .setLabel("Environment name")
-                                    .setStyle(discord_js_1.TextInputStyle.Short)
-                                    .setRequired(true);
-                                const editEnvironmentNameRow = new discord_js_1.ActionRowBuilder().addComponents(editEnvironmentNameInput);
-                                editEnvironmentModal.addComponents(editEnvironmentNameRow);
-                                // Show the modal
-                                await buttonInteraction.showModal(editEnvironmentModal);
+                            // Create the Edit Environment submenu
+                            const editEnvironmentUpdatedComponents = adminReply.components.map((row) => {
+                                return discord_js_1.ActionRowBuilder.from(row).setComponents(row.components.map((button) => {
+                                    return button;
+                                }));
+                            });
+                            await interaction.editReply({
+                                components: editEnvironmentUpdatedComponents,
+                            });
+                            // create buttons for submenu
+                            const editEnvironmentButtons = [
+                                new discord_js_1.ButtonBuilder()
+                                    .setCustomId("edit-environment-name")
+                                    .setLabel("Edit Environment Name")
+                                    .setStyle(discord_js_1.ButtonStyle.Primary),
+                                new discord_js_1.ButtonBuilder()
+                                    .setCustomId("edit-environment-items")
+                                    .setLabel("Edit Environment Items")
+                                    .setStyle(discord_js_1.ButtonStyle.Primary),
+                                new discord_js_1.ButtonBuilder()
+                                    .setCustomId("edit-environment-channel")
+                                    .setLabel("Edit Environment Channel")
+                                    .setStyle(discord_js_1.ButtonStyle.Primary),
+                            ];
+                            if (prevPlayer === true) {
+                                await buttonInteraction.editReply({
+                                    content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(0, 1)}?`,
+                                    components: (0, buttonWrapper_1.default)(editEnvironmentButtons),
+                                });
                             }
-                            catch (error) {
-                                console.log("Error handling Edit Environment modal:", error);
+                            else {
+                                await buttonInteraction.update({
+                                    content: `What would you like to do, Administrator ${targetUserObj.user.globalName.substr(0, 1)}?`,
+                                    components: (0, buttonWrapper_1.default)(editEnvironmentButtons),
+                                });
                             }
                             break;
                         case "delete_environment":
@@ -1004,6 +1019,84 @@ module.exports = {
                             }
                             catch (error) {
                                 console.log("Error handling Delete Environment modal:", error);
+                            }
+                            break;
+                        // Edit Environment Buttons
+                        case "edit-environment-name":
+                            try {
+                                // Set up the Edit Environment Name modal
+                                const editEnvironmentNameModal = new discord_js_1.ModalBuilder()
+                                    .setCustomId("edit-environment-name-modal")
+                                    .setTitle("Edit Environment Name");
+                                const editEnvironmentNameInput = new discord_js_1.TextInputBuilder()
+                                    .setCustomId("edit-environment-name-input")
+                                    .setLabel("Environment name")
+                                    .setStyle(discord_js_1.TextInputStyle.Short)
+                                    .setRequired(true);
+                                const editEnvironmentNewNameInput = new discord_js_1.TextInputBuilder()
+                                    .setCustomId("edit-environment-new-name-input")
+                                    .setLabel("New environment name")
+                                    .setStyle(discord_js_1.TextInputStyle.Short)
+                                    .setRequired(true);
+                                const editEnvironmentNameRow = new discord_js_1.ActionRowBuilder().addComponents(editEnvironmentNameInput);
+                                const editEnvironmentNewNameRow = new discord_js_1.ActionRowBuilder().addComponents(editEnvironmentNewNameInput);
+                                editEnvironmentNameModal.addComponents(editEnvironmentNameRow, editEnvironmentNewNameRow);
+                                // Show the modal
+                                await buttonInteraction.showModal(editEnvironmentNameModal);
+                            }
+                            catch (error) {
+                                console.log("Error handling Edit Environment Name modal:", error);
+                            }
+                            break;
+                        case "edit-environment-items":
+                            try {
+                                // Set up the Edit Environment Items modal
+                                const editEnvironmentItemsModal = new discord_js_1.ModalBuilder()
+                                    .setCustomId("edit-environment-items-modal")
+                                    .setTitle("Edit Environment Items");
+                                const editEnvironmentNameInput = new discord_js_1.TextInputBuilder()
+                                    .setCustomId("edit-environment-name-input")
+                                    .setLabel("Environment name")
+                                    .setStyle(discord_js_1.TextInputStyle.Short)
+                                    .setRequired(true);
+                                const editEnvironmentItemsInput = new discord_js_1.TextInputBuilder()
+                                    .setCustomId("edit-environment-items-input")
+                                    .setLabel("Environment items")
+                                    .setStyle(discord_js_1.TextInputStyle.Short)
+                                    .setRequired(true);
+                                const editEnvironmentNameRow = new discord_js_1.ActionRowBuilder().addComponents(editEnvironmentNameInput);
+                                const editEnvironmentItemsRow = new discord_js_1.ActionRowBuilder().addComponents(editEnvironmentItemsInput);
+                                editEnvironmentItemsModal.addComponents(editEnvironmentNameRow, editEnvironmentItemsRow);
+                                // Show the modal
+                                await buttonInteraction.showModal(editEnvironmentItemsModal);
+                            }
+                            catch (error) {
+                                console.log("Error handling Edit Environment Items modal:", error);
+                            }
+                            break;
+                        case "edit-environment-channel":
+                            try {
+                                const editEnvironmentChannelModal = new discord_js_1.ModalBuilder()
+                                    .setCustomId("edit-environment-channel-modal")
+                                    .setTitle("Edit Environment Channel");
+                                const editEnvironmentNameInput = new discord_js_1.TextInputBuilder()
+                                    .setCustomId("edit-environment-name-input")
+                                    .setLabel("Environment name")
+                                    .setStyle(discord_js_1.TextInputStyle.Short)
+                                    .setRequired(true);
+                                const editEnvironmentChannelInput = new discord_js_1.TextInputBuilder()
+                                    .setCustomId("edit-environment-channel-input")
+                                    .setLabel("Environment channel")
+                                    .setStyle(discord_js_1.TextInputStyle.Short)
+                                    .setRequired(true);
+                                const editEnvironmentNameRow = new discord_js_1.ActionRowBuilder().addComponents(editEnvironmentNameInput);
+                                const editEnvironmentChannelRow = new discord_js_1.ActionRowBuilder().addComponents(editEnvironmentChannelInput);
+                                editEnvironmentChannelModal.addComponents(editEnvironmentNameRow, editEnvironmentChannelRow);
+                                // Show the modal
+                                await buttonInteraction.showModal(editEnvironmentChannelModal);
+                            }
+                            catch (error) {
+                                console.log("Error handling Edit Environment Channel modal:", error);
                             }
                             break;
                         // Bot Perform Buttons
@@ -1135,7 +1228,7 @@ module.exports = {
         }
         catch (error) {
             if (error instanceof discord_js_1.HTTPError && error.status === 503) {
-                console.log(`There was an error running status: The API did not respond. ${error.status}`);
+                console.log(`There was an error running status: The API did not respond in time. ${error.status}`);
             }
             console.log(`There was an error running status: ${error}`);
         }

@@ -37,6 +37,7 @@ module.exports = async (
 ) => {
   // Export the function
   if (!modalInteraction.isModalSubmit()) return;
+  let sharedStates: Array<object> = [];
   try {
     switch (
       modalInteraction.customId // Switch on the (pretty self-explanatory) custom IDs
@@ -925,35 +926,36 @@ module.exports = async (
       case "create-environment-modal":
         // get input values
         const createEnvironmentName = modalInteraction.fields
-          .getTextInputValue("create-environment-name-input")
-          .toLowerCase();
+          .getTextInputValue("create-environment-name-input") // get name input
+          .toLowerCase(); // convert to lowercase
         const createEnvironmentItemsPromises: Array<string> =
           modalInteraction.fields
-            .getTextInputValue("create-environment-items-input")
-            .toLowerCase()
-            .split(",");
+            .getTextInputValue("create-environment-items-input") // get items input
+            .toLowerCase() // convert to lowercase
+            .split(","); // convert to array, split by comma
         const createEnvironmentChannel = parseInt(
+          // get channel input and convert to number
           modalInteraction.fields.getTextInputValue(
             "create-environment-channel-input"
           )
         );
-
-        // Remove leading/trailing whitespaces from each item name
         const createEnvironmentItems = createEnvironmentItemsPromises.map(
-          (item) => item.trim()
+          (item) => item.trim() // remove leading/trailing whitespaces
         );
 
-        // Validate item names
         const createEnvironmentItemsChecked: Array<object> = await Promise.all(
+          // await all promises
           createEnvironmentItems.map(async (itemName: string) => {
-            const item = await itemData.findOne({ itemName });
-            return item;
+            // for each item
+            const item = await itemData.findOne({ itemName }); // get their corresponding data
+            return item; // return the item object into the new array
           })
         );
 
-        // Validate the inputs
         if (isNaN(createEnvironmentChannel)) {
+          // if channel id is not a number
           await modalInteraction.reply({
+            // say so verbosely
             content: "Channel ID invalid!",
             ephemeral: true,
           });
@@ -964,7 +966,9 @@ module.exports = async (
             environmentName: createEnvironmentName,
           })
         ) {
+          // if environment already exists
           await modalInteraction.reply({
+            // say so verbosely
             content: `Environment ${createEnvironmentName} already exists.`,
             ephemeral: true,
           });
@@ -973,28 +977,26 @@ module.exports = async (
 
         // Check if all items exist
         const invalidItems = createEnvironmentItemsChecked.filter(
+          // filter out valid items into new array
           (item) => !item
         );
         if (invalidItems.length > 0) {
+          // if there are invalid items
           await modalInteraction.reply({
+            // say so verbosely
             content: `Items ${invalidItems
               .map((item, index) => createEnvironmentItems[index])
               .join(", ")} not found, make sure they exist in the database.`,
             ephemeral: true,
           });
           return;
-        } else {
         }
 
         // give all items the environment name
         createEnvironmentItemsChecked.forEach(async (item: any) => {
-          const itemDataInstance = await itemData.findOne({
-            itemName: item.itemName,
-          });
-          if (!itemDataInstance) return;
-
-          itemDataInstance.itemEnvironments.push(createEnvironmentName);
-          itemDataInstance.save();
+          // for each existing item
+          item.itemEnvironments.push(createEnvironmentName);
+          item.save();
         });
         // create environment
         const createEnvironment = new environmentData({
@@ -1009,106 +1011,92 @@ module.exports = async (
         await modalInteraction.reply({
           content: `Successfully created environment ${createEnvironmentName}.\n With items ${createEnvironmentItems.join(
             ", "
-          )}.`,
+          )}. \n And channel: <#${createEnvironmentChannel}>`,
           ephemeral: true,
         });
         break;
 
-      case "edit-environment-modal":
+      case "edit-environment-name-modal":
         // get input values
         const editEnvironmentName = modalInteraction.fields
           .getTextInputValue("edit-environment-name-input")
-          .toLowerCase()
-          .trim();
+          .toLowerCase();
 
-        // Validate the inputs
-        if (
-          !(await environmentData.findOne({
-            environmentName: editEnvironmentName,
-          }))
-        ) {
+        const editEnvironmentNewName = modalInteraction.fields
+          .getTextInputValue("edit-environment-new-name-input")
+          .toLowerCase();
+
+        // Validate and format the inputs
+        const editEnvironmentNameData = await environmentData.findOne({
+          environmentName: editEnvironmentName,
+        });
+
+        if (editEnvironmentNameData) {
+          editEnvironmentNameData.environmentName = editEnvironmentNewName;
+          await editEnvironmentNameData.save();
+
           await modalInteraction.reply({
-            content: `Environment ${editEnvironmentName} not found.`,
+            content: `Successfully renamed environment ${editEnvironmentName} to ${editEnvironmentNewName}.`,
             ephemeral: true,
           });
-          return;
+        } else {
+          await modalInteraction.reply({
+            content: "Environment not found!",
+            ephemeral: true,
+          });
         }
-        // Share variable
-        const sharedStateInstance = new EditEnvironmentSharedState();
-        sharedStateInstance.name = editEnvironmentName;
-
-        // edit environment buttons
-        const editEnvironmentButtons = [
-          new ButtonBuilder()
-            .setCustomId("edit-environment-items-button")
-            .setLabel("Edit Items")
-            .setStyle(ButtonStyle.Primary),
-          new ButtonBuilder()
-            .setCustomId("edit-environment-users-button")
-            .setLabel("Edit Users")
-            .setStyle(ButtonStyle.Primary),
-          new ButtonBuilder()
-            .setCustomId("edit-environment-channels-button")
-            .setLabel("Edit Channels")
-            .setStyle(ButtonStyle.Primary),
-        ];
-        modalInteraction.reply({
-          components: buttonWrapper(editEnvironmentButtons),
-          ephemeral: true,
-        });
         break;
 
       case "edit-environment-items-modal":
         // get input values
-        const editEnvironmentItemsOperator =
-          modalInteraction.fields.getTextInputValue(
-            "edit-environment-items-operator-input"
-          );
-        const editEnvironmentItemsString =
-          modalInteraction.fields.getTextInputValue(
-            "edit-environment-items-value-input"
-          );
+        const editEnvironmentItemsName: string = modalInteraction.fields
+          .getTextInputValue("edit-environment-name-input")
+          .toLowerCase();
+        const editEnvironmentItemsPromises: Array<string> =
+          modalInteraction.fields
+            .getTextInputValue("edit-environment-items-input")
+            .toLowerCase()
+            .split(",")
+            .map((item) => item.trim());
 
-        // Validate the inputs
-        if (
-          editEnvironmentItemsOperator !== "add" &&
-          editEnvironmentItemsOperator !== "remove"
-        ) {
+        const editEnvironmentItemsData = await environmentData.findOne({
+          environmentName: editEnvironmentItemsName,
+        });
+
+        if (!editEnvironmentItemsData) {
           await modalInteraction.reply({
-            content: "Invalid operator! Valid operators: add, remove.",
+            content: "Environment not found!",
             ephemeral: true,
           });
           return;
         }
-        const editEnvironmentItemsObjects = editEnvironmentItemsString
-          .toLowerCase()
-          .split(",")
-          .map(async (item) => {
-            item.trim();
-            const itemDataInstance = await itemData.findOne({ itemName: item });
-            if (!itemDataInstance) return null;
-            return itemDataInstance.itemName;
+
+        const editEnvironmentItems: Array<object> = await Promise.all(
+          editEnvironmentItemsPromises.map(async (itemName: string) => {
+            // for each item
+            const item = await itemData.findOne({ itemName }); // get their corresponding data
+            if (!item) return null;
+            else return item;
+          })
+        );
+        const editEnvironmentInvalidItems = editEnvironmentItems.filter(
+          // filter out valid items into new array
+          (item) => !item
+        );
+        if (editEnvironmentInvalidItems.length > 0) {
+          // if there are invalid items
+          await modalInteraction.reply({
+            // say so verbosely
+            content: `Items ${invalidItems
+              .map((item, index) => createEnvironmentItems[index])
+              .join(", ")} not found, make sure they exist in the database.`,
+            ephemeral: true,
           });
-
-        for (const item of editEnvironmentItemsObjects) {
-          if (!item) {
-            await modalInteraction.reply({
-              content: `Item ${item} not found, make sure it exists in the database.`,
-              ephemeral: true,
-            });
-            return;
-          }
+          return;
         }
+        break;
 
-        switch (editEnvironmentItemsOperator) {
-          case "add":
-            const { name } = new EditEnvironmentSharedState();
-            console.log(name);
-            break;
-
-          case "remove":
-            break;
-        }
+      case "edit-environment-channel-modal":
         break;
 
       // Bot Perform Modals
