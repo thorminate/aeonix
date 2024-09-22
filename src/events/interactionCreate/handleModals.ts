@@ -23,14 +23,6 @@ import statusEffectData from "../../models/statusEffectDatabaseSchema";
 import environmentData from "../../models/environmentDatabaseSchema";
 import ms from "ms";
 
-class EditEnvironmentSharedState {
-  public name: string;
-
-  constructor() {
-    this.name = "";
-  }
-}
-
 module.exports = async (
   bot: Client,
   modalInteraction: ModalSubmitInteraction
@@ -1094,6 +1086,17 @@ module.exports = async (
           });
           return;
         }
+        editEnvironmentItemsData.environmentItems = editEnvironmentItems.map(
+          (item: any) => item.itemName
+        );
+
+        await editEnvironmentItemsData.save();
+        await modalInteraction.reply({
+          content: `Successfully edited items in environment ${editEnvironmentItemsName} to ${editEnvironmentItems
+            .map((item: any) => item.itemName)
+            .join(", ")}.`,
+          ephemeral: true,
+        });
         break;
 
       case "edit-environment-channel-modal":

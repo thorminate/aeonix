@@ -16,12 +16,6 @@ const itemDatabaseSchema_1 = __importDefault(require("../../models/itemDatabaseS
 const statusEffectDatabaseSchema_1 = __importDefault(require("../../models/statusEffectDatabaseSchema"));
 const environmentDatabaseSchema_1 = __importDefault(require("../../models/environmentDatabaseSchema"));
 const ms_1 = __importDefault(require("ms"));
-class EditEnvironmentSharedState {
-    name;
-    constructor() {
-        this.name = "";
-    }
-}
 module.exports = async (bot, modalInteraction) => {
     // Export the function
     if (!modalInteraction.isModalSubmit())
@@ -854,6 +848,14 @@ module.exports = async (bot, modalInteraction) => {
                     });
                     return;
                 }
+                editEnvironmentItemsData.environmentItems = editEnvironmentItems.map((item) => item.itemName);
+                await editEnvironmentItemsData.save();
+                await modalInteraction.reply({
+                    content: `Successfully edited items in environment ${editEnvironmentItemsName} to ${editEnvironmentItems
+                        .map((item) => item.itemName)
+                        .join(", ")}.`,
+                    ephemeral: true,
+                });
                 break;
             case "edit-environment-channel-modal":
                 break;
