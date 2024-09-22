@@ -3,11 +3,7 @@
   "version": "0.0.1",
   "main": "dist/index.js",
   "scripts": {
-<<<<<<< HEAD
     "start": "ts-node src/index.ts"
-=======
-    "start": "tsc && node dist/index.js"
->>>>>>> 2e75c4ab70472ed24e2e9f702562ae5c2f2fa6d1
   },
   "keywords": [],
   "author": "Thorminate",
@@ -19,12 +15,8 @@
     "mongoose": "^8.6.2",
     "ms": "^2.1.3",
     "pretty-ms": "^9.1.0",
-<<<<<<< HEAD
     "typescript": "^5.6.2",
     "ts-node": "^10.9.2"
-=======
-    "typescript": "^5.6.2"
->>>>>>> 2e75c4ab70472ed24e2e9f702562ae5c2f2fa6d1
   },
   "devDependencies": {
     "@types/ms": "^0.7.34"
