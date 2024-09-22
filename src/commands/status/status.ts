@@ -565,6 +565,10 @@ module.exports = {
 
                 // Edit the original reply to disable the button
                 await interaction.editReply({
+<<<<<<< HEAD
+=======
+                  content: `loading...`,
+>>>>>>> 2e75c4ab70472ed24e2e9f702562ae5c2f2fa6d1
                   components: modifySkillsUpdatedComponents,
                 });
                 // Define buttons for submenu
@@ -639,6 +643,10 @@ module.exports = {
 
                 // Edit the original reply to disable the button
                 await interaction.editReply({
+<<<<<<< HEAD
+=======
+                  content: `loading...`,
+>>>>>>> 2e75c4ab70472ed24e2e9f702562ae5c2f2fa6d1
                   components: modifyItemsUpdatedComponents,
                 });
                 // Define buttons for submenu
@@ -711,6 +719,10 @@ module.exports = {
 
                 // Edit the original reply to disable the button
                 await interaction.editReply({
+<<<<<<< HEAD
+=======
+                  content: `loading...`,
+>>>>>>> 2e75c4ab70472ed24e2e9f702562ae5c2f2fa6d1
                   components: modifyStatusEffectsUpdatedComponents,
                 });
                 // Define buttons for submenu
@@ -1371,6 +1383,7 @@ module.exports = {
                       createEnvironmentItemsInput
                     );
 
+<<<<<<< HEAD
                   const createEnvironmentChannelRow =
                     new ActionRowBuilder<TextInputBuilder>().addComponents(
                       createEnvironmentChannelInput
@@ -1380,6 +1393,11 @@ module.exports = {
                     createEnvironmentNameRow,
                     createEnvironmentItemsRow,
                     createEnvironmentChannelRow
+=======
+                  createEnvironmentModal.addComponents(
+                    createEnvironmentNameRow,
+                    createEnvironmentItemsRow
+>>>>>>> 2e75c4ab70472ed24e2e9f702562ae5c2f2fa6d1
                   );
 
                   // Show the modal
@@ -1393,6 +1411,7 @@ module.exports = {
                 break;
 
               case "edit_environment":
+<<<<<<< HEAD
                 // Create the Edit Environment submenu
                 const editEnvironmentUpdatedComponents =
                   adminReply.components.map((row: any) => {
@@ -1442,6 +1461,32 @@ module.exports = {
                     )}?`,
                     components: buttonWrapper(editEnvironmentButtons),
                   });
+=======
+                // Handle "Edit Environment" button click
+                try {
+                  // Set up the Edit Environment modal
+                  const editEnvironmentModal = new ModalBuilder()
+                    .setCustomId("edit-environment-modal")
+                    .setTitle("Edit Environment");
+
+                  const editEnvironmentNameInput = new TextInputBuilder()
+                    .setCustomId("edit-environment-name-input")
+                    .setLabel("Environment name")
+                    .setStyle(TextInputStyle.Short)
+                    .setRequired(true);
+
+                  const editEnvironmentNameRow =
+                    new ActionRowBuilder<TextInputBuilder>().addComponents(
+                      editEnvironmentNameInput
+                    );
+
+                  editEnvironmentModal.addComponents(editEnvironmentNameRow);
+
+                  // Show the modal
+                  await buttonInteraction.showModal(editEnvironmentModal);
+                } catch (error) {
+                  console.log("Error handling Edit Environment modal:", error);
+>>>>>>> 2e75c4ab70472ed24e2e9f702562ae5c2f2fa6d1
                 }
                 break;
 
@@ -1478,6 +1523,7 @@ module.exports = {
                 }
                 break;
 
+<<<<<<< HEAD
               // Edit Environment Buttons
               case "edit-environment-name":
                 try {
@@ -1609,6 +1655,8 @@ module.exports = {
                 }
                 break;
 
+=======
+>>>>>>> 2e75c4ab70472ed24e2e9f702562ae5c2f2fa6d1
               // Bot Perform Buttons
               case "send_message":
                 // Handle "Send Message" button click
@@ -1804,7 +1852,11 @@ module.exports = {
     } catch (error) {
       if (error instanceof HTTPError && error.status === 503) {
         console.log(
+<<<<<<< HEAD
           `There was an error running status: The API did not respond in time. ${error.status}`
+=======
+          `There was an error running status: The API did not respond. ${error.status}`
+>>>>>>> 2e75c4ab70472ed24e2e9f702562ae5c2f2fa6d1
         );
       }
       console.log(`There was an error running status: ${error}`);

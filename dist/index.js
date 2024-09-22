@@ -54,7 +54,11 @@ const rl = ReadLine.createInterface({
 rl.setPrompt("> "); // Set the prompt.
 setTimeout(() => {
     rl.prompt(); // Give the prompt.
+<<<<<<< HEAD
 }, 2500); // Give the prompt.
+=======
+}, 100); // Give the prompt.
+>>>>>>> 2e75c4ab70472ed24e2e9f702562ae5c2f2fa6d1
 rl.on("line", async (input) => {
     // When a line is typed.
     switch (input.split(" ")[0] // Switch on the first word in the line.
