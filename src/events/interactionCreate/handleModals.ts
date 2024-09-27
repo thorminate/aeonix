@@ -1152,6 +1152,45 @@ module.exports = async (
         break;
 
       case "edit-environment-channel-modal":
+        // get input values
+        const editEnvironmentChannelName: string = modalInteraction.fields
+          .getTextInputValue("edit-environment-name-input")
+          .toLowerCase();
+        const editEnvironmentChannel = modalInteraction.fields
+          .getTextInputValue("edit-environment-channel-input")
+          .toLowerCase();
+
+        const editEnvironmentChannelData =
+          await modalInteraction.guild.channels.cache.get(
+            editEnvironmentChannel
+          );
+        if (!editEnvironmentChannelData) {
+          await modalInteraction.reply({
+            content: "Channel not found!",
+            ephemeral: true,
+          });
+          return;
+        }
+
+        const editEnvironmentChannelObj = await environmentData.findOne({
+          environmentName: editEnvironmentChannelName,
+        });
+
+        if (!editEnvironmentChannelObj) {
+          await modalInteraction.reply({
+            content: "Environment not found!",
+            ephemeral: true,
+          });
+          return;
+        }
+
+        editEnvironmentChannelObj.environmentChannel = editEnvironmentChannel;
+        await editEnvironmentChannelObj.save();
+        await modalInteraction.reply({
+          content: `Successfully edited environment ${editEnvironmentChannelName} to <#${editEnvironmentChannel}>.`,
+          ephemeral: true,
+        });
+
         break;
 
       // Bot Perform Modals
