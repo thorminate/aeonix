@@ -1054,9 +1054,14 @@ module.exports = {
                                 const editEnvironmentItemsModal = new discord_js_1.ModalBuilder()
                                     .setCustomId("edit-environment-items-modal")
                                     .setTitle("Edit Environment Items");
-                                const editEnvironmentNameInput = new discord_js_1.TextInputBuilder()
+                                const editEnvironmentItemsNameInput = new discord_js_1.TextInputBuilder()
                                     .setCustomId("edit-environment-name-input")
                                     .setLabel("Environment name")
+                                    .setStyle(discord_js_1.TextInputStyle.Short)
+                                    .setRequired(true);
+                                const editEnvironmentNameOperatorInput = new discord_js_1.TextInputBuilder()
+                                    .setCustomId("edit-environment-items-operator-input")
+                                    .setLabel("Add, set, or remove")
                                     .setStyle(discord_js_1.TextInputStyle.Short)
                                     .setRequired(true);
                                 const editEnvironmentItemsInput = new discord_js_1.TextInputBuilder()
@@ -1064,9 +1069,10 @@ module.exports = {
                                     .setLabel("Environment items")
                                     .setStyle(discord_js_1.TextInputStyle.Short)
                                     .setRequired(true);
-                                const editEnvironmentNameRow = new discord_js_1.ActionRowBuilder().addComponents(editEnvironmentNameInput);
+                                const editEnvironmentItemsNameRow = new discord_js_1.ActionRowBuilder().addComponents(editEnvironmentItemsNameInput);
+                                const editEnvironmentItemsOperationRow = new discord_js_1.ActionRowBuilder().addComponents(editEnvironmentNameOperatorInput);
                                 const editEnvironmentItemsRow = new discord_js_1.ActionRowBuilder().addComponents(editEnvironmentItemsInput);
-                                editEnvironmentItemsModal.addComponents(editEnvironmentNameRow, editEnvironmentItemsRow);
+                                editEnvironmentItemsModal.addComponents(editEnvironmentItemsNameRow, editEnvironmentItemsOperationRow, editEnvironmentItemsRow);
                                 // Show the modal
                                 await buttonInteraction.showModal(editEnvironmentItemsModal);
                             }

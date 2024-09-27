@@ -924,20 +924,18 @@ module.exports = async (
           modalInteraction.fields
             .getTextInputValue("create-environment-items-input") // get items input
             .toLowerCase() // convert to lowercase
-            .split(","); // convert to array, split by comma
+            .split(",")
+            .map((itemName) => itemName.trim()); // convert to array, split by comma
         const createEnvironmentChannel = parseInt(
           // get channel input and convert to number
           modalInteraction.fields.getTextInputValue(
             "create-environment-channel-input"
           )
         );
-        const createEnvironmentItems = createEnvironmentItemsPromises.map(
-          (item) => item.trim() // remove leading/trailing whitespaces
-        );
 
-        const createEnvironmentItemsChecked: Array<object> = await Promise.all(
+        const createEnvironmentItems: Array<object> = await Promise.all(
           // await all promises
-          createEnvironmentItems.map(async (itemName: string) => {
+          createEnvironmentItemsPromises.map(async (itemName: string) => {
             // for each item
             const item = await itemData.findOne({ itemName }); // get their corresponding data
             return item; // return the item object into the new array
@@ -968,7 +966,7 @@ module.exports = async (
         }
 
         // Check if all items exist
-        const invalidItems = createEnvironmentItemsChecked.filter(
+        const invalidItems = createEnvironmentItems.filter(
           // filter out valid items into new array
           (item) => !item
         );
@@ -985,7 +983,7 @@ module.exports = async (
         }
 
         // give all items the environment name
-        createEnvironmentItemsChecked.forEach(async (item: any) => {
+        createEnvironmentItems.forEach(async (item: any) => {
           // for each existing item
           item.itemEnvironments.push(createEnvironmentName);
           item.save();
@@ -993,7 +991,7 @@ module.exports = async (
         // create environment
         const createEnvironment = new environmentData({
           environmentName: createEnvironmentName,
-          environmentItems: createEnvironmentItemsChecked.map(
+          environmentItems: createEnvironmentItems.map(
             (item: any) => item.itemName
           ),
           environmentChannel: createEnvironmentChannel,
@@ -1044,6 +1042,11 @@ module.exports = async (
         const editEnvironmentItemsName: string = modalInteraction.fields
           .getTextInputValue("edit-environment-name-input")
           .toLowerCase();
+
+        const editEnvironmentItemsOperator =
+          modalInteraction.fields.getTextInputValue(
+            "edit-environment-items-operator-input"
+          );
         const editEnvironmentItemsPromises: Array<string> =
           modalInteraction.fields
             .getTextInputValue("edit-environment-items-input")
@@ -1086,17 +1089,66 @@ module.exports = async (
           });
           return;
         }
-        editEnvironmentItemsData.environmentItems = editEnvironmentItems.map(
-          (item: any) => item.itemName
-        );
+        switch (editEnvironmentItemsOperator) {
+          case "add":
+            if (
+              editEnvironmentItemsData.environmentItems.includes(
+                editEnvironmentItems.map((item: any) => item.itemName)
+              )
+            ) {
+              await modalInteraction.reply({
+                content: `Items ${editEnvironmentItems
+                  .map((item: any) => item.itemName)
+                  .join(
+                    ", "
+                  )} already in environment ${editEnvironmentItemsName}.`,
+                ephemeral: true,
+              });
+              return;
+            }
+            editEnvironmentItemsData.environmentItems.push(
+              ...editEnvironmentItems.map((item: any) => item.itemName)
+            );
 
-        await editEnvironmentItemsData.save();
-        await modalInteraction.reply({
-          content: `Successfully edited items in environment ${editEnvironmentItemsName} to ${editEnvironmentItems
-            .map((item: any) => item.itemName)
-            .join(", ")}.`,
-          ephemeral: true,
-        });
+            await editEnvironmentItemsData.save();
+            await modalInteraction.reply({
+              content: `Successfully edited items in environment ${editEnvironmentItemsName} to ${editEnvironmentItems
+                .map((item: any) => item.itemName)
+                .join(", ")}.`,
+              ephemeral: true,
+            });
+            break;
+
+          case "remove":
+            editEnvironmentItemsData.environmentItems =
+              editEnvironmentItemsData.environmentItems.filter(
+                (itemName: string) =>
+                  !editEnvironmentItems.some(
+                    (item: any) => item.itemName === itemName
+                  )
+              );
+            await editEnvironmentItemsData.save();
+            await modalInteraction.reply({
+              content: `Successfully removed items in environment ${editEnvironmentItemsName} to ${editEnvironmentItems
+                .map((item: any) => item.itemName)
+                .join(", ")}.`,
+              ephemeral: true,
+            });
+            break;
+
+          case "set":
+            editEnvironmentItemsData.environmentItems =
+              editEnvironmentItems.map((item: any) => item.itemName);
+
+            await editEnvironmentItemsData.save();
+            await modalInteraction.reply({
+              content: `Successfully set items in environment ${editEnvironmentItemsName} to ${editEnvironmentItems
+                .map((item: any) => item.itemName)
+                .join(", ")}.`,
+              ephemeral: true,
+            });
+            break;
+        }
         break;
 
       case "edit-environment-channel-modal":
@@ -1382,7 +1434,7 @@ module.exports = async (
 
       default:
         modalInteraction.reply({
-          content: "Uhh something went wrong",
+          content: "Uhh something went wrong, Modal not found.",
           ephemeral: true,
         });
         break;

@@ -1529,11 +1529,18 @@ module.exports = {
                     .setCustomId("edit-environment-items-modal")
                     .setTitle("Edit Environment Items");
 
-                  const editEnvironmentNameInput = new TextInputBuilder()
+                  const editEnvironmentItemsNameInput = new TextInputBuilder()
                     .setCustomId("edit-environment-name-input")
                     .setLabel("Environment name")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true);
+
+                  const editEnvironmentNameOperatorInput =
+                    new TextInputBuilder()
+                      .setCustomId("edit-environment-items-operator-input")
+                      .setLabel("Add, set, or remove")
+                      .setStyle(TextInputStyle.Short)
+                      .setRequired(true);
 
                   const editEnvironmentItemsInput = new TextInputBuilder()
                     .setCustomId("edit-environment-items-input")
@@ -1541,9 +1548,13 @@ module.exports = {
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true);
 
-                  const editEnvironmentNameRow =
+                  const editEnvironmentItemsNameRow =
                     new ActionRowBuilder<TextInputBuilder>().addComponents(
-                      editEnvironmentNameInput
+                      editEnvironmentItemsNameInput
+                    );
+                  const editEnvironmentItemsOperationRow =
+                    new ActionRowBuilder<TextInputBuilder>().addComponents(
+                      editEnvironmentNameOperatorInput
                     );
                   const editEnvironmentItemsRow =
                     new ActionRowBuilder<TextInputBuilder>().addComponents(
@@ -1551,7 +1562,8 @@ module.exports = {
                     );
 
                   editEnvironmentItemsModal.addComponents(
-                    editEnvironmentNameRow,
+                    editEnvironmentItemsNameRow,
+                    editEnvironmentItemsOperationRow,
                     editEnvironmentItemsRow
                   );
 
