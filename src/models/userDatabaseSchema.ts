@@ -83,6 +83,11 @@ const userData = new Schema({
     type: Array<object>,
     default: [],
   },
+  environment: {
+    // Define the current environment.
+    type: String,
+    default: "start",
+  },
 });
 
 export default model("userDatabase", userData); // Export the model.

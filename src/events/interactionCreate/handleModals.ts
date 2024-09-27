@@ -999,9 +999,9 @@ module.exports = async (
 
         await createEnvironment.save();
         await modalInteraction.reply({
-          content: `Successfully created environment ${createEnvironmentName}.\n With items ${createEnvironmentItems.join(
-            ", "
-          )}. \n And channel: <#${createEnvironmentChannel}>`,
+          content: `Successfully created environment ${createEnvironmentName}.\n With item(s): ${createEnvironmentItems
+            .map((item: any) => item.itemName)
+            .join(", ")}. \n And channel: <#${createEnvironmentChannel}>`,
           ephemeral: true,
         });
         break;
@@ -1193,6 +1193,91 @@ module.exports = async (
 
         break;
 
+      case "delete-environment-modal":
+        // get input values
+        const deleteEnvironmentName: string = modalInteraction.fields
+          .getTextInputValue("delete-environment-name-input")
+          .toLowerCase();
+
+        const deleteEnvironmentObj = await environmentData.findOne({
+          environmentName: deleteEnvironmentName,
+        });
+        if (!deleteEnvironmentObj) {
+          await modalInteraction.reply({
+            content: "Environment not found!",
+            ephemeral: true,
+          });
+          return;
+        }
+
+        await deleteEnvironmentObj.deleteOne();
+        await modalInteraction.reply({
+          content: `Successfully deleted environment ${deleteEnvironmentName}.`,
+          ephemeral: true,
+        });
+        break;
+
+      case "user-relocator-modal":
+        // get input values
+        const relocateNameInput = modalInteraction.fields
+          .getTextInputValue("environment-name-input")
+          .toLowerCase();
+        const relocateUserId = modalInteraction.fields
+          .getTextInputValue("environment-user-input")
+          .toLowerCase()
+          .split(",")
+          .map((id: string) => id.trim());
+
+        const relocateEnvironmentObj = await environmentData.findOne({
+          environmentName: relocateNameInput,
+        });
+
+        if (!relocateEnvironmentObj) {
+          await modalInteraction.reply({
+            content: "Environment not found!",
+            ephemeral: true,
+          });
+          return;
+        }
+        relocateUserId.forEach(async (relocateUserId: string) => {
+          const relocateUserObj = await userData.findOne({
+            userId: relocateUserId,
+          });
+
+          if (!relocateUserObj) {
+            await modalInteraction.reply({
+              content: "User not found!",
+              ephemeral: true,
+            });
+            return;
+          }
+          if (relocateUserObj.environment) {
+            const relocateUserPreviousEnvironmentObj =
+              await environmentData.findOne({
+                environmentName: relocateUserObj.environment,
+              });
+
+            if (relocateUserPreviousEnvironmentObj) {
+              relocateUserPreviousEnvironmentObj.environmentUsers =
+                relocateUserPreviousEnvironmentObj.environmentUsers.filter(
+                  (user: string) => user !== relocateUserId
+                );
+
+              await relocateUserPreviousEnvironmentObj.save();
+            }
+          }
+          relocateUserObj.environment = relocateEnvironmentObj.environmentName;
+          relocateEnvironmentObj.environmentUsers.push(relocateUserId);
+          await relocateUserObj.save();
+          await relocateEnvironmentObj.save();
+        });
+
+        const relocateUserIds = relocateUserId.join(">, <@");
+        await modalInteraction.reply({
+          content: `Successfully relocated user(s) <@${relocateUserIds}> to environment ${relocateNameInput}.`,
+          ephemeral: true,
+        });
+        break;
       // Bot Perform Modals
       case "send-message-modal":
         // get input values

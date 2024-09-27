@@ -84,5 +84,10 @@ const userData = new mongoose_1.Schema({
         type: (Array),
         default: [],
     },
+    environment: {
+        // Define the current environment.
+        type: String,
+        default: "start",
+    },
 });
 exports.default = (0, mongoose_1.model)("userDatabase", userData); // Export the model.
