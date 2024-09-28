@@ -73,9 +73,16 @@ module.exports = async (bot: Client, message: Message) => {
 
         if (skill) {
           // Perform the skill action here
+          if (user.will < skill.skillWill) {
+            await message.reply({
+              content: "You don't have enough will to use this skill.",
+              ephemeral: true,
+            });
+            return;
+          }
           const skillAction = skill.skillAction;
           await message.reply(skillAction);
-        } else if (skillName === undefined) {
+        } else if (!skillName) {
           await message.reply({
             content: "Please specify a skill to use.",
             ephemeral: true,

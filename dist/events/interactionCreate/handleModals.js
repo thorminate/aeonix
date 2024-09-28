@@ -24,6 +24,7 @@ module.exports = async (bot, modalInteraction) => {
     try {
         switch (modalInteraction.customId // Switch on the (pretty self-explanatory) custom IDs
         ) {
+            //region Admin modals
             // Stat Modal
             case "stats-giver-modal":
                 // get input values
@@ -715,17 +716,19 @@ module.exports = async (bot, modalInteraction) => {
                     .toLowerCase() // convert to lowercase
                     .split(",")
                     .map((itemName) => itemName.trim()); // convert to array, split by comma
-                const createEnvironmentChannel = parseInt(
+                const createEnvironmentChannel = 
                 // get channel input and convert to number
-                modalInteraction.fields.getTextInputValue("create-environment-channel-input"));
+                modalInteraction.fields.getTextInputValue("create-environment-channel-input");
                 const createEnvironmentItems = await Promise.all(
                 // await all promises
                 createEnvironmentItemsPromises.map(async (itemName) => {
                     // for each item
+                    if (itemName === "none")
+                        return itemName;
                     const item = await itemDatabaseSchema_1.default.findOne({ itemName }); // get their corresponding data
-                    return item; // return the item object into the new array
+                    return [item, itemName]; // return the item object into the new array
                 }));
-                if (isNaN(createEnvironmentChannel)) {
+                if (!modalInteraction.guild.channels.cache.has(createEnvironmentChannel)) {
                     // if channel id is not a number
                     await modalInteraction.reply({
                         // say so verbosely
@@ -745,40 +748,60 @@ module.exports = async (bot, modalInteraction) => {
                     });
                     return;
                 }
-                // Check if all items exist
-                const invalidItems = createEnvironmentItems.filter(
-                // filter out valid items into new array
-                (item) => !item);
-                if (invalidItems.length > 0) {
-                    // if there are invalid items
+                if (!createEnvironmentItems.includes("none")) {
+                    // Check if all items exist
+                    const invalidItems = createEnvironmentItems.filter(
+                    // filter out valid items into new array
+                    (item) => !item[0]);
+                    if (invalidItems.length > 0) {
+                        // if there are invalid items
+                        await modalInteraction.reply({
+                            // say so verbosely
+                            content: `Item(s) ${invalidItems
+                                .map((item, index) => createEnvironmentItems[index][0])
+                                .join(", ")} not found, make sure they exist in the database.`,
+                            ephemeral: true,
+                        });
+                        return;
+                    }
+                    // give all items the environment name
+                    createEnvironmentItems.forEach(async (item) => {
+                        // for each existing item
+                        item[0].itemEnvironments.push(createEnvironmentName);
+                        item[0].save();
+                    });
+                    // create environment
+                    const createEnvironment = new environmentDatabaseSchema_1.default({
+                        environmentName: createEnvironmentName,
+                        environmentItems: createEnvironmentItems.map((item) => item[1]),
+                        environmentChannel: createEnvironmentChannel,
+                    });
+                    await createEnvironment.save();
                     await modalInteraction.reply({
-                        // say so verbosely
-                        content: `Items ${invalidItems
-                            .map((item, index) => createEnvironmentItems[index])
-                            .join(", ")} not found, make sure they exist in the database.`,
+                        content: `Successfully created environment ${createEnvironmentName}.\nWith item(s): ${createEnvironmentItems
+                            .map((item) => {
+                            if (!item)
+                                return "none";
+                            else
+                                return item[1];
+                        })
+                            .join(", ")}. \nAnd channel: <#${createEnvironmentChannel}>`,
                         ephemeral: true,
                     });
-                    return;
                 }
-                // give all items the environment name
-                createEnvironmentItems.forEach(async (item) => {
-                    // for each existing item
-                    item.itemEnvironments.push(createEnvironmentName);
-                    item.save();
-                });
-                // create environment
-                const createEnvironment = new environmentDatabaseSchema_1.default({
-                    environmentName: createEnvironmentName,
-                    environmentItems: createEnvironmentItems.map((item) => item.itemName),
-                    environmentChannel: createEnvironmentChannel,
-                });
-                await createEnvironment.save();
-                await modalInteraction.reply({
-                    content: `Successfully created environment ${createEnvironmentName}.\n With item(s): ${createEnvironmentItems
-                        .map((item) => item.itemName)
-                        .join(", ")}. \n And channel: <#${createEnvironmentChannel}>`,
-                    ephemeral: true,
-                });
+                else {
+                    // create environment
+                    const createEnvironment = new environmentDatabaseSchema_1.default({
+                        environmentName: createEnvironmentName,
+                        environmentItems: [],
+                        environmentChannel: createEnvironmentChannel,
+                    });
+                    await createEnvironment.save();
+                    await modalInteraction.reply({
+                        content: `Successfully created environment ${createEnvironmentName}.\nWith no items. \nAnd channel: <#${createEnvironmentChannel}>`,
+                        ephemeral: true,
+                    });
+                }
                 break;
             case "edit-environment-name-modal":
                 // get input values
@@ -832,7 +855,7 @@ module.exports = async (bot, modalInteraction) => {
                     // for each item
                     const item = await itemDatabaseSchema_1.default.findOne({ itemName }); // get their corresponding data
                     if (!item)
-                        return null;
+                        return itemName;
                     else
                         return item;
                 }));
@@ -843,8 +866,8 @@ module.exports = async (bot, modalInteraction) => {
                     // if there are invalid items
                     await modalInteraction.reply({
                         // say so verbosely
-                        content: `Items ${invalidItems
-                            .map((item, index) => createEnvironmentItems[index])
+                        content: `Items ${editEnvironmentInvalidItems
+                            .map((item, index) => editEnvironmentItems[index])
                             .join(", ")} not found, make sure they exist in the database.`,
                         ephemeral: true,
                     });
@@ -864,9 +887,9 @@ module.exports = async (bot, modalInteraction) => {
                         editEnvironmentItemsData.environmentItems.push(...editEnvironmentItems.map((item) => item.itemName));
                         await editEnvironmentItemsData.save();
                         await modalInteraction.reply({
-                            content: `Successfully edited items in environment ${editEnvironmentItemsName} to ${editEnvironmentItems
+                            content: `Successfully added item(s) ${editEnvironmentItems
                                 .map((item) => item.itemName)
-                                .join(", ")}.`,
+                                .join(", ")} to environment ${editEnvironmentItemsName}.`,
                             ephemeral: true,
                         });
                         break;
@@ -942,6 +965,18 @@ module.exports = async (bot, modalInteraction) => {
                     });
                     return;
                 }
+                const startEnvironmentObj = await environmentDatabaseSchema_1.default.findOne({
+                    environmentName: "start",
+                });
+                deleteEnvironmentObj.environmentUsers.forEach(async (userId) => {
+                    const userObj = await userDatabaseSchema_1.default.findOne({ userId: userId });
+                    if (!userObj)
+                        return;
+                    userObj.environment = "start";
+                    startEnvironmentObj.environmentUsers.push(userId);
+                    await userObj.save();
+                    await startEnvironmentObj.save();
+                });
                 await deleteEnvironmentObj.deleteOne();
                 await modalInteraction.reply({
                     content: `Successfully deleted environment ${deleteEnvironmentName}.`,
