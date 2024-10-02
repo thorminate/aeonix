@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseSchema"));
 const skillDatabaseSchema_1 = __importDefault(require("../../models/skillDatabaseSchema"));
 const itemDatabaseSchema_1 = __importDefault(require("../../models/itemDatabaseSchema"));
-module.exports = async (bot, message) => {
+exports.default = async (bot, message) => {
     // if message was not made in a guild, author was a bot or the cooldown is active, return
     if (!message.inGuild() || message.author.bot)
         return;

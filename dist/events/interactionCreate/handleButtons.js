@@ -10,7 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js"); // Import the discord.js library.
 const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseSchema")); // Import the user database schema.
-module.exports = async (bot, buttonInteraction) => {
+exports.default = async (bot, buttonInteraction) => {
     if (!buttonInteraction.isButton())
         return;
     switch (buttonInteraction.customId) {

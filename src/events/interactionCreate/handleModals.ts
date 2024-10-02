@@ -13,7 +13,6 @@ import {
 } from "discord.js";
 import buttonWrapper from "../../utils/buttonWrapper";
 import userData from "../../models/userDatabaseSchema";
-import skillData from "../../models/skillDatabaseSchema";
 import itemData from "../../models/itemDatabaseSchema";
 import statusEffectData from "../../models/statusEffectDatabaseSchema";
 import environmentData from "../../models/environmentDatabaseSchema";
@@ -21,7 +20,7 @@ import ms from "ms";
 import { Document } from "mongoose";
 import actions from "../../actions/actionIndex";
 
-module.exports = async (
+export default async (
   bot: Client,
   modalInteraction: ModalSubmitInteraction
 ) => {

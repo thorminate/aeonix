@@ -21,7 +21,7 @@ import {
 } from "discord.js"; // Import the discord.js library.
 import userData from "../../models/userDatabaseSchema"; // Import the user database schema.
 
-module.exports = async (bot: Client, buttonInteraction: ButtonInteraction) => {
+export default async (bot: Client, buttonInteraction: ButtonInteraction) => {
   if (!buttonInteraction.isButton()) return;
   switch (buttonInteraction.customId) {
     // Onboarding buttons

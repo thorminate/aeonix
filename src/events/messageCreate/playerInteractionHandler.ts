@@ -3,7 +3,7 @@ import userData from "../../models/userDatabaseSchema";
 import skillData from "../../models/skillDatabaseSchema";
 import itemData from "../../models/itemDatabaseSchema";
 
-module.exports = async (bot: Client, message: Message) => {
+export default async (bot: Client, message: Message) => {
   // if message was not made in a guild, author was a bot or the cooldown is active, return
   if (!message.inGuild() || message.author.bot) return;
   async function consumeItem(message: any, itemName: any) {

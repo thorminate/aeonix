@@ -3,6 +3,7 @@
 import { Client } from "discord.js"; // Get the discord.js library for setting the type of the bot parameter.
 import path from "path"; // Get the path library.
 import getAllFiles from "../utils/getAllFiles"; // Get the getAllFiles function.
+import url from "url";
 
 export default (bot: Client) => {
   // Export the function.
@@ -19,8 +20,10 @@ export default (bot: Client) => {
       // When the event that is the same name as the event folder is triggered.
       for (const eventFile of eventFiles) {
         // Loop through the event files.
-        const eventFunction = require(eventFile); // Get the event function.
-        eventFunction(bot, arg); // Run the event function.
+        const filePath = path.resolve(eventFile); // Get the path to the event file.
+        const fileUrl = url.pathToFileURL(filePath); // Get the URL to the event file.
+        const eventFunction = await import(fileUrl.toString()); // Get the event function.
+        eventFunction.default.default(bot, arg); // Run the event function. (no idea why the extra default is needed)
       }
     });
   }

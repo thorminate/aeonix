@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const getLocalCommands_1 = __importDefault(require("../../utils/getLocalCommands"));
 const discord_js_1 = require("discord.js");
-module.exports = async (bot, commandInteraction) => {
+exports.default = async (bot, commandInteraction) => {
     if (!commandInteraction.isChatInputCommand())
         return;
     // get already registered commands

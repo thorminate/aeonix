@@ -16,7 +16,7 @@ const statusEffectDatabaseSchema_1 = __importDefault(require("../../models/statu
 const environmentDatabaseSchema_1 = __importDefault(require("../../models/environmentDatabaseSchema"));
 const ms_1 = __importDefault(require("ms"));
 const actionIndex_1 = __importDefault(require("../../actions/actionIndex"));
-module.exports = async (bot, modalInteraction) => {
+exports.default = async (bot, modalInteraction) => {
     // Export the function
     if (!modalInteraction.isModalSubmit())
         return;

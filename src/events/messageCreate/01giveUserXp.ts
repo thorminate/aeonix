@@ -12,7 +12,7 @@ function getRandomExp(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-module.exports = async (bot: Client, message: Message) => {
+export default async (bot: Client, message: Message) => {
   // if message was not made in a guild, author was a bot or the cooldown is active, return
   if (
     !message.inGuild() ||

@@ -6,10 +6,7 @@
 import getLocalCommands from "../../utils/getLocalCommands";
 import { Client, CommandInteraction, PermissionsBitField } from "discord.js";
 
-module.exports = async (
-  bot: Client,
-  commandInteraction: CommandInteraction
-) => {
+export default async (bot: Client, commandInteraction: CommandInteraction) => {
   if (!commandInteraction.isChatInputCommand()) return;
   // get already registered commands
   const localCommands = getLocalCommands();

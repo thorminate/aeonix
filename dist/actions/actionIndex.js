@@ -3,14 +3,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const levelUp_1 = __importDefault(require("./levelUp"));
-const giveStat_1 = __importDefault(require("./giveStat"));
-const createSkill_1 = __importDefault(require("./createSkill"));
-const grantSkill_1 = __importDefault(require("./grantSkill"));
-const deleteSkill_1 = __importDefault(require("./deleteSkill"));
-const revokeSkill_1 = __importDefault(require("./revokeSkill"));
+const levelUp_1 = __importDefault(require("./user/levelUp"));
+const giveStat_1 = __importDefault(require("./user/giveStat"));
+const createSkill_1 = __importDefault(require("./skill/createSkill"));
+const grantSkill_1 = __importDefault(require("./skill/grantSkill"));
+const deleteSkill_1 = __importDefault(require("./skill/deleteSkill"));
+const revokeSkill_1 = __importDefault(require("./skill/revokeSkill"));
 /**
  * Index of all the actions
+ * @type {Object}
+ * @name actions
+ * @memberof module:Actions
  */
 exports.default = {
     user: {
