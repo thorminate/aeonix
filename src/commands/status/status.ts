@@ -668,9 +668,9 @@ module.exports = {
                   .setDisabled(false);
 
                 const removeItemButton = new ButtonBuilder()
-                  .setLabel("Remove Item")
+                  .setLabel("Revoke Item")
                   .setStyle(ButtonStyle.Danger)
-                  .setCustomId("remove_item")
+                  .setCustomId("revoke_item")
                   .setDisabled(false);
 
                 if (prevPlayer === true) {
@@ -1126,45 +1126,45 @@ module.exports = {
                 }
                 break;
 
-              case "remove_item":
-                // Handle "Remove Item" button click
+              case "revoke_item":
+                // Handle "Revoke Item" button click
                 try {
-                  // Set up the Remove Item modal
-                  const removeItemModal = new ModalBuilder()
-                    .setCustomId("remove-item-modal")
-                    .setTitle("Remove Item");
+                  // Set up the Revoke Item modal
+                  const revokeItemModal = new ModalBuilder()
+                    .setCustomId("revoke-item-modal")
+                    .setTitle("Revoke Item");
 
-                  const removeItemTargetInput = new TextInputBuilder()
-                    .setCustomId("remove-item-target-input")
+                  const revokeItemTargetInput = new TextInputBuilder()
+                    .setCustomId("revoke-item-target-input")
                     .setLabel("Target user ID")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
                     .setMinLength(18);
 
-                  const removeItemNameInput = new TextInputBuilder()
-                    .setCustomId("remove-item-name-input")
+                  const revokeItemNameInput = new TextInputBuilder()
+                    .setCustomId("revoke-item-name-input")
                     .setLabel("Item Descriptor/Name")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true);
 
                   const removeItemTargetRow =
                     new ActionRowBuilder<TextInputBuilder>().addComponents(
-                      removeItemTargetInput
+                      revokeItemTargetInput
                     );
                   const removeItemNameRow =
                     new ActionRowBuilder<TextInputBuilder>().addComponents(
-                      removeItemNameInput
+                      revokeItemNameInput
                     );
 
-                  removeItemModal.addComponents(
+                  revokeItemModal.addComponents(
                     removeItemNameRow,
                     removeItemTargetRow
                   );
 
                   // Show the modal
-                  await buttonInteraction.showModal(removeItemModal);
+                  await buttonInteraction.showModal(revokeItemModal);
                 } catch (error) {
-                  console.log("Error handling Remove Item modal:", error);
+                  console.log("Error handling Revoke Item modal:", error);
                 }
                 break;
 

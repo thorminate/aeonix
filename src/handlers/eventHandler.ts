@@ -7,14 +7,17 @@ import url from "url";
 
 export default (bot: Client) => {
   // Export the function.
-  const eventFolders = getAllFiles(path.join(__dirname, "..", "events"), true); // Get the event folders.
+  const eventFolders: Array<string> = getAllFiles(
+    path.join(__dirname, "..", "events"),
+    true
+  ); // Get the event folders.
 
   for (const eventFolder of eventFolders) {
     // Loop through the event folders.
-    const eventFiles = getAllFiles(eventFolder); // Get the event files.
+    const eventFiles: Array<string> = getAllFiles(eventFolder); // Get the event files.
     eventFiles.sort((a: string, b: string) => a.localeCompare(b)); // Sort the event files.
 
-    const eventName = eventFolder.replace(/\\/g, "/").split("/").pop(); // Get the event name.
+    const eventName: string = eventFolder.replace(/\\/g, "/").split("/").pop(); // Get the event name.
 
     bot.on(eventName, async (arg) => {
       // When the event that is the same name as the event folder is triggered.

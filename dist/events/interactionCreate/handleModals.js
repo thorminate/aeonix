@@ -109,88 +109,16 @@ exports.default = async (bot, modalInteraction) => {
                 const itemActionable = modalInteraction.fields
                     .getTextInputValue("create-item-actionable-input")
                     .toLowerCase();
-                const itemAction = modalInteraction.fields.getTextInputValue("create-item-action-input");
-                function checkItemActionSyntax(actionString) {
-                    if (actionString === "none")
-                        return true;
-                    const actionParts = actionString.split(",");
-                    const validOperators = ["+", "-"];
-                    const validStats = ["STRENGTH", "WILL", "COGNITION"];
-                    for (const action of actionParts) {
-                        const [stat, operator, value] = action.trim().split(" ");
-                        if (!validStats.includes(stat)) {
-                            return false; // invalid stat
-                        }
-                        if (!validOperators.includes(operator)) {
-                            return false; // invalid operator
-                        }
-                        if (isNaN(parseInt(value))) {
-                            return false; // invalid value
-                        }
-                    }
-                    return true; // syntax is correct
-                }
-                /*
-              
-              // the code to execute the item action using correct syntax
-        
-              function executeItemAction(actionString, userData) {
-                if (actionString === "none") return;
-                const actionParts = actionString.split(",");
-                const operators = {
-                  "+": (a, b) => a + b,
-                  "-": (a, b) => a - b,
-                };
-        
-                for (const action of actionParts) {
-                  const [stat, operator, value] = action.trim().split(" ");
-                  const statName = stat.toLowerCase();
-                  const statValue = parseInt(value);
-                  userData[statName] = operators[operator](
-                    userData[statName],
-                    statValue
-                  );
-                }
-              }
-              */
-                // Validate the inputs
-                if (itemActionable !== "interact" &&
-                    itemActionable !== "consume" &&
-                    itemActionable !== "use") {
-                    modalInteraction.reply({
-                        content: "The third field must be either 'interact', 'consume' or 'use'.",
+                if (itemActionable !== "consume" &&
+                    itemActionable !== "use" &&
+                    itemActionable !== "interact") {
+                    await modalInteraction.reply({
+                        content: "Please enter a valid action. Valid actions are 'consume', 'use', and 'interact'.",
                         ephemeral: true,
                     });
                     return;
                 }
-                if (checkItemActionSyntax(itemAction) === false) {
-                    modalInteraction.reply({
-                        content: "The fourth field must be a valid action syntax or 'none'.\nExample: COGNITION + 10, WILL - 5\nThey must be separated by a comma and a space. The operator must be either '+' or '-'. The stat must be either 'STRENGTH', 'WILL' or 'COGNITION'. The value must be a number. Each action must be separated by a space. so COGNITION+10, WILL-5 in invalid syntax.",
-                        ephemeral: true,
-                    });
-                    return;
-                }
-                const existingItem = await itemDatabaseSchema_1.default.findOne({
-                    itemName: itemName,
-                });
-                if (existingItem) {
-                    modalInteraction.reply({
-                        content: "An item with that name already exists. You can skip this step.",
-                        ephemeral: true,
-                    });
-                    return;
-                }
-                const newItem = new itemDatabaseSchema_1.default({
-                    itemName: itemName,
-                    itemDescription: itemDescription,
-                    itemActionable: itemActionable,
-                    itemAction: itemAction,
-                });
-                await newItem.save();
-                await modalInteraction.reply({
-                    content: `Successfully created item ${itemName}.`,
-                    ephemeral: true,
-                });
+                actionIndex_1.default.item.create(modalInteraction, itemName, itemDescription, itemActionable);
                 break;
             case "give-item-modal":
                 // get input values
@@ -206,90 +134,15 @@ exports.default = async (bot, modalInteraction) => {
                     });
                     return;
                 }
-                const giveItemTargetData = await userDatabaseSchema_1.default.findOne({
-                    userId: giveItemTarget,
-                    guildId: modalInteraction.guild.id,
-                });
-                if (!giveItemTargetData) {
-                    await modalInteraction.reply({
-                        content: "User not found, make sure they exist in the database.",
-                        ephemeral: true,
-                    });
-                }
-                const giveItemData = await itemDatabaseSchema_1.default.findOne({
-                    itemName: giveItemName,
-                });
-                if (!giveItemData) {
-                    await modalInteraction.reply({
-                        content: "Item not found, make sure it exist in the database",
-                        ephemeral: true,
-                    });
-                }
-                const giveItemIndex = giveItemTargetData.inventory.findIndex((item) => item.itemName === giveItemData.itemName);
-                if (giveItemIndex === -1) {
-                    const inventoryObject = {
-                        itemName: giveItemData.itemName,
-                        itemAmount: giveItemAmount,
-                    };
-                    giveItemTargetData.inventory.push(inventoryObject);
-                    await giveItemTargetData.save();
-                }
-                else {
-                    giveItemTargetData.inventory[giveItemIndex].itemAmount +=
-                        giveItemAmount;
-                    await giveItemTargetData.save();
-                }
-                giveItemData.itemUsers.push(giveItemTarget);
-                await giveItemData.save();
-                await modalInteraction.reply({
-                    content: `Successfully gave ${giveItemAmount}x ${giveItemName} to <@${giveItemTarget}>.`,
-                    ephemeral: true,
-                });
+                await actionIndex_1.default.item.give(modalInteraction, giveItemName, giveItemTarget, giveItemAmount);
                 break;
-            case "remove-item-modal":
+            case "revoke-item-modal":
                 // get input values
                 const removeItemName = modalInteraction.fields
-                    .getTextInputValue("remove-item-name-input")
+                    .getTextInputValue("revoke-item-name-input")
                     .toLowerCase();
-                const removeItemTarget = modalInteraction.fields.getTextInputValue("remove-item-target-input");
-                // Validate the inputs
-                const removeItemData = await itemDatabaseSchema_1.default.findOne({
-                    itemName: removeItemName,
-                });
-                if (!removeItemData) {
-                    await modalInteraction.reply({
-                        content: "Item not found, make sure it exist in the database",
-                        ephemeral: true,
-                    });
-                    return;
-                }
-                const removeItemTargetData = await userDatabaseSchema_1.default.findOne({
-                    userId: removeItemTarget,
-                    guildId: modalInteraction.guild.id,
-                });
-                if (!removeItemTargetData) {
-                    await modalInteraction.reply({
-                        content: "User not found, make sure they are in the server.",
-                        ephemeral: true,
-                    });
-                    return;
-                }
-                const removeItemIndex = removeItemTargetData.inventory.findIndex((item) => item.itemName === removeItemData.itemName);
-                if (removeItemIndex > -1) {
-                    removeItemTargetData.inventory.splice(removeItemIndex, 1);
-                    await removeItemTargetData.save();
-                    await modalInteraction.reply({
-                        content: `Successfully removed item ${removeItemName} from <@${removeItemTarget}>'s inventory.`,
-                        ephemeral: true,
-                    });
-                }
-                else {
-                    await modalInteraction.reply({
-                        content: "User does not have the item in their inventory.",
-                        ephemeral: true,
-                    });
-                    return;
-                }
+                const removeItemTarget = modalInteraction.fields.getTextInputValue("revoke-item-target-input");
+                await actionIndex_1.default.item.revoke(modalInteraction, removeItemName, removeItemTarget);
                 break;
             case "delete-item-modal":
                 // get input values
@@ -297,47 +150,7 @@ exports.default = async (bot, modalInteraction) => {
                     .getTextInputValue("delete-item-name-input")
                     .toLowerCase();
                 // Validate the inputs
-                const deleteItemData = await itemDatabaseSchema_1.default.findOne({
-                    itemName: deleteItemName,
-                });
-                if (!deleteItemData) {
-                    await modalInteraction.reply({
-                        content: "Item not found, make sure it exist in the database",
-                        ephemeral: true,
-                    });
-                    return;
-                }
-                // Delete the item from people's inventories
-                const deleteItemUsers = deleteItemData.itemUsers;
-                for (const user of deleteItemUsers) {
-                    const deleteItemUserData = await userDatabaseSchema_1.default.findOne({
-                        userId: user,
-                        guildId: modalInteraction.guild.id,
-                    });
-                    const deleteItemIndex = deleteItemUserData.inventory.findIndex((item) => item.itemName === deleteItemName);
-                    if (deleteItemIndex > -1) {
-                        deleteItemUserData.inventory.splice(deleteItemIndex, 1);
-                        await deleteItemUserData.save();
-                    }
-                }
-                // Delete the item from environments
-                const deleteItemEnvironments = deleteItemData.itemEnvironments;
-                for (const environment of deleteItemEnvironments) {
-                    const deleteItemEnvironmentData = await environmentDatabaseSchema_1.default.findOne({
-                        environmentName: environment,
-                    });
-                    const deleteItemIndex = deleteItemEnvironmentData.environmentItems.findIndex((item) => item.itemName === deleteItemName);
-                    if (deleteItemIndex > -1) {
-                        deleteItemEnvironmentData.environmentItems.splice(deleteItemIndex, 1);
-                        await deleteItemEnvironmentData.save();
-                    }
-                }
-                // Delete the item from the database.
-                itemDatabaseSchema_1.default.deleteOne({ itemName: deleteItemName });
-                await modalInteraction.reply({
-                    content: `Successfully deleted item ${deleteItemName}.`,
-                    ephemeral: true,
-                });
+                await actionIndex_1.default.item.delete(modalInteraction, deleteItemName);
                 break;
             // Status Effect Modals
             case "create-status-effect-modal":
@@ -350,25 +163,6 @@ exports.default = async (bot, modalInteraction) => {
                     .toLowerCase();
                 const statusEffectDescription = modalInteraction.fields.getTextInputValue("create-status-effect-description-input");
                 const statusEffectAction = modalInteraction.fields.getTextInputValue("create-status-effect-action-input");
-                // Validate the inputs
-                if (statusEffectName === "" ||
-                    statusEffectDuration === "" ||
-                    statusEffectDescription === "" ||
-                    statusEffectAction === "") {
-                    await modalInteraction.reply({
-                        content: "Please fill in the required fields.",
-                        ephemeral: true,
-                    });
-                    return;
-                }
-                if (!checkItemActionSyntax(statusEffectAction)) {
-                    await modalInteraction.reply({
-                        content: "Invalid status effect action syntax. Use 'none' for no action.",
-                        ephemeral: true,
-                    });
-                    return;
-                }
-                // check if status effect already exists
                 const statusEffectExistingData = await statusEffectDatabaseSchema_1.default.findOne({
                     statusEffectName: statusEffectName,
                 });

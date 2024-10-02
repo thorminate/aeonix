@@ -29,31 +29,6 @@ export default async (bot: Client, message: Message) => {
           user.inventory.splice(itemIndex, 1); // Remove the item from the inventory
           await user.save();
         }
-        // the code to execute the item action using correct syntax
-        async function executeItemAction(
-          actionString: string,
-          userData: { [x: string]: any; save: () => any }
-        ) {
-          if (actionString === "none") return;
-          const actionParts = actionString.split(",");
-          const operators = {
-            "+": (a: any, b: any) => a + b,
-            "-": (a: number, b: number) => a - b,
-          };
-
-          for (const action of actionParts) {
-            const [stat, operator, value] = action.trim().split(" ");
-            const statName = stat.toLowerCase();
-            const statValue = parseInt(value);
-            userData[statName] = operators[operator](
-              userData[statName],
-              statValue
-            );
-            await userData.save();
-          }
-        }
-
-        executeItemAction(itemDataConsume.itemAction, user);
 
         await message.reply(`Item ${itemName} consumed.`);
       } else {

@@ -74,7 +74,7 @@ export default async (bot: Client, commandInteraction: CommandInteraction) => {
       }
     }
     // if all goes well, run the commands callback function.
-    await commandObject.callback(bot, commandInteraction);
+    await commandObject.callback(commandInteraction.client, commandInteraction);
   } catch (error) {
     console.log(`There was an error running this command: ${error}`);
   }

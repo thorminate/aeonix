@@ -9,11 +9,13 @@ const createSkill_1 = __importDefault(require("./skill/createSkill"));
 const grantSkill_1 = __importDefault(require("./skill/grantSkill"));
 const deleteSkill_1 = __importDefault(require("./skill/deleteSkill"));
 const revokeSkill_1 = __importDefault(require("./skill/revokeSkill"));
+const createItem_1 = __importDefault(require("./item/createItem"));
+const giveItem_1 = __importDefault(require("./item/giveItem"));
+const revokeItem_1 = __importDefault(require("./item/revokeItem"));
+const deleteItem_1 = __importDefault(require("./item/deleteItem"));
 /**
  * Index of all the actions
- * @type {Object}
- * @name actions
- * @memberof module:Actions
+ * @type {Object<Object<Function>>}
  */
 exports.default = {
     user: {
@@ -25,5 +27,11 @@ exports.default = {
         grant: grantSkill_1.default,
         delete: deleteSkill_1.default,
         revoke: revokeSkill_1.default,
+    },
+    item: {
+        create: createItem_1.default,
+        give: giveItem_1.default,
+        revoke: revokeItem_1.default,
+        delete: deleteItem_1.default,
     },
 };

@@ -4,11 +4,14 @@ import createSkill from "./skill/createSkill";
 import grantSkill from "./skill/grantSkill";
 import deleteSkill from "./skill/deleteSkill";
 import revokeSkill from "./skill/revokeSkill";
+import createItem from "./item/createItem";
+import giveItem from "./item/giveItem";
+import revokeItem from "./item/revokeItem";
+import deleteItem from "./item/deleteItem";
+
 /**
  * Index of all the actions
- * @type {Object}
- * @name actions
- * @memberof module:Actions
+ * @type {Object<Object<Function>>}
  */
 export default {
   user: {
@@ -20,5 +23,11 @@ export default {
     grant: grantSkill,
     delete: deleteSkill,
     revoke: revokeSkill,
+  },
+  item: {
+    create: createItem,
+    give: giveItem,
+    revoke: revokeItem,
+    delete: deleteItem,
   },
 };

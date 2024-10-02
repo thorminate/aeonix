@@ -488,9 +488,9 @@ module.exports = {
                                 .setCustomId("give_item")
                                 .setDisabled(false);
                             const removeItemButton = new discord_js_1.ButtonBuilder()
-                                .setLabel("Remove Item")
+                                .setLabel("Revoke Item")
                                 .setStyle(discord_js_1.ButtonStyle.Danger)
-                                .setCustomId("remove_item")
+                                .setCustomId("revoke_item")
                                 .setDisabled(false);
                             if (prevPlayer === true) {
                                 await buttonInteraction.editReply({
@@ -797,32 +797,32 @@ module.exports = {
                                 console.log("Error handling Give Item modal:", error);
                             }
                             break;
-                        case "remove_item":
-                            // Handle "Remove Item" button click
+                        case "revoke_item":
+                            // Handle "Revoke Item" button click
                             try {
-                                // Set up the Remove Item modal
-                                const removeItemModal = new discord_js_1.ModalBuilder()
-                                    .setCustomId("remove-item-modal")
-                                    .setTitle("Remove Item");
-                                const removeItemTargetInput = new discord_js_1.TextInputBuilder()
-                                    .setCustomId("remove-item-target-input")
+                                // Set up the Revoke Item modal
+                                const revokeItemModal = new discord_js_1.ModalBuilder()
+                                    .setCustomId("revoke-item-modal")
+                                    .setTitle("Revoke Item");
+                                const revokeItemTargetInput = new discord_js_1.TextInputBuilder()
+                                    .setCustomId("revoke-item-target-input")
                                     .setLabel("Target user ID")
                                     .setStyle(discord_js_1.TextInputStyle.Short)
                                     .setRequired(true)
                                     .setMinLength(18);
-                                const removeItemNameInput = new discord_js_1.TextInputBuilder()
-                                    .setCustomId("remove-item-name-input")
+                                const revokeItemNameInput = new discord_js_1.TextInputBuilder()
+                                    .setCustomId("revoke-item-name-input")
                                     .setLabel("Item Descriptor/Name")
                                     .setStyle(discord_js_1.TextInputStyle.Short)
                                     .setRequired(true);
-                                const removeItemTargetRow = new discord_js_1.ActionRowBuilder().addComponents(removeItemTargetInput);
-                                const removeItemNameRow = new discord_js_1.ActionRowBuilder().addComponents(removeItemNameInput);
-                                removeItemModal.addComponents(removeItemNameRow, removeItemTargetRow);
+                                const removeItemTargetRow = new discord_js_1.ActionRowBuilder().addComponents(revokeItemTargetInput);
+                                const removeItemNameRow = new discord_js_1.ActionRowBuilder().addComponents(revokeItemNameInput);
+                                revokeItemModal.addComponents(removeItemNameRow, removeItemTargetRow);
                                 // Show the modal
-                                await buttonInteraction.showModal(removeItemModal);
+                                await buttonInteraction.showModal(revokeItemModal);
                             }
                             catch (error) {
-                                console.log("Error handling Remove Item modal:", error);
+                                console.log("Error handling Revoke Item modal:", error);
                             }
                             break;
                         case "delete_item":
