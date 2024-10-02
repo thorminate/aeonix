@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Levels up the user and returns the new level.
  * @param {Document} user
- * @returns {Document}
+ * @returns {Promise<Document>}
  */
 exports.default = async (user) => {
     if (!user)

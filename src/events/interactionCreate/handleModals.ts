@@ -19,6 +19,7 @@ import statusEffectData from "../../models/statusEffectDatabaseSchema";
 import environmentData from "../../models/environmentDatabaseSchema";
 import ms from "ms";
 import { Document } from "mongoose";
+import actions from "../../actions/actionIndex";
 
 module.exports = async (
   bot: Client,
@@ -26,7 +27,6 @@ module.exports = async (
 ) => {
   // Export the function
   if (!modalInteraction.isModalSubmit()) return;
-  let sharedStates: Array<object> = [];
   try {
     switch (
       modalInteraction.customId // Switch on the (pretty self-explanatory) custom IDs
@@ -51,20 +51,6 @@ module.exports = async (
           "stats-giver-modifier-input"
         );
 
-        // Validate the inputs
-        if (
-          isNaN(statAmount) ||
-          statAmount < 0 ||
-          !modalInteraction.guild.members.cache.has(statsTargetUserInput)
-        ) {
-          await modalInteraction.reply({
-            content:
-              "Please enter a valid positive number for the stat amount and a valid user ID.",
-            ephemeral: true,
-          });
-          return;
-        }
-
         if (
           variant !== "strength" &&
           variant !== "will" &&
@@ -72,7 +58,9 @@ module.exports = async (
           variant !== "level" &&
           variant !== "exp"
         ) {
+          // Check if the variant is not a valid variant
           await modalInteraction.reply({
+            // Reply with an error message if so
             content:
               "Please enter a valid variant. Valid variants are 'strength', 'will', 'cognition', 'level', and 'exp'.",
             ephemeral: true,
@@ -81,7 +69,9 @@ module.exports = async (
         }
 
         if (modifier !== "add" && modifier !== "remove" && modifier !== "set") {
+          // Check if the modifier is not a valid modifier
           await modalInteraction.reply({
+            // Reply with an error message if so
             content:
               "Please enter a valid modifier. Valid modifiers are 'add', 'remove', and 'set'.",
             ephemeral: true,
@@ -89,95 +79,23 @@ module.exports = async (
           return;
         }
 
-        // Fetch the target user and update their stats
-        const statsTargetUserObj = await modalInteraction.guild.members.fetch(
-          statsTargetUserInput
-        );
-
-        const statsTargetUserData = await userData.findOne({
-          userId: statsTargetUserObj.user.id,
-          guildId: modalInteraction.guild.id,
-        });
-
-        if (!statsTargetUserData) {
+        if (isNaN(statAmount) || statAmount < 0) {
+          // Check if the stat amount is not a valid number
           await modalInteraction.reply({
-            content:
-              "User not found in the database. Please make sure the user has at least sent one message before running this command.",
+            // Reply with an error message if so
+            content: "Please enter a valid positive number for the stat amount",
             ephemeral: true,
           });
           return;
         }
 
-        if (modifier === "add") {
-          if (variant === "strength") {
-            statsTargetUserData.strength =
-              statsTargetUserData.strength + statAmount;
-          } else if (variant === "will") {
-            statsTargetUserData.will = statsTargetUserData.will + statAmount;
-          } else if (variant === "cognition") {
-            statsTargetUserData.cognition =
-              statsTargetUserData.cognition + statAmount;
-          } else if (variant === "level") {
-            statsTargetUserData.level = statsTargetUserData.level + statAmount;
-          } else if (variant === "exp") {
-            statsTargetUserData.exp = statsTargetUserData.exp + statAmount;
-          }
-          await statsTargetUserData.save();
-
-          await modalInteraction.reply({
-            content: `Successfully gave <@${statsTargetUserObj.user.id}> **${statAmount}** stat point(s) to the ${variant} variant!`,
-            ephemeral: true,
-          });
-        }
-        if (modifier === "remove") {
-          if (variant === "strength") {
-            statsTargetUserData.strength =
-              statsTargetUserData.strength - statAmount;
-          } else if (variant === "will") {
-            statsTargetUserData.will = statsTargetUserData.will - statAmount;
-          } else if (variant === "cognition") {
-            statsTargetUserData.cognition =
-              statsTargetUserData.cognition - statAmount;
-          } else if (variant === "level") {
-            statsTargetUserData.level = statsTargetUserData.level - statAmount;
-          } else if (variant === "exp") {
-            statsTargetUserData.exp = statsTargetUserData.exp - statAmount;
-          }
-          if (statsTargetUserData.strength < 0) {
-            statsTargetUserData.strength = 0;
-          }
-          if (statsTargetUserData.will < 0) {
-            statsTargetUserData.will = 0;
-          }
-          if (statsTargetUserData.cognition < 0) {
-            statsTargetUserData.cognition = 0;
-          }
-          await statsTargetUserData.save();
-
-          await modalInteraction.reply({
-            content: `Successfully took <@${statsTargetUserObj.user.id}> **${statAmount}** stat point(s) from ${variant}!`,
-            ephemeral: true,
-          });
-        }
-        if (modifier === "set") {
-          if (variant === "strength") {
-            statsTargetUserData.strength = statAmount;
-          } else if (variant === "will") {
-            statsTargetUserData.will = statAmount;
-          } else if (variant === "cognition") {
-            statsTargetUserData.cognition = statAmount;
-          } else if (variant === "level") {
-            statsTargetUserData.level = statAmount;
-          } else if (variant === "exp") {
-            statsTargetUserData.exp = statAmount;
-          }
-          await statsTargetUserData.save();
-
-          await modalInteraction.reply({
-            content: `Successfully set <@${statsTargetUserObj.user.id}>'s ${variant} to **${statAmount}!**`,
-            ephemeral: true,
-          });
-        }
+        actions.user.giveStat(
+          modalInteraction,
+          variant,
+          modifier,
+          statAmount,
+          statsTargetUserInput
+        );
         break;
 
       // Skill Modals
@@ -203,47 +121,14 @@ module.exports = async (
           modalInteraction.fields.getTextInputValue("create-skill-will-input")
         );
 
-        // Validate the inputs
-        if (
-          createSkillName === "" ||
-          createSkillDescription === "" ||
-          createSkillAction === "" ||
-          isNaN(createSkillCooldown) ||
-          isNaN(createSkillWill)
-        ) {
-          await modalInteraction.reply({
-            content:
-              "Please fill in all the required fields correctly. Cooldown and Will must be numbers.",
-            ephemeral: true,
-          });
-          return;
-        }
-        // check if skill already exists
-        if (await skillData.findOne({ skillName: createSkillName })) {
-          await modalInteraction.reply({
-            content: "Skill already exists. Please choose a different name.",
-            ephemeral: true,
-          });
-          return;
-        }
-
-        // create a new skill and store it in the database
-
-        const newSkill = new skillData({
-          skillName: createSkillName,
-          skillDescription: createSkillDescription,
-          skillAction: createSkillAction,
-          skillCooldown: createSkillCooldown,
-          skillWill: createSkillWill,
-        });
-
-        await newSkill.save();
-
-        await modalInteraction.reply({
-          content: `Successfully created skill ${createSkillName}.`,
-          ephemeral: true,
-        });
-
+        actions.skill.create(
+          modalInteraction,
+          createSkillName,
+          createSkillDescription,
+          createSkillAction,
+          createSkillCooldown,
+          createSkillWill
+        );
         break;
 
       case "delete-skill-modal":
@@ -253,48 +138,7 @@ module.exports = async (
           .getTextInputValue("delete-skill-name-input")
           .toLowerCase();
 
-        // Validate the inputs
-        if (deleteSkillName === "") {
-          await modalInteraction.reply({
-            content: "Please fill in the required field.",
-            ephemeral: true,
-          });
-          return;
-        }
-        // first delete the skill from all users that have it
-        const skillUsers = await userData.find({
-          skills: { $elemMatch: { skillName: deleteSkillName } },
-        });
-
-        for (const skillUser of skillUsers) {
-          skillUser.skills = skillUser.skills.filter(
-            (skill) => skill.skillName !== deleteSkillName
-          );
-
-          if (skillUser.skills.length === 0) {
-            skillUser.skills = [];
-          }
-
-          await skillUser.save();
-        }
-
-        // delete the skill from the database
-        const deletedSkill = await skillData.deleteOne({
-          skillName: deleteSkillName,
-        });
-
-        if (deletedSkill.deletedCount === 0) {
-          await modalInteraction.reply({
-            content: `Failed to delete skill ${deleteSkillName}. Please check if the skill exists.`,
-            ephemeral: true,
-          });
-        } else {
-          await modalInteraction.reply({
-            content: `Successfully deleted skill ${deleteSkillName}.`,
-            ephemeral: true,
-          });
-        }
-
+        await actions.skill.delete(modalInteraction, deleteSkillName);
         break;
 
       case "grant-skill-modal":
@@ -307,64 +151,11 @@ module.exports = async (
           "grant-skill-target-input"
         );
 
-        // Validate the inputs
-        if (grantSkillName === "") {
-          await modalInteraction.reply({
-            content: "Please fill in the required fields.",
-            ephemeral: true,
-          });
-          return;
-        }
-
-        // grant the skill to the target user
-        const grantSkillTargetUserData = await userData.findOne({
-          userId: grantSkillTarget,
-        });
-
-        if (!grantSkillTargetUserData) {
-          await modalInteraction.reply({
-            content:
-              "Target user not found. Make sure you entered a valid user ID.",
-            ephemeral: true,
-          });
-          return;
-        }
-
-        const grantSkillSkill = await skillData.findOne({
-          skillName: grantSkillName,
-        });
-
-        if (!grantSkillSkill) {
-          await modalInteraction.reply({
-            content: `Skill ${grantSkillName} not found. Make sure you entered a valid skill name. Or create a new skill.`,
-            ephemeral: true,
-          });
-          return;
-        }
-
-        // check if the user already has the skill
-        if (
-          grantSkillTargetUserData.skills.some(
-            (skill) => skill === grantSkillName
-          )
-        ) {
-          await modalInteraction.reply({
-            content: `User already has skill ${grantSkillName}.`,
-            ephemeral: true,
-          });
-          return;
-        }
-
-        grantSkillSkill.skillUsers.push(grantSkillTargetUserData.userId);
-        await grantSkillSkill.save();
-        grantSkillTargetUserData.skills.push(grantSkillSkill.skillName);
-        await grantSkillTargetUserData.save();
-
-        await modalInteraction.reply({
-          content: `Successfully granted skill ${grantSkillName} to <@${grantSkillTarget}>.`,
-          ephemeral: true,
-        });
-
+        await actions.skill.grant(
+          modalInteraction,
+          grantSkillName,
+          grantSkillTarget
+        );
         break;
 
       case "revoke-skill-modal":
@@ -377,50 +168,11 @@ module.exports = async (
           "revoke-skill-target-input"
         );
 
-        // Validate the inputs
-        const revokeSkillData = await skillData.findOne({
-          skillName: revokeSkillName,
-        });
-
-        if (!revokeSkillData) {
-          await modalInteraction.reply({
-            content: `Skill ${revokeSkillName} not found. Make sure you entered a valid skill name. Or create a new skill.`,
-            ephemeral: true,
-          });
-          return;
-        }
-
-        const revokeSkillTargetData = await userData.findOne({
-          userId: revokeSkillTarget,
-          guildId: modalInteraction.guild.id,
-        });
-
-        if (!revokeSkillTargetData) {
-          await modalInteraction.reply({
-            content:
-              "Target user not found. Make sure you entered a valid user ID.",
-            ephemeral: true,
-          });
-          return;
-        }
-
-        // check if the user has the skill
-        if (revokeSkillTargetData.skills.includes(revokeSkillName)) {
-          revokeSkillTargetData.skills = revokeSkillTargetData.skills.filter(
-            (skill) => skill !== revokeSkillName
-          );
-          await revokeSkillTargetData.save();
-          await modalInteraction.reply({
-            content: `Successfully revoked skill ${revokeSkillName} from <@${revokeSkillTarget}>.`,
-            ephemeral: true,
-          });
-        } else {
-          await modalInteraction.reply({
-            content: `User does not have skill ${revokeSkillName}.`,
-            ephemeral: true,
-          });
-        }
-
+        await actions.skill.revoke(
+          modalInteraction,
+          revokeSkillName,
+          revokeSkillTarget
+        );
         break;
 
       // Item Modals
@@ -1595,12 +1347,20 @@ module.exports = async (
 
       default:
         modalInteraction.reply({
-          content: "Uhh something went wrong, Modal not found.",
+          content: "Something went wrong, Modal not found.",
           ephemeral: true,
         });
         break;
     }
   } catch (error) {
-    console.error("Error handling modal submission:", error);
+    console.error("Error processing a modal: ", error);
+
+    await modalInteraction
+      .reply({
+        content:
+          "Something went wrong, the modal could not be processed correctly.",
+        ephemeral: true,
+      })
+      .catch(console.error);
   }
 };

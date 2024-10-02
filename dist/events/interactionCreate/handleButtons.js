@@ -107,7 +107,7 @@ module.exports = async (bot, buttonInteraction) => {
                 .setLabel("Orc")
                 .setDescription("Orcs are known for their brutish strength and resilience.")
                 .setEmoji("🧟")
-                .setValue("orc"));
+                .setValue("Orc"));
             const speciesRow = new discord_js_1.ActionRowBuilder().addComponents(speciesMenu);
             buttonInteraction.reply({
                 content: "First off, select your species!",

@@ -3,9 +3,9 @@ import { Document } from "mongodb";
 /**
  * Levels up the user and returns the new level.
  * @param {Document} user
- * @returns {Document}
+ * @returns {Promise<Document>}
  */
-export default async (user: Document) => {
+export default async (user: Document): Promise<Document> => {
   if (!user) return;
   function getRandomMultiplier(min: number, max: number) {
     min = Math.ceil(min);
