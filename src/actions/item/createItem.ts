@@ -7,7 +7,7 @@ export default async (
   itemDescription: string,
   itemActionType: "interact" | "consume" | "use"
 ) => {
-  const item = await itemData.findOne({ itemName: itemName });
+  const item = await itemData.findOne({ name: itemName });
   if (item) {
     interaction.reply({
       content: "An item with that name already exists.",
@@ -17,9 +17,9 @@ export default async (
   }
 
   const newItem = new itemData({
-    itemName: itemName,
-    itemDescription: itemDescription,
-    itemActionable: itemActionType,
+    name: itemName,
+    description: itemDescription,
+    actionType: itemActionType,
   });
 
   await newItem.save();

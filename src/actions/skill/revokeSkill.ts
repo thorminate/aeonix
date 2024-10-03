@@ -7,11 +7,11 @@ export default async (
   skillName: string,
   targetId: string
 ) => {
-  const skillData = await SkillData.findOne({
-    skillName: skillName,
+  const skill = await SkillData.findOne({
+    name: skillName,
   });
 
-  if (!skillData) {
+  if (!skill) {
     await interaction.reply({
       content: `Skill ${skillName} not found. Make sure you entered a valid skill name. Or create a new skill.`,
       ephemeral: true,
@@ -19,12 +19,12 @@ export default async (
     return;
   }
 
-  const targetData = await UserData.findOne({
-    userId: targetId,
-    guildId: interaction.guild.id,
+  const target = await UserData.findOne({
+    id: targetId,
+    guild: interaction.guild.id,
   });
 
-  if (!targetData) {
+  if (!target) {
     await interaction.reply({
       content: "Target user not found. Make sure you entered a valid user ID.",
       ephemeral: true,
@@ -33,16 +33,14 @@ export default async (
   }
 
   // check if the user has the skill
-  if (targetData.skills.includes(skillData.skillName)) {
-    targetData.skills = targetData.skills.filter(
-      (skill) => skill !== skillData.skillName
+  if (target.skills.includes(skill.name)) {
+    target.skills = target.skills.filter(
+      (skillName) => skillName !== skill.name
     );
-    skillData.skillUsers = skillData.skillUsers.filter(
-      (user) => user !== targetData.userId
-    );
+    skill.users = skill.users.filter((user) => user !== target.id);
 
-    await skillData.save();
-    await targetData.save();
+    await skill.save();
+    await target.save();
     await interaction.reply({
       content: `Successfully revoked skill ${skillName} from <@${targetId}>.`,
       ephemeral: true,

@@ -4,22 +4,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose"); // Import the mongoose library.
 const environmentData = new mongoose_1.Schema({
     // Define the schema.
-    environmentName: {
+    name: {
         // Define the environment name.
         type: String,
         required: true,
     },
-    environmentChannel: {
+    channel: {
         // Define the environment channel.
         type: String,
         required: true,
     },
-    environmentItems: {
+    items: {
         // Define the environment items.
         type: (Array),
         default: [],
     },
-    environmentUsers: {
+    users: {
         // Define the environment users.
         type: (Array),
         default: [],

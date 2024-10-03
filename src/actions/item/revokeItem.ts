@@ -8,7 +8,7 @@ export default async (
   targetId: string
 ) => {
   const itemData = await ItemData.findOne({
-    itemName: itemName,
+    name: itemName,
   });
 
   if (!itemData) {
@@ -20,8 +20,8 @@ export default async (
   }
 
   const targetData = await UserData.findOne({
-    userId: targetId,
-    guildId: interaction.guild.id,
+    id: targetId,
+    guild: interaction.guild.id,
   });
 
   if (!targetData) {
@@ -36,7 +36,7 @@ export default async (
     targetData.inventory = targetData.inventory.filter(
       (item) => item.itemName !== itemName
     );
-    itemData.itemUsers = itemData.itemUsers.filter((user) => user !== targetId);
+    itemData.users = itemData.users.filter((user) => user !== targetId);
     await targetData.save();
     await itemData.save();
 

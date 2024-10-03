@@ -32,8 +32,8 @@ export default async (
 
   const userData = await UserData.findOne({
     // Find the target user in the database
-    userId: userObj.user.id,
-    guildId: interaction.guild.id,
+    id: userObj.user.id,
+    guild: interaction.guild.id,
   });
 
   if (!userData) {

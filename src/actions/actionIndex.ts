@@ -8,13 +8,19 @@ import createItem from "./item/createItem";
 import giveItem from "./item/giveItem";
 import revokeItem from "./item/revokeItem";
 import deleteItem from "./item/deleteItem";
+import statusCreate from "./status/statusCreate";
 
 /**
  * Index of all the actions
  * @type {Object<Object<Function>>}
+ *
+ * example usage:
+ * actions.user.levelUp(userData)
  */
 export default {
+  // export the index
   user: {
+    // user actions
     levelUp,
     giveStat,
   },
@@ -29,5 +35,8 @@ export default {
     give: giveItem,
     revoke: revokeItem,
     delete: deleteItem,
+  },
+  statusEffect: {
+    create: statusCreate,
   },
 };

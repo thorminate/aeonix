@@ -24,8 +24,8 @@ exports.default = async (bot, message) => {
     try {
         // gets user from userData
         const user = await userDatabaseSchema_1.default.findOne({
-            userId: message.author.id,
-            guildId: message.guild.id,
+            id: message.author.id,
+            guild: message.guild.id,
         });
         // if userData(aka level) exists in database, check cooldown and give exp to user.
         if (user) {
@@ -55,8 +55,8 @@ exports.default = async (bot, message) => {
         }
         else {
             const newUser = new userDatabaseSchema_1.default({
-                userId: message.author.id,
-                guildId: message.guild.id,
+                id: message.author.id,
+                guild: message.guild.id,
                 exp: expToGive,
             });
             // then send a notice that the persona was not saved in the database.

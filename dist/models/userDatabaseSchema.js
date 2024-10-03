@@ -4,12 +4,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose"); // Import the mongoose library.
 const userData = new mongoose_1.Schema({
     // Define the schema.
-    userId: {
+    id: {
         // Define the user id.
         type: String,
         required: true,
     },
-    guildId: {
+    guild: {
         // Define the guild id.
         type: String,
         required: true,
@@ -56,7 +56,7 @@ const userData = new mongoose_1.Schema({
     },
     skills: {
         // Define the skills.
-        type: (Array),
+        type: [String],
         default: [],
     },
     inventory: {
@@ -69,20 +69,18 @@ const userData = new mongoose_1.Schema({
         type: (Array),
         default: [],
     },
-    willMultiplier: {
+    multipliers: {
         // Define the will multiplier.
-        type: Number,
-        default: 1,
-    },
-    strengthMultiplier: {
-        // Define the strength multiplier.
-        type: Number,
-        default: 1,
-    },
-    cognitionMultiplier: {
-        // Define the cognition multiplier.
-        type: Number,
-        default: 1,
+        type: {
+            strength: Number,
+            will: Number,
+            cognition: Number,
+        },
+        default: {
+            strength: 1,
+            will: 1,
+            cognition: 1,
+        },
     },
     isOnboard: {
         // Define the isOnboard.

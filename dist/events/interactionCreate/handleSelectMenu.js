@@ -15,35 +15,35 @@ exports.default = async (bot, interaction) => {
         case "species-select":
             if (!interaction.isStringSelectMenu())
                 return;
-            let user = await userDatabaseSchema_1.default.findOne({ userId: interaction.user.id });
+            let user = await userDatabaseSchema_1.default.findOne({ id: interaction.user.id });
             if (!user) {
                 const newUser = new userDatabaseSchema_1.default({
-                    userId: interaction.user.id,
-                    guildId: interaction.guild.id,
+                    id: interaction.user.id,
+                    guild: interaction.guild.id,
                 });
                 user = newUser;
             }
             await interaction.values.forEach(async (value) => {
                 user.species = value;
                 if (value === "Human") {
-                    user.strengthMultiplier = 1.1;
-                    user.willMultiplier = 1.1;
-                    user.cognitionMultiplier = 1.1;
+                    user.multipliers.strength = 1.1;
+                    user.multipliers.will = 1.1;
+                    user.multipliers.cognition = 1.1;
                 }
                 else if (value === "Elf") {
-                    user.strengthMultiplier = 0.9;
-                    user.willMultiplier = 1.3;
-                    user.cognitionMultiplier = 1.1;
+                    user.multipliers.strength = 0.9;
+                    user.multipliers.will = 1.3;
+                    user.multipliers.cognition = 1.1;
                 }
                 else if (value === "Dwarf") {
-                    user.strengthMultiplier = 1.1;
-                    user.willMultiplier = 0.9;
-                    user.cognitionMultiplier = 1.3;
+                    user.multipliers.strength = 1.1;
+                    user.multipliers.will = 0.9;
+                    user.multipliers.cognition = 1.3;
                 }
                 else if (value === "Orc") {
-                    user.strengthMultiplier = 1.3;
-                    user.willMultiplier = 1.1;
-                    user.cognitionMultiplier = 0.9;
+                    user.multipliers.strength = 1.3;
+                    user.multipliers.will = 1.1;
+                    user.multipliers.cognition = 0.9;
                 }
                 await user.save();
                 const classMenu = new discord_js_1.StringSelectMenuBuilder()
@@ -74,7 +74,7 @@ exports.default = async (bot, interaction) => {
             if (!interaction.isStringSelectMenu())
                 return;
             const selectedClass = interaction.values[0];
-            const userClass = await userDatabaseSchema_1.default.findOne({ userId: interaction.user.id });
+            const userClass = await userDatabaseSchema_1.default.findOne({ id: interaction.user.id });
             if (userClass) {
                 userClass.class = selectedClass;
                 userClass.isOnboard = true;
@@ -94,7 +94,7 @@ exports.default = async (bot, interaction) => {
                 const messages = await onboardingChannel.messages.fetch({ limit: 1 });
                 const message = messages.first();
                 const resetButton = new discord_js_1.ButtonBuilder()
-                    .setCustomId("welcome-channel-begin-onboarding")
+                    .setCustomId("begin-onboarding")
                     .setLabel("Begin Onboarding")
                     .setStyle(discord_js_1.ButtonStyle.Success)
                     .setDisabled(false);
@@ -102,9 +102,7 @@ exports.default = async (bot, interaction) => {
                 await message.edit({
                     components: [resetRow],
                 });
-                setTimeout(() => {
-                    interaction.member.roles.add("1270791621289578607");
-                }, 4000);
+                interaction.member.roles.add("1270791621289578607");
             }
             break;
     }

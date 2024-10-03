@@ -4,27 +4,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose"); // Import the mongoose library.
 const itemData = new mongoose_1.Schema({
     // Define the schema.
-    itemName: {
+    name: {
         // Define the item name.
         type: String,
         required: true,
     },
-    itemDescription: {
+    description: {
         // Define the item description.
         type: String,
         required: true,
     },
-    itemActionable: {
+    actionType: {
         // Define the item actionable.
         type: String,
         required: true,
     },
-    itemUsers: {
+    users: {
         // Define the item users.
         type: (Array),
         default: [],
     },
-    itemEnvironments: {
+    environments: {
         // Define the item environments.
         type: (Array),
         default: [],

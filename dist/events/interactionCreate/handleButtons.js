@@ -17,14 +17,14 @@ exports.default = async (bot, buttonInteraction) => {
         // Onboarding buttons
         case "begin-onboarding":
             let user = await userDatabaseSchema_1.default.findOne({
-                userId: buttonInteraction.user.id,
-                guildId: buttonInteraction.guild.id,
+                id: buttonInteraction.user.id,
+                guild: buttonInteraction.guild.id,
             });
             const userDiscord = await buttonInteraction.guild.members.fetch(buttonInteraction.user.id);
             if (!user) {
                 const newUser = new userDatabaseSchema_1.default({
-                    userId: buttonInteraction.user.id,
-                    guildId: buttonInteraction.guild.id,
+                    id: buttonInteraction.user.id,
+                    guild: buttonInteraction.guild.id,
                     isOnboard: false,
                 });
                 user = newUser;

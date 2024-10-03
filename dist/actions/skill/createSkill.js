@@ -7,31 +7,13 @@ const skillDatabaseSchema_1 = __importDefault(require("../../models/skillDatabas
 /**
  * Creates a new skill in the database.
  * @param {ModalSubmitInteraction} interaction The interaction that ran the command.
- * @param {string} skillName The name of the skill.
- * @param {string} skillDescription The description of the skill.
- * @param {string} skillAction The action of the skill.
- * @param {number} skillCooldown The cooldown of the skill.
- * @param {number} skillWill The will of the skill.
- * @param {boolean} strict Whether the command should check if the inputs are valid. Default is false.
+ * @param {Options} options The name, description, action, cooldown, and will of the skill.
  * @returns {Promise<void>}
  */
-exports.default = async (interaction, skillName, skillDescription, skillAction, skillCooldown, skillWill, strict = false) => {
+exports.default = async (interaction, options) => {
     // Validate the inputs
-    if (!strict) {
-        if (skillName === "" ||
-            skillDescription === "" ||
-            skillAction === "" ||
-            isNaN(skillCooldown) ||
-            isNaN(skillWill)) {
-            await interaction.reply({
-                content: "Please fill in all the required fields correctly. Cooldown and Will must be numbers.",
-                ephemeral: true,
-            });
-            return;
-        }
-    }
     // check if skill already exists
-    if (await skillDatabaseSchema_1.default.findOne({ skillName: skillName })) {
+    if (await skillDatabaseSchema_1.default.findOne({ name: options.name })) {
         await interaction.reply({
             content: "Skill already exists. Please choose a different name.",
             ephemeral: true,
@@ -40,15 +22,15 @@ exports.default = async (interaction, skillName, skillDescription, skillAction, 
     }
     // create a new skill and store it in the database
     const newSkill = new skillDatabaseSchema_1.default({
-        skillName: skillName,
-        skillDescription: skillDescription,
-        skillAction: skillAction,
-        skillCooldown: skillCooldown,
-        skillWill: skillWill,
+        name: options.name,
+        description: options.description,
+        action: options.action,
+        cooldown: options.cooldown,
+        will: options.will,
     });
     await newSkill.save();
     await interaction.reply({
-        content: `Successfully created skill ${skillName}.`,
+        content: `Successfully created skill ${options.name}.`,
         ephemeral: true,
     });
 };

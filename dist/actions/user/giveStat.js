@@ -27,8 +27,8 @@ exports.default = async (interaction, variant, modifier, amount, userId) => {
     }
     const userData = await userDatabaseSchema_1.default.findOne({
         // Find the target user in the database
-        userId: userObj.user.id,
-        guildId: interaction.guild.id,
+        id: userObj.user.id,
+        guild: interaction.guild.id,
     });
     if (!userData) {
         // Check if the target user is not found in the database

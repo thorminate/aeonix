@@ -10,8 +10,8 @@ export default async (
 ) => {
   const targetData = await UserData.findOne({
     // get user data
-    userId: targetId,
-    guildId: interaction.guild.id,
+    id: targetId,
+    guild: interaction.guild.id,
   });
 
   if (!targetData) {
@@ -24,7 +24,7 @@ export default async (
 
   const itemData = await ItemData.findOne({
     // get item data
-    itemName: itemName,
+    name: itemName,
   });
 
   if (!itemData) {
@@ -37,14 +37,14 @@ export default async (
 
   const itemIndex = targetData.inventory.findIndex(
     // get index of item whose name matches the item name
-    (item) => item.itemName === itemData.itemName
+    (item) => item.itemName === itemData.name
   );
   // check if item exists in inventory (-1 means it doesn't exist)
   if (itemIndex === -1) {
     // item doesn't exist in inventory
     targetData.inventory.push({
       // add item to inventory
-      itemName: itemData.itemName,
+      itemName: itemData.name,
       itemAmount: amount,
     });
   } else {
@@ -52,7 +52,7 @@ export default async (
     targetData.inventory[itemIndex].itemAmount += amount; // add amount to existing item
   }
 
-  itemData.itemUsers.push(targetId);
+  itemData.users.push(targetId);
 
   await targetData.save();
 

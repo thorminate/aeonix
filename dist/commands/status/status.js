@@ -27,12 +27,11 @@ module.exports = {
                 ephemeral: true,
             });
             //define targetUserObj
-            const userId = interaction.member.id;
-            const userObj = await interaction.guild.members.fetch(userId);
+            const userObj = await interaction.guild.members.fetch(interaction.user.id);
             // find user in database and then get their data
             const userData = await userDatabaseSchema_1.default.findOne({
-                userId: userId,
-                guildId: interaction.guild.id,
+                id: interaction.user.id,
+                guild: interaction.guild.id,
             });
             // if user doesn't exist in database, say so and return
             if (!userData) {

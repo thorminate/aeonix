@@ -5,8 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const itemDatabaseSchema_1 = __importDefault(require("../../models/itemDatabaseSchema"));
 exports.default = async (interaction, itemName, itemDescription, itemActionType) => {
-    console.log(itemName, itemDescription, itemActionType);
-    const item = await itemDatabaseSchema_1.default.findOne({ itemName: itemName });
+    const item = await itemDatabaseSchema_1.default.findOne({ name: itemName });
     if (item) {
         interaction.reply({
             content: "An item with that name already exists.",
@@ -15,9 +14,9 @@ exports.default = async (interaction, itemName, itemDescription, itemActionType)
         return;
     }
     const newItem = new itemDatabaseSchema_1.default({
-        itemName: itemName,
-        itemDescription: itemDescription,
-        itemActionable: itemActionType,
+        name: itemName,
+        description: itemDescription,
+        actionType: itemActionType,
     });
     await newItem.save();
     await interaction.reply({

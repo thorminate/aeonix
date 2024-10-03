@@ -7,7 +7,7 @@ const itemDatabaseSchema_1 = __importDefault(require("../../models/itemDatabaseS
 const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseSchema"));
 exports.default = async (interaction, itemName, targetId) => {
     const itemData = await itemDatabaseSchema_1.default.findOne({
-        itemName: itemName,
+        name: itemName,
     });
     if (!itemData) {
         await interaction.reply({
@@ -17,8 +17,8 @@ exports.default = async (interaction, itemName, targetId) => {
         return;
     }
     const targetData = await userDatabaseSchema_1.default.findOne({
-        userId: targetId,
-        guildId: interaction.guild.id,
+        id: targetId,
+        guild: interaction.guild.id,
     });
     if (!targetData) {
         await interaction.reply({
@@ -29,7 +29,7 @@ exports.default = async (interaction, itemName, targetId) => {
     }
     if (targetData.inventory.some((item) => item.itemName === itemName)) {
         targetData.inventory = targetData.inventory.filter((item) => item.itemName !== itemName);
-        itemData.itemUsers = itemData.itemUsers.filter((user) => user !== targetId);
+        itemData.users = itemData.users.filter((user) => user !== targetId);
         await targetData.save();
         await itemData.save();
         await interaction.reply({

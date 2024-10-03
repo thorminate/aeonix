@@ -8,7 +8,7 @@ const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseS
 const environmentDatabaseSchema_1 = __importDefault(require("../../models/environmentDatabaseSchema"));
 exports.default = async (interaction, itemName) => {
     const itemData = await itemDatabaseSchema_1.default.findOne({
-        itemName: itemName,
+        name: itemName,
     });
     if (!itemData) {
         await interaction.reply({
@@ -18,20 +18,20 @@ exports.default = async (interaction, itemName) => {
         return;
     }
     // Delete the item from people's inventories
-    for (const user of itemData.itemUsers) {
+    for (const user of itemData.users) {
         const userData = await userDatabaseSchema_1.default.findOne({
-            userId: user,
-            guildId: interaction.guild.id,
+            id: user,
+            guild: interaction.guild.id,
         });
         userData.inventory = userData.inventory.filter((item) => item.itemName !== itemName);
         await userData.save();
     }
     // Delete the item from environments
-    for (const environment of itemData.itemEnvironments) {
+    for (const environment of itemData.environments) {
         const environmentData = await environmentDatabaseSchema_1.default.findOne({
-            environmentName: environment,
+            name: environment,
         });
-        environmentData.environmentItems = environmentData.environmentItems.filter((item) => item.itemName !== itemName);
+        environmentData.items = environmentData.items.filter((item) => item.itemName !== itemName);
     }
     // Delete the item from the database.
     await itemData.deleteOne();

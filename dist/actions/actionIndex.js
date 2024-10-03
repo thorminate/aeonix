@@ -13,12 +13,18 @@ const createItem_1 = __importDefault(require("./item/createItem"));
 const giveItem_1 = __importDefault(require("./item/giveItem"));
 const revokeItem_1 = __importDefault(require("./item/revokeItem"));
 const deleteItem_1 = __importDefault(require("./item/deleteItem"));
+const statusCreate_1 = __importDefault(require("./status/statusCreate"));
 /**
  * Index of all the actions
  * @type {Object<Object<Function>>}
+ *
+ * example usage:
+ * actions.user.levelUp(userData)
  */
 exports.default = {
+    // export the index
     user: {
+        // user actions
         levelUp: levelUp_1.default,
         giveStat: giveStat_1.default,
     },
@@ -33,5 +39,8 @@ exports.default = {
         give: giveItem_1.default,
         revoke: revokeItem_1.default,
         delete: deleteItem_1.default,
+    },
+    statusEffect: {
+        create: statusCreate_1.default,
     },
 };

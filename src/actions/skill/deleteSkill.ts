@@ -7,7 +7,7 @@ export default async (
   skillName: string
 ) => {
   const skill = await skillData.findOne({
-    skillName: skillName,
+    name: skillName,
   });
   if (!skill) {
     await interaction.reply({
@@ -18,7 +18,7 @@ export default async (
   }
   // first delete the skill from all users that have it
   const skillUsers = await userData.find({
-    userId: { $in: skill.skillUsers },
+    id: { $in: skill.users },
   });
 
   skillUsers.forEach(async (skillUser) => {

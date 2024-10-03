@@ -14,7 +14,7 @@ const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseS
  */
 exports.default = async (interaction, skillName, targetId) => {
     const targetData = await userDatabaseSchema_1.default.findOne({
-        userId: targetId,
+        id: targetId,
     });
     if (!targetData) {
         await interaction.reply({
@@ -24,7 +24,7 @@ exports.default = async (interaction, skillName, targetId) => {
         return;
     }
     const skillData = await skillDatabaseSchema_1.default.findOne({
-        skillName: skillName,
+        name: skillName,
     });
     if (!skillData) {
         await interaction.reply({
@@ -34,16 +34,16 @@ exports.default = async (interaction, skillName, targetId) => {
         return;
     }
     // check if the user already has the skill
-    if (targetData.skills.some((skill) => skill === skillData.skillName)) {
+    if (targetData.skills.some((skill) => skill === skillData.name)) {
         await interaction.reply({
             content: `User already has skill ${skillName}.`,
             ephemeral: true,
         });
         return;
     }
-    skillData.skillUsers.push(targetData.userId);
+    skillData.users.push(targetData.id);
     await skillData.save();
-    targetData.skills.push(skillData.skillName);
+    targetData.skills.push(skillData.name);
     await targetData.save();
     await interaction.reply({
         content: `Successfully granted skill ${skillName} to <@${targetId}>.`,

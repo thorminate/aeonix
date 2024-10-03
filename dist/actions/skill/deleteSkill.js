@@ -7,7 +7,7 @@ const skillDatabaseSchema_1 = __importDefault(require("../../models/skillDatabas
 const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseSchema"));
 exports.default = async (interaction, skillName) => {
     const skill = await skillDatabaseSchema_1.default.findOne({
-        skillName: skillName,
+        name: skillName,
     });
     if (!skill) {
         await interaction.reply({
@@ -18,7 +18,7 @@ exports.default = async (interaction, skillName) => {
     }
     // first delete the skill from all users that have it
     const skillUsers = await userDatabaseSchema_1.default.find({
-        userId: { $in: skill.skillUsers },
+        id: { $in: skill.users },
     });
     skillUsers.forEach(async (skillUser) => {
         skillUser.skills = skillUser.skills.filter((skill) => skill !== skillName);

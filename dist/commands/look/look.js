@@ -22,10 +22,9 @@ module.exports = {
             await interaction.deferReply({
                 ephemeral: true,
             });
-            const userId = interaction.member.id;
             const userData = await userDatabaseSchema_1.default.findOne({
-                userId: userId,
-                guildId: interaction.guild.id,
+                id: interaction.user.id,
+                guild: interaction.guild.id,
             });
             if (!userData) {
                 await interaction.editReply({
@@ -34,7 +33,7 @@ module.exports = {
                 return;
             }
             const userEnvironmentData = await environmentDatabaseSchema_1.default.findOne({
-                environmentName: userData.environment,
+                name: userData.environment,
             });
             if (!userEnvironmentData) {
                 await interaction.editReply({
@@ -42,14 +41,14 @@ module.exports = {
                 });
                 return;
             }
-            if (userEnvironmentData.environmentChannel !== interaction.channel.id) {
+            if (userEnvironmentData.channel !== interaction.channel.id) {
                 await interaction.editReply({
-                    content: `You can only look in your current environment, <#${userEnvironmentData.environmentChannel}>`,
+                    content: `You can only look in your current environment, <#${userEnvironmentData.channel}>`,
                 });
                 return;
             }
             await interaction.editReply({
-                content: (await userEnvironmentData).environmentItems.join(", "),
+                content: (await userEnvironmentData).items.join(", "),
             });
         }
         catch (error) {

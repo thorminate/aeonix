@@ -11,20 +11,19 @@ exports.default = async (bot, message) => {
     if (!message.inGuild() || message.author.bot)
         return;
     async function consumeItem(message, itemName) {
-        const userId = message.author.id;
-        const user = await userDatabaseSchema_1.default.findOne({ userId: userId });
+        const user = await userDatabaseSchema_1.default.findOne({ id: message.author.id });
         if (user) {
             const itemIndex = Array.prototype.findIndex.call(user.inventory, (item) => item && item.itemName === itemName);
-            const itemDataConsume = await itemDatabaseSchema_1.default.findOne({ itemName: itemName });
+            const itemDataConsume = await itemDatabaseSchema_1.default.findOne({ name: itemName });
             if (itemIndex > -1) {
                 if (!itemDataConsume)
                     return;
-                if (itemDataConsume.itemActionable === "consume" &&
+                if (itemDataConsume.actionType === "consume" &&
                     user.inventory[itemIndex].Amount > 1) {
                     user.inventory[itemIndex].Amount--;
                     await user.save();
                 }
-                else if (itemDataConsume.itemActionable === "consume") {
+                else if (itemDataConsume.actionType === "consume") {
                     user.inventory.splice(itemIndex, 1); // Remove the item from the inventory
                     await user.save();
                 }
@@ -39,21 +38,20 @@ exports.default = async (bot, message) => {
         }
     }
     async function useSkill(message, skillName) {
-        const userId = message.author.id;
-        const user = await userDatabaseSchema_1.default.findOne({ userId: userId });
+        const user = await userDatabaseSchema_1.default.findOne({ id: message.author.id });
         if (user) {
             if (user.skills.includes(skillName)) {
-                const skill = await skillDatabaseSchema_1.default.findOne({ skillName: skillName });
+                const skill = await skillDatabaseSchema_1.default.findOne({ name: skillName });
                 if (skill) {
                     // Perform the skill action here
-                    if (user.will < skill.skillWill) {
+                    if (user.will < skill.will) {
                         await message.reply({
                             content: "You don't have enough will to use this skill.",
                             ephemeral: true,
                         });
                         return;
                     }
-                    const skillAction = skill.skillAction;
+                    const skillAction = skill.action;
                     await message.reply(skillAction);
                 }
                 else if (!skillName) {

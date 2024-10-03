@@ -8,8 +8,8 @@ const itemDatabaseSchema_1 = __importDefault(require("../../models/itemDatabaseS
 exports.default = async (interaction, itemName, targetId, amount) => {
     const targetData = await userDatabaseSchema_1.default.findOne({
         // get user data
-        userId: targetId,
-        guildId: interaction.guild.id,
+        id: targetId,
+        guild: interaction.guild.id,
     });
     if (!targetData) {
         // check if user exists
@@ -20,7 +20,7 @@ exports.default = async (interaction, itemName, targetId, amount) => {
     }
     const itemData = await itemDatabaseSchema_1.default.findOne({
         // get item data
-        itemName: itemName,
+        name: itemName,
     });
     if (!itemData) {
         // check if item exists
@@ -31,13 +31,13 @@ exports.default = async (interaction, itemName, targetId, amount) => {
     }
     const itemIndex = targetData.inventory.findIndex(
     // get index of item whose name matches the item name
-    (item) => item.itemName === itemData.itemName);
+    (item) => item.itemName === itemData.name);
     // check if item exists in inventory (-1 means it doesn't exist)
     if (itemIndex === -1) {
         // item doesn't exist in inventory
         targetData.inventory.push({
             // add item to inventory
-            itemName: itemData.itemName,
+            itemName: itemData.name,
             itemAmount: amount,
         });
     }
@@ -45,7 +45,7 @@ exports.default = async (interaction, itemName, targetId, amount) => {
         // item exists in inventory
         targetData.inventory[itemIndex].itemAmount += amount; // add amount to existing item
     }
-    itemData.itemUsers.push(targetId);
+    itemData.users.push(targetId);
     await targetData.save();
     await itemData.save();
     await interaction.reply({

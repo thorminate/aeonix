@@ -4,27 +4,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose"); // Import the mongoose library.
 const statusEffectData = new mongoose_1.Schema({
     // Define the schema.
-    statusEffectName: {
+    name: {
         // Define the status effect name.
         type: String,
         required: true,
     },
-    statusEffectDescription: {
-        // Define the status effect description.
-        type: String,
-        required: true,
-    },
-    statusEffectDuration: {
+    duration: {
         // Define the status effect duration.
         type: Number,
         required: true,
     },
-    statusEffectAction: {
-        // Define the status effect action.
+    description: {
+        // Define the status effect description.
         type: String,
         required: true,
     },
-    statusEffectUsers: {
+    users: {
         // Define the status effect users.
         type: (Array),
         default: [],
