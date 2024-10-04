@@ -9,6 +9,8 @@ import giveItem from "./item/giveItem";
 import revokeItem from "./item/revokeItem";
 import deleteItem from "./item/deleteItem";
 import statusCreate from "./status/statusCreate";
+import statusDelete from "./status/statusDelete";
+import statusGrant from "./status/statusGrant";
 
 /**
  * Index of all the actions
@@ -38,5 +40,7 @@ export default {
   },
   statusEffect: {
     create: statusCreate,
+    delete: statusDelete,
+    grant: statusGrant,
   },
 };

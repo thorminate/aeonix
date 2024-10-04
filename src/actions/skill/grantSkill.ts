@@ -2,18 +2,23 @@ import { ModalSubmitInteraction } from "discord.js";
 import SkillData from "../../models/skillDatabaseSchema";
 import UserData from "../../models/userDatabaseSchema";
 
+interface Options {
+  skillName: string;
+  targetId: string;
+}
+
 /**
  * Grants a skill to a target user.
  * @param {ModalSubmitInteraction} interaction The interaction that ran the command.
- * @param {string} skillName The name of the skill to be granted.
- * @param {string} targetId The ID of the target user.
+ * @param {Options} options
  * @returns {Promise<void>}
  */
 export default async (
   interaction: ModalSubmitInteraction,
-  skillName: string,
-  targetId: string
-) => {
+  options: Options
+): Promise<void> => {
+  const { skillName, targetId } = options;
+
   const targetData = await UserData.findOne({
     id: targetId,
   });

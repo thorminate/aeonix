@@ -12,9 +12,10 @@ export default async (
   interaction: ModalSubmitInteraction,
   options: Options
 ) => {
+  const { name, description, duration } = options;
   if (
     await StatusEffectData.findOne({
-      name: options.name,
+      name: name,
     })
   ) {
     await interaction.reply({
@@ -25,7 +26,7 @@ export default async (
     return;
   }
 
-  const durationMs = parseInt(ms(options.duration));
+  const durationMs = parseInt(ms(duration));
 
   if (durationMs < 0 || durationMs > 86400000 || isNaN(durationMs)) {
     await interaction.reply({
@@ -37,14 +38,14 @@ export default async (
   // create status effect
 
   const statusEffectNew = new StatusEffectData({
-    statusEffectName: options.name,
-    statusEffectDuration: durationMs,
-    statusEffectDescription: options.description,
+    name: name,
+    duration: durationMs,
+    description: description,
   });
 
   await statusEffectNew.save();
   await interaction.reply({
-    content: `Successfully created status effect ${options.name}.`,
+    content: `Successfully created status effect ${name}.`,
     ephemeral: true,
   });
 };

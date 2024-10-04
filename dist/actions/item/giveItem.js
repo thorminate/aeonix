@@ -5,7 +5,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseSchema"));
 const itemDatabaseSchema_1 = __importDefault(require("../../models/itemDatabaseSchema"));
-exports.default = async (interaction, itemName, targetId, amount) => {
+/**
+ * Gives an item to a user.
+ * @param {ModalSubmitInteraction} interaction The interaction that ran the command.
+ * @param {Options} options The name of the item, the target user's ID, and the amount of item(s) to be given.
+ */
+exports.default = async (interaction, options) => {
+    const { itemName, targetId, amount } = options;
     const targetData = await userDatabaseSchema_1.default.findOne({
         // get user data
         id: targetId,

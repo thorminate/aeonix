@@ -2,12 +2,23 @@ import { ModalSubmitInteraction } from "discord.js";
 import UserData from "../../models/userDatabaseSchema";
 import ItemData from "../../models/itemDatabaseSchema";
 
+interface Options {
+  itemName: string;
+  targetId: string;
+  amount: number;
+}
+
+/**
+ * Gives an item to a user.
+ * @param {ModalSubmitInteraction} interaction The interaction that ran the command.
+ * @param {Options} options The name of the item, the target user's ID, and the amount of item(s) to be given.
+ */
 export default async (
   interaction: ModalSubmitInteraction,
-  itemName: string,
-  targetId: string,
-  amount: number
+  options: Options
 ) => {
+  const { itemName, targetId, amount } = options;
+
   const targetData = await UserData.findOne({
     // get user data
     id: targetId,

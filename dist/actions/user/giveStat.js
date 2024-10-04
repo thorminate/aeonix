@@ -7,14 +7,11 @@ const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseS
 /**
  * Gives a defined amount of stat point(s) to the target user.
  * @param {ModalSubmitInteraction} interaction The interaction that ran the command.
- * @param {string} variant The variant of the stat point(s) to be given. Valid variants are 'strength', 'will', 'cognition', 'level', and 'exp'.
- * @param {string} modifier The modifier of the stat point(s) to be given. Valid modifiers are 'add', 'remove', and 'set'.
- * @param {number} amount The amount of stat point(s) to be given.
- * @param {string} userId The ID of the target user.
- * @param {boolean} strict Whether the command should check if the amount, modifier, and variant are valid. Default is false.
+ * @param {Options} options The variant, modifier, and amount of stat point(s) to be given.
  * @returns {Promise<void>}
  */
-exports.default = async (interaction, variant, modifier, amount, userId) => {
+exports.default = async (interaction, options) => {
+    let { variant, modifier, amount, userId } = options;
     const userObj = await interaction.guild.members.fetch(userId); // Fetch the target user by their ID
     if (!userObj) {
         // Check if the target user is not found

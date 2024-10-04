@@ -5,7 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const skillDatabaseSchema_1 = __importDefault(require("../../models/skillDatabaseSchema"));
 const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseSchema"));
-exports.default = async (interaction, skillName, targetId) => {
+/**
+ * Revokes a skill from a target user.
+ * @param {ModalSubmitInteraction} interaction The interaction that ran the command.
+ * @param {Options} options The name of the skill to be revoked and the target user's ID.
+ * @returns {Promise<void>}
+ */
+exports.default = async (interaction, options) => {
+    const { skillName, targetId } = options;
     const skill = await skillDatabaseSchema_1.default.findOne({
         name: skillName,
     });

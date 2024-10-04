@@ -5,7 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const itemDatabaseSchema_1 = __importDefault(require("../../models/itemDatabaseSchema"));
 const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseSchema"));
-exports.default = async (interaction, itemName, targetId) => {
+/**
+ * Revokes an item from a user.
+ * @param {ModalSubmitInteraction} interaction The interaction that ran the command.
+ * @param {Options} options The name of the item to be revoked and the target user's ID.
+ * @returns {Promise<void>}
+ */
+exports.default = async (interaction, options) => {
+    const { itemName, targetId } = options;
     const itemData = await itemDatabaseSchema_1.default.findOne({
         name: itemName,
     });

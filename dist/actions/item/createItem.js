@@ -4,7 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const itemDatabaseSchema_1 = __importDefault(require("../../models/itemDatabaseSchema"));
-exports.default = async (interaction, itemName, itemDescription, itemActionType) => {
+/**
+ * Creates an item in the database.
+ * @param {ModalSubmitInteraction} interaction The interaction that ran the command.
+ * @param {Options} options The name, description, and action type of the item.
+ */
+exports.default = async (interaction, options) => {
+    const { itemName, itemDescription, itemActionType } = options;
     const item = await itemDatabaseSchema_1.default.findOne({ name: itemName });
     if (item) {
         interaction.reply({

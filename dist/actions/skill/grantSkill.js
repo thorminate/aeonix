@@ -8,11 +8,11 @@ const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseS
 /**
  * Grants a skill to a target user.
  * @param {ModalSubmitInteraction} interaction The interaction that ran the command.
- * @param {string} skillName The name of the skill to be granted.
- * @param {string} targetId The ID of the target user.
+ * @param {Options} options
  * @returns {Promise<void>}
  */
-exports.default = async (interaction, skillName, targetId) => {
+exports.default = async (interaction, options) => {
+    const { skillName, targetId } = options;
     const targetData = await userDatabaseSchema_1.default.findOne({
         id: targetId,
     });

@@ -12,7 +12,6 @@ const discord_js_1 = require("discord.js");
 const buttonWrapper_1 = __importDefault(require("../../utils/buttonWrapper"));
 const userDatabaseSchema_1 = __importDefault(require("../../models/userDatabaseSchema"));
 const itemDatabaseSchema_1 = __importDefault(require("../../models/itemDatabaseSchema"));
-const statusEffectDatabaseSchema_1 = __importDefault(require("../../models/statusEffectDatabaseSchema"));
 const environmentDatabaseSchema_1 = __importDefault(require("../../models/environmentDatabaseSchema"));
 const ms_1 = __importDefault(require("ms"));
 const actionIndex_1 = __importDefault(require("../../actions/actionIndex"));
@@ -62,7 +61,12 @@ exports.default = async (bot, modalInteraction) => {
                     });
                     return;
                 }
-                actionIndex_1.default.user.giveStat(modalInteraction, variant, modifier, statAmount, statsTargetUserInput);
+                actionIndex_1.default.user.giveStat(modalInteraction, {
+                    variant,
+                    modifier,
+                    amount: statAmount,
+                    userId: statsTargetUserInput,
+                });
                 break;
             // Skill Modals
             case "create-skill-modal":
@@ -95,7 +99,10 @@ exports.default = async (bot, modalInteraction) => {
                     .getTextInputValue("grant-skill-name-input")
                     .toLowerCase();
                 const grantSkillTarget = modalInteraction.fields.getTextInputValue("grant-skill-target-input");
-                await actionIndex_1.default.skill.grant(modalInteraction, grantSkillName, grantSkillTarget);
+                await actionIndex_1.default.skill.grant(modalInteraction, {
+                    skillName: grantSkillName,
+                    targetId: grantSkillTarget,
+                });
                 break;
             case "revoke-skill-modal":
                 // get input values
@@ -103,7 +110,10 @@ exports.default = async (bot, modalInteraction) => {
                     .getTextInputValue("revoke-skill-name-input")
                     .toLowerCase();
                 const revokeSkillTarget = modalInteraction.fields.getTextInputValue("revoke-skill-target-input");
-                await actionIndex_1.default.skill.revoke(modalInteraction, revokeSkillName, revokeSkillTarget);
+                await actionIndex_1.default.skill.revoke(modalInteraction, {
+                    skillName: revokeSkillName,
+                    targetId: revokeSkillTarget,
+                });
                 break;
             // Item Modals
             case "create-item-modal":
@@ -124,7 +134,11 @@ exports.default = async (bot, modalInteraction) => {
                     });
                     return;
                 }
-                actionIndex_1.default.item.create(modalInteraction, itemName, itemDescription, itemActionable);
+                actionIndex_1.default.item.create(modalInteraction, {
+                    itemName,
+                    itemDescription: itemDescription,
+                    itemActionType: itemActionable,
+                });
                 break;
             case "give-item-modal":
                 // get input values
@@ -140,7 +154,11 @@ exports.default = async (bot, modalInteraction) => {
                     });
                     return;
                 }
-                await actionIndex_1.default.item.give(modalInteraction, giveItemName, giveItemTarget, giveItemAmount);
+                await actionIndex_1.default.item.give(modalInteraction, {
+                    itemName: giveItemName,
+                    targetId: giveItemTarget,
+                    amount: giveItemAmount,
+                });
                 break;
             case "revoke-item-modal":
                 // get input values
@@ -148,7 +166,10 @@ exports.default = async (bot, modalInteraction) => {
                     .getTextInputValue("revoke-item-name-input")
                     .toLowerCase();
                 const removeItemTarget = modalInteraction.fields.getTextInputValue("revoke-item-target-input");
-                await actionIndex_1.default.item.revoke(modalInteraction, removeItemName, removeItemTarget);
+                await actionIndex_1.default.item.revoke(modalInteraction, {
+                    itemName: removeItemName,
+                    targetId: removeItemTarget,
+                });
                 break;
             case "delete-item-modal":
                 // get input values
@@ -187,66 +208,15 @@ exports.default = async (bot, modalInteraction) => {
                     .getTextInputValue("delete-status-effect-name-input")
                     .toLowerCase();
                 // Validate the inputs
-                const deleteStatusEffectData = await statusEffectDatabaseSchema_1.default.findOne({
-                    name: deleteStatusEffectName,
-                });
-                if (!deleteStatusEffectData) {
-                    await modalInteraction.reply({
-                        content: "Status effect not found, make sure it exist in the database",
-                        ephemeral: true,
-                    });
-                    return;
-                }
-                // delete status effect from all users
-                deleteStatusEffectData.users.forEach(async (user) => {
-                    await userDatabaseSchema_1.default.findOne({ id: user }).then((user) => {
-                        if (user) {
-                            user.statusEffects = user.statusEffects.filter((effect) => effect.statusEffectName !== deleteStatusEffectName);
-                        }
-                    });
-                });
-                await statusEffectDatabaseSchema_1.default.deleteOne({
-                    statusEffectName: deleteStatusEffectName,
-                });
-                await modalInteraction.reply({
-                    content: `Successfully deleted status effect ${deleteStatusEffectName}.`,
-                    ephemeral: true,
-                });
+                actionIndex_1.default.statusEffect.delete(modalInteraction, deleteStatusEffectName);
                 break;
             case "grant-status-effect-modal":
                 // get input values
                 const grantStatusEffectName = modalInteraction.fields.getTextInputValue("grant-status-effect-name-input");
                 const grantStatusEffectTarget = modalInteraction.fields.getTextInputValue("grant-status-effect-target-input");
-                // Validate the inputs
-                const grantStatusEffectData = await statusEffectDatabaseSchema_1.default.findOne({
-                    name: grantStatusEffectName,
-                });
-                if (!grantStatusEffectData) {
-                    await modalInteraction.reply({
-                        content: "Status effect not found, make sure it exists in the database",
-                        ephemeral: true,
-                    });
-                    return;
-                }
-                const grantStatusEffectTargetData = await userDatabaseSchema_1.default.findOne({
-                    id: grantStatusEffectTarget,
-                    guild: modalInteraction.guild.id,
-                });
-                if (!grantStatusEffectTargetData) {
-                    await modalInteraction.reply({
-                        content: "User not found!",
-                        ephemeral: true,
-                    });
-                    return;
-                }
-                grantStatusEffectTargetData.statusEffects.push({
-                    statusEffectName: grantStatusEffectData.name,
-                    statusEffectTimestamp: Date.now(),
-                });
-                await grantStatusEffectTargetData.save();
-                await modalInteraction.reply({
-                    content: `Successfully granted status effect ${grantStatusEffectName} to ${grantStatusEffectTarget}.`,
-                    ephemeral: true,
+                await actionIndex_1.default.statusEffect.grant(modalInteraction, {
+                    statusEffectName: grantStatusEffectName,
+                    targetId: grantStatusEffectTarget,
                 });
                 break;
             // Environment Modals
@@ -263,89 +233,7 @@ exports.default = async (bot, modalInteraction) => {
                 const createEnvironmentChannel = 
                 // get channel input and convert to number
                 modalInteraction.fields.getTextInputValue("create-environment-channel-input");
-                const createEnvironmentItems = await Promise.all(
-                // await all promises
-                createEnvironmentItemsPromises.map(async (itemName) => {
-                    // for each item
-                    if (itemName === "none")
-                        return itemName;
-                    const item = await itemDatabaseSchema_1.default.findOne({ name: itemName }); // get their corresponding data
-                    return [item, itemName]; // return the item object into the new array
-                }));
-                if (!modalInteraction.guild.channels.cache.has(createEnvironmentChannel)) {
-                    // if channel id is not a number
-                    await modalInteraction.reply({
-                        // say so verbosely
-                        content: "Channel ID invalid!",
-                        ephemeral: true,
-                    });
-                    return;
-                }
-                if (await environmentDatabaseSchema_1.default.findOne({
-                    name: createEnvironmentName,
-                })) {
-                    // if environment already exists
-                    await modalInteraction.reply({
-                        // say so verbosely
-                        content: `Environment ${createEnvironmentName} already exists.`,
-                        ephemeral: true,
-                    });
-                    return;
-                }
-                if (!createEnvironmentItems.includes("none")) {
-                    // Check if all items exist
-                    const invalidItems = createEnvironmentItems.filter(
-                    // filter out valid items into new array
-                    (item) => !item[0]);
-                    if (invalidItems.length > 0) {
-                        // if there are invalid items
-                        await modalInteraction.reply({
-                            // say so verbosely
-                            content: `Item(s) ${invalidItems
-                                .map((item, index) => createEnvironmentItems[index][0])
-                                .join(", ")} not found, make sure they exist in the database.`,
-                            ephemeral: true,
-                        });
-                        return;
-                    }
-                    // give all items the environment name
-                    createEnvironmentItems.forEach(async (item) => {
-                        // for each existing item
-                        item[0].itemEnvironments.push(createEnvironmentName);
-                        item[0].save();
-                    });
-                    // create environment
-                    const createEnvironment = new environmentDatabaseSchema_1.default({
-                        environmentName: createEnvironmentName,
-                        environmentItems: createEnvironmentItems.map((item) => item[1]),
-                        environmentChannel: createEnvironmentChannel,
-                    });
-                    await createEnvironment.save();
-                    await modalInteraction.reply({
-                        content: `Successfully created environment ${createEnvironmentName}.\nWith item(s): ${createEnvironmentItems
-                            .map((item) => {
-                            if (!item)
-                                return "none";
-                            else
-                                return item[1];
-                        })
-                            .join(", ")}. \nAnd channel: <#${createEnvironmentChannel}>`,
-                        ephemeral: true,
-                    });
-                }
-                else {
-                    // create environment
-                    const createEnvironment = new environmentDatabaseSchema_1.default({
-                        environmentName: createEnvironmentName,
-                        environmentItems: [],
-                        environmentChannel: createEnvironmentChannel,
-                    });
-                    await createEnvironment.save();
-                    await modalInteraction.reply({
-                        content: `Successfully created environment ${createEnvironmentName}.\nWith no items. \nAnd channel: <#${createEnvironmentChannel}>`,
-                        ephemeral: true,
-                    });
-                }
+                console.log(createEnvironmentItemsPromises);
                 break;
             case "edit-environment-name-modal":
                 // get input values

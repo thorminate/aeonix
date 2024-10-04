@@ -2,11 +2,23 @@ import { ModalSubmitInteraction } from "discord.js";
 import SkillData from "../../models/skillDatabaseSchema";
 import UserData from "../../models/userDatabaseSchema";
 
+interface Options {
+  skillName: string;
+  targetId: string;
+}
+
+/**
+ * Revokes a skill from a target user.
+ * @param {ModalSubmitInteraction} interaction The interaction that ran the command.
+ * @param {Options} options The name of the skill to be revoked and the target user's ID.
+ * @returns {Promise<void>}
+ */
 export default async (
   interaction: ModalSubmitInteraction,
-  skillName: string,
-  targetId: string
-) => {
+  options: Options
+): Promise<void> => {
+  const { skillName, targetId } = options;
+
   const skill = await SkillData.findOne({
     name: skillName,
   });

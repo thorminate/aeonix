@@ -14,6 +14,8 @@ const giveItem_1 = __importDefault(require("./item/giveItem"));
 const revokeItem_1 = __importDefault(require("./item/revokeItem"));
 const deleteItem_1 = __importDefault(require("./item/deleteItem"));
 const statusCreate_1 = __importDefault(require("./status/statusCreate"));
+const statusDelete_1 = __importDefault(require("./status/statusDelete"));
+const statusGrant_1 = __importDefault(require("./status/statusGrant"));
 /**
  * Index of all the actions
  * @type {Object<Object<Function>>}
@@ -42,5 +44,7 @@ exports.default = {
     },
     statusEffect: {
         create: statusCreate_1.default,
+        delete: statusDelete_1.default,
+        grant: statusGrant_1.default,
     },
 };

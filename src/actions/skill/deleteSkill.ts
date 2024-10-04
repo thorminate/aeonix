@@ -2,10 +2,16 @@ import { ModalSubmitInteraction } from "discord.js";
 import skillData from "../../models/skillDatabaseSchema";
 import userData from "../../models/userDatabaseSchema";
 
+/**
+ * Deletes a skill from the database.
+ * @param {ModalSubmitInteraction} interaction The interaction that ran the command.
+ * @param {string} skillName The name of the skill to be deleted.
+ * @returns {Promise<void>}
+ */
 export default async (
   interaction: ModalSubmitInteraction,
   skillName: string
-) => {
+): Promise<void> => {
   const skill = await skillData.findOne({
     name: skillName,
   });

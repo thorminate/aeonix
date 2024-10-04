@@ -2,11 +2,23 @@ import { ModalSubmitInteraction } from "discord.js";
 import ItemData from "../../models/itemDatabaseSchema";
 import UserData from "../../models/userDatabaseSchema";
 
+interface Options {
+  itemName: string;
+  targetId: string;
+}
+
+/**
+ * Revokes an item from a user.
+ * @param {ModalSubmitInteraction} interaction The interaction that ran the command.
+ * @param {Options} options The name of the item to be revoked and the target user's ID.
+ * @returns {Promise<void>}
+ */
 export default async (
   interaction: ModalSubmitInteraction,
-  itemName: string,
-  targetId: string
-) => {
+  options: Options
+): Promise<void> => {
+  const { itemName, targetId } = options;
+
   const itemData = await ItemData.findOne({
     name: itemName,
   });
