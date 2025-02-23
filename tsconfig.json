@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "outDir": "./dist", // Specify the output folder for compiled JavaScript
+    "allowJs": true,
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "resolveJsonModule": true
+  },
+  "exclude": ["./node_modules/**/*", "./dist/**/*", "./config.json"],
+  "include": [
+    "./src/**/*",
+    "src/events/ready/01register-commands.ts",
+    "src/events/ready/02playerOnboarding.ts"
+  ] // Specify the path to your TypeScript files
+}
