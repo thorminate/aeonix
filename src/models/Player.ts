@@ -1,9 +1,9 @@
-import mongoose from "mongoose";
+import { Document, model, Schema, Model } from "mongoose";
 import Saveable from "./utils/Saveable";
 import calculateLevelExp from "../utils/calculateLevelExp";
 import { GuildMember, TextChannel } from "discord.js";
 
-interface IPlayer extends mongoose.Document {
+interface IPlayer extends Document {
   userId: string;
   username: string;
   displayName: string;
@@ -21,7 +21,7 @@ export interface InventoryEntry {
   state: string;
 }
 
-const playerSchema = new mongoose.Schema({
+const playerSchema = new Schema({
   userId: { type: String, required: true },
   username: { type: String, required: true, unique: true },
   displayName: { type: String, required: true },
@@ -33,7 +33,7 @@ const playerSchema = new mongoose.Schema({
   inventory: { type: Array<InventoryEntry>, default: [] },
 });
 
-const PlayerModel = mongoose.model<IPlayer>("Player", playerSchema);
+const PlayerModel = model<IPlayer>("Player", playerSchema);
 
 export default class Player extends Saveable<IPlayer> {
   userId: string;
@@ -122,12 +122,12 @@ export default class Player extends Saveable<IPlayer> {
     };
   }
 
-  protected getModel(): mongoose.Model<IPlayer> {
+  protected getModel(): Model<IPlayer> {
     return PlayerModel;
   }
 
   // Static method implementation
-  static getModel(): mongoose.Model<IPlayer> {
+  static getModel(): Model<IPlayer> {
     return PlayerModel;
   }
 }
