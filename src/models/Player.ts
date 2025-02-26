@@ -1,19 +1,7 @@
-import { Document, model, Schema, Model } from "mongoose";
 import Saveable from "./utils/Saveable";
 import calculateLevelExp from "../utils/calculateLevelExp";
-import { GuildMember, TextChannel } from "discord.js";
-
-interface IPlayer extends Document {
-  userId: string;
-  username: string;
-  displayName: string;
-  level: number;
-  xp: number;
-  strength: number;
-  will: number;
-  cognition: number;
-  inventory: InventoryEntry[];
-}
+import { GuildMember, TextChannel, User } from "discord.js";
+import { Document, Model, model, Schema } from "mongoose";
 
 export interface InventoryEntry {
   name: string;
@@ -21,71 +9,105 @@ export interface InventoryEntry {
   state: string;
 }
 
-const playerSchema = new Schema({
-  userId: { type: String, required: true },
-  username: { type: String, required: true, unique: true },
-  displayName: { type: String, required: true },
-  level: { type: Number, default: 1 },
-  xp: { type: Number, default: 0 },
-  strength: { type: Number, default: 0 },
-  will: { type: Number, default: 0 },
-  cognition: { type: Number, default: 0 },
-  inventory: { type: Array<InventoryEntry>, default: [] },
-});
+export interface InventoryBlock {
+  name: string;
+  entries: InventoryEntry[];
+}
 
-const PlayerModel = model<IPlayer>("Player", playerSchema);
-
-export default class Player extends Saveable<IPlayer> {
-  userId: string;
-  username: string;
-  displayName: string;
+export interface StatBlock {
   level: number;
   xp: number;
   strength: number;
   will: number;
   cognition: number;
-  inventory: InventoryEntry[];
+}
+
+interface IPlayer extends Document {
+  id: string;
+  name: string;
+  characterName: string;
+  status: StatBlock;
+  inventory: InventoryBlock;
+}
+
+const playerSchema = new Schema({
+  id: { type: String, required: true },
+  name: { type: String, required: true, unique: true },
+  characterName: { type: String, required: true },
+  status: { type: Object, default: { strength: 0, will: 0, cognition: 0 } },
+  inventory: { type: Object, default: [] },
+});
+
+const PlayerModel = model<IPlayer>("Player", playerSchema);
+
+export default class Player extends Saveable<IPlayer> {
+  id: string;
+  name: string;
+  characterName: string;
+  status: StatBlock;
+  inventory: InventoryBlock;
 
   /**
-   *
-   * @param amount Number of levels to level up, defaults to 1, may not be negative
-   * @returns
+   * Level up the player by specified amount
+   * @param amount Amount of levels to level up, may not be less than 1
+   * @param member Member to level up, may not be null
+   * @param currentChannel Channel to send level up message in, may be null
+   * @param resetXp Whether to reset xp to 0 when levelling up
+   * @param save Whether to save to db automatically
+   * @returns The player after level up
    */
   async levelUp(
-    amount: number = 1,
     member: GuildMember,
+    amount: number = 1,
     currentChannel?: TextChannel,
     resetXp: boolean = true,
     save: boolean = true
   ) {
     if (amount <= 0 || !amount) return;
-    this.level += amount;
-    if (resetXp) this.xp = 0;
+    this.status.level += amount;
+    if (resetXp) this.status.xp = 0;
 
     if (currentChannel) {
       currentChannel.send(
-        `<@${member.user.id}> has leveled up! Their level is now ${this.level}!`
+        `<@${member.user.id}> has leveled up! Their level is now ${this.status.level}!`
       );
     }
 
     if (save) this.save();
   }
 
+  /**
+   * Give xp to the player
+   * @param amount The amount of xp to give, may not be less than 0
+   * @param member The member to give xp to, may not be null
+   * @param save Whether to save to db automatically
+   * @param currentChannel Channel to send level up message in.
+   */
   async giveXp(
     amount: number,
     member: GuildMember,
     save: boolean = true,
     currentChannel?: TextChannel
   ) {
-    this.xp += amount;
-    while (this.xp >= calculateLevelExp(this.level)) {
-      this.levelUp(1, member, currentChannel, false, false);
-      this.xp -= calculateLevelExp(this.level - 1);
+    this.status.xp += amount;
+    while (this.status.xp >= calculateLevelExp(this.status.level)) {
+      this.levelUp(member, 1, currentChannel, false, false);
+      this.status.xp -= calculateLevelExp(this.status.level - 1);
     }
+
+    if (this.status.xp < 0) this.status.xp = 0;
 
     if (save) this.save();
   }
 
+  /**
+   * Give xp to the player from a range, inputted as min and max
+   * @param min The minimum amount of xp to give
+   * @param max The maximum amount of xp to give
+   * @param member The member to give xp to
+   * @param currentChannel Channel to send level up message in
+   * @param save Whether to save to db automatically
+   */
   async giveXpFromRange(
     min: number,
     max: number,
@@ -95,30 +117,23 @@ export default class Player extends Saveable<IPlayer> {
   ) {
     const randomFromRange = Math.floor(Math.random() * (max - min + 1)) + min;
 
-    this.giveXp(randomFromRange, member, false, currentChannel);
-
-    if (save) this.save();
+    this.giveXp(randomFromRange, member, save, currentChannel);
   }
 
-  constructor(
-    username: string,
-    displayName: string,
-    member: GuildMember,
-    userId?: string
-  ) {
+  // All below is necessary for the Player class to function and may not be modified.
+
+  constructor(user: User, characterName: string) {
     super();
     // Only the required properties (inside the schema) are set. The rest are implied when saving to db.
-    this.username = username || "";
-    this.displayName = displayName || "";
-    this.userId = userId ? userId : member.user.id;
+    this.name = user.username;
+    this.characterName = characterName || "";
+    this.id = user.id;
   }
 
-  // All below is necessary for the Saveable class and may not be modified.
-
-  protected getIdentifier(): { key: keyof IPlayer; value: any } {
+  protected getIdentifier(): { key: keyof IPlayer; value: string } {
     return {
-      key: "username",
-      value: this.username,
+      key: "name",
+      value: this.name,
     };
   }
 

@@ -10,8 +10,8 @@ export default async (bot: Client, interaction: ModalSubmitInteraction) => {
 
       const player = await Player.loadOrCreate(interaction.user.username);
 
-      player.username = interaction.user.username;
-      player.displayName = displayName;
+      player.name = interaction.user.username;
+      player.characterName = displayName;
 
       await player.save();
 
