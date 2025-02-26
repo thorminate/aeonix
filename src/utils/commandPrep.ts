@@ -1,5 +1,4 @@
 import { CommandInteraction } from "discord.js";
-import commandVerify from "./commandVerify";
 
 interface Options {
   ephemeral: boolean;
@@ -12,17 +11,17 @@ export default async (interaction: CommandInteraction, Options?: Options) => {
     };
   }
 
-  const isCommandValid = await commandVerify(interaction);
+  const { ephemeral } = Options;
 
-  if (!isCommandValid) {
+  if (!interaction.isChatInputCommand() || !interaction.inGuild()) {
     await interaction.reply({
       content: "Invalid command.",
-      ephemeral: Options.ephemeral,
+      ephemeral,
     });
     return;
   }
 
   await interaction.deferReply({
-    ephemeral: Options.ephemeral,
+    ephemeral,
   });
 };

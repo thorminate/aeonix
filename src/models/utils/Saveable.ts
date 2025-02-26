@@ -8,7 +8,7 @@ export interface SaveableConstructor<T extends Document, TInstance> {
 
 export default abstract class Saveable<T extends Document> {
   protected abstract getModel(): Model<T>;
-  protected abstract getIdentifier(): { key: string; value: any };
+  protected abstract getIdentifier(): { key: keyof T; value: string };
 
   async save(data?: Partial<T>): Promise<void> {
     const { key, value } = this.getIdentifier();
