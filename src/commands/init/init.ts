@@ -5,7 +5,7 @@ import {
   CommandInteraction,
 } from "discord.js";
 import commandPrep from "../../utils/commandPrep";
-import Player from "../../models/Player";
+import Player from "../../models/player/Player";
 import buttonWrapper from "../../utils/buttonWrapper";
 
 export default {

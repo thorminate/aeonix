@@ -1,7 +1,11 @@
-import Saveable from "./utils/Saveable";
-import calculateLevelExp from "../utils/calculateLevelExp";
+import Saveable from "../utils/Saveable";
 import { GuildMember, TextChannel, User } from "discord.js";
 import { Document, Model, model, Schema } from "mongoose";
+
+export const calculateLevelExp = (currentLevel: number): number => {
+  const nextLevel = currentLevel + 1;
+  return Math.floor(1000 * Math.pow(1.1, nextLevel));
+};
 
 export interface InventoryEntry {
   name: string;

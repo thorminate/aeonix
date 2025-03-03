@@ -4,10 +4,14 @@ import {
   ButtonStyle,
   Client,
 } from "discord.js";
-import Player from "../../models/Player";
+import Player from "../../models/player/Player";
 import buttonWrapper from "../../utils/buttonWrapper";
+import { EventParam } from "../../handlers/eventHandler";
 
-export default async (bot: Client, buttonInteraction: ButtonInteraction) => {
+export default async (event: EventParam) => {
+  const { arg } = event;
+  const buttonInteraction = arg as ButtonInteraction;
+
   if (!buttonInteraction.isButton()) return;
 
   switch (buttonInteraction.customId) {

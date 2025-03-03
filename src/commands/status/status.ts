@@ -1,6 +1,6 @@
 // shows your status
 import { Client, CommandInteraction, HTTPError } from "discord.js";
-import Player from "../../models/Player";
+import Player from "../../models/player/Player";
 import log from "../../utils/log";
 import { config } from "dotenv";
 import commandPrep from "../../utils/commandPrep";

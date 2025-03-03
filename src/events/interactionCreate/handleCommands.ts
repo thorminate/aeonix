@@ -6,8 +6,12 @@
 import getLocalCommands from "../../utils/getLocalCommands";
 import { Client, CommandInteraction, PermissionsBitField } from "discord.js";
 import log from "../../utils/log";
+import { EventParam } from "../../handlers/eventHandler";
 
-export default async (bot: Client, commandInteraction: CommandInteraction) => {
+export default async (event: EventParam) => {
+  const { arg } = event;
+  const commandInteraction = arg as CommandInteraction;
+
   if (!commandInteraction.isChatInputCommand()) return;
   // get already registered commands
   const localCommands = await getLocalCommands();

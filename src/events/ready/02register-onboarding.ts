@@ -13,9 +13,12 @@ import {
 import { config } from "dotenv";
 import buttonWrapper from "../../utils/buttonWrapper";
 import log from "../../utils/log";
+import { EventParam } from "../../handlers/eventHandler";
 config();
 
-export default async (bot: Client) => {
+export default async (event: EventParam) => {
+  const { bot } = event;
+
   const onboardingChannelId = process.env.ONBOARDING_CHANNEL;
 
   const onboardingChannel = await bot.channels.fetch(onboardingChannelId);

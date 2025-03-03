@@ -1,21 +1,30 @@
 import { Client, ModalSubmitInteraction } from "discord.js";
-import Player from "../../models/Player";
+import Player from "../../models/player/Player";
+import { EventParam } from "../../handlers/eventHandler";
 
-export default async (bot: Client, interaction: ModalSubmitInteraction) => {
-  if (!interaction.isModalSubmit()) return;
+export default async (event: EventParam) => {
+  const { arg } = event;
+  const modalInteraction = arg as ModalSubmitInteraction;
 
-  switch (interaction.customId) {
+  if (!modalInteraction.isModalSubmit()) return;
+
+  switch (modalInteraction.customId) {
     case "set-display-name":
-      const displayName = interaction.fields.getTextInputValue("display-name");
+      modalInteraction.client;
+      const displayName =
+        modalInteraction.fields.getTextInputValue("display-name");
 
-      const player = await Player.loadOrCreate(interaction.user.username);
+      const player = await Player.loadOrCreate(modalInteraction.user.username);
 
-      player.name = interaction.user.username;
+      player.name = modalInteraction.user.username;
       player.characterName = displayName;
 
       await player.save();
 
-      await interaction.reply({ content: "Display name set", ephemeral: true });
+      await modalInteraction.reply({
+        content: "Display name set",
+        ephemeral: true,
+      });
 
       break;
   }

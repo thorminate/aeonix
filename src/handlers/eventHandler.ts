@@ -1,10 +1,19 @@
 // when an event is triggered, it runs all files in that event's folder
 
-import { Client } from "discord.js"; // Get the discord.js library for setting the type of the bot parameter.
+import { ButtonInteraction, Client, CommandInteraction } from "discord.js"; // Get the discord.js library for setting the type of the bot parameter.
 import path from "path"; // Get the path library.
 import getAllFiles from "../utils/getAllFiles"; // Get the getAllFiles function.
 import url from "url";
 import log from "../utils/log";
+export class EventParam {
+  bot: Client;
+  arg: any;
+
+  constructor(bot: Client, arg: any) {
+    this.bot = bot;
+    this.arg = arg;
+  }
+}
 
 export default async (bot: Client) => {
   // Export the function.
@@ -28,13 +37,15 @@ export default async (bot: Client) => {
         const fileUrl = url.pathToFileURL(filePath); // Get the URL to the event file.
         const eventFunction = await import(fileUrl.toString()); // Get the event function.
         // Run the event function. (the extra default is needed for some reason)
-        await eventFunction.default.default(bot, arg).catch((err: any) => {
-          log({
-            header: "Event Error, unable to process event",
-            payload: `${err}`,
-            type: "Error",
+        await eventFunction.default
+          .default(new EventParam(bot, arg))
+          .catch((err: any) => {
+            log({
+              header: "Event Error, unable to process event",
+              payload: `${err}`,
+              type: "Error",
+            });
           });
-        });
       }
     });
   }
